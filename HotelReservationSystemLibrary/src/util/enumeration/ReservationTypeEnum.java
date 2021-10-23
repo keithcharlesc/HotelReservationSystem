@@ -5,11 +5,13 @@
  */
 package util.enumeration;
 
-public enum EmployeeAccessRightEnum {
+/**
+ *
+ * @author keithcharleschan
+ */
+public enum ReservationTypeEnum {
     
-    SYSTEM_ADMINISTRATOR,
-    OPERATION_MANAGER,
-    SALES_MANAGER,
-    GUEST_RELATION_OFFICER
+    WALK_IN,
+    ONLINE
     
 }

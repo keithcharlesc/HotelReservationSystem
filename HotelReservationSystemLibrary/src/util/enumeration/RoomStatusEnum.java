@@ -5,11 +5,9 @@
  */
 package util.enumeration;
 
-public enum EmployeeAccessRightEnum {
+public enum RoomStatusEnum {
     
-    SYSTEM_ADMINISTRATOR,
-    OPERATION_MANAGER,
-    SALES_MANAGER,
-    GUEST_RELATION_OFFICER
+    AVAILABLE,
+    UNAVAILABLE
     
 }

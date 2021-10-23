@@ -50,6 +50,38 @@ public class GuestEntity implements Serializable {
     public void setGuestId(Long guestId) {
         this.guestId = guestId;
     }
+    
+    public String getGuestName() {
+        return guestName;
+    }
+
+    public void setGuestName(String guestName) {
+        this.guestName = guestName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Long getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(Long phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
+    }
 
     @Override
     public int hashCode() {
@@ -74,62 +106,6 @@ public class GuestEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.GuestEntity[ id=" + getGuestId() + " ]";
-    }
-
-    /**
-     * @return the guestName
-     */
-    public String getGuestName() {
-        return guestName;
-    }
-
-    /**
-     * @param guestName the guestName to set
-     */
-    public void setGuestName(String guestName) {
-        this.guestName = guestName;
-    }
-
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return the phoneNo
-     */
-    public Long getPhoneNo() {
-        return phoneNo;
-    }
-
-    /**
-     * @param phoneNo the phoneNo to set
-     */
-    public void setPhoneNo(Long phoneNo) {
-        this.phoneNo = phoneNo;
-    }
-
-    /**
-     * @return the reservations
-     */
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    /**
-     * @param reservations the reservations to set
-     */
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
     }
     
 }

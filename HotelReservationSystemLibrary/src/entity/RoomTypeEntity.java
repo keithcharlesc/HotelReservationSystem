@@ -33,12 +33,12 @@ public class RoomTypeEntity implements Serializable {
     private int roomBed;
     private int roomCapacity;
     private String roomAmenities;
-    
-    @OneToMany(mappedBy="roomType")
+
+    @OneToMany(mappedBy = "roomType")
     private List<RoomRateEntity> roomRates;
-    
-    @OneToMany(mappedBy="roomType")
-    private List<Room> rooms;
+
+    @OneToMany(mappedBy = "roomType")
+    private List<RoomEntity> rooms;
 
     public RoomTypeEntity() {
         this.roomRates = new ArrayList<>();
@@ -56,8 +56,6 @@ public class RoomTypeEntity implements Serializable {
         this.roomCapacity = roomCapacity;
         this.roomAmenities = roomAmenities;
     }
-    
-    
 
     public Long getRoomTypeId() {
         return roomTypeId;
@@ -65,6 +63,86 @@ public class RoomTypeEntity implements Serializable {
 
     public void setRoomTypeId(Long roomTypeId) {
         this.roomTypeId = roomTypeId;
+    }
+
+    public String getRoomTyppe() {
+        return roomTyppe;
+    }
+
+    public void setRoomTyppe(String roomTyppe) {
+        this.roomTyppe = roomTyppe;
+    }
+
+    public Boolean getIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(Boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
+    public String getRoomDescription() {
+        return roomDescription;
+    }
+
+    public void setRoomDescription(String roomDescription) {
+        this.roomDescription = roomDescription;
+    }
+
+    public int getRoomImportance() {
+        return roomImportance;
+    }
+
+    public void setRoomImportance(int roomImportance) {
+        this.roomImportance = roomImportance;
+    }
+
+    public int getRoomSize() {
+        return roomSize;
+    }
+
+    public void setRoomSize(int roomSize) {
+        this.roomSize = roomSize;
+    }
+
+    public int getRoomBed() {
+        return roomBed;
+    }
+
+    public void setRoomBed(int roomBed) {
+        this.roomBed = roomBed;
+    }
+
+    public int getRoomCapacity() {
+        return roomCapacity;
+    }
+
+    public void setRoomCapacity(int roomCapacity) {
+        this.roomCapacity = roomCapacity;
+    }
+
+    public String getRoomAmenities() {
+        return roomAmenities;
+    }
+
+    public void setRoomAmenities(String roomAmenities) {
+        this.roomAmenities = roomAmenities;
+    }
+
+    public List<RoomRateEntity> getRoomrates() {
+        return roomRates;
+    }
+
+    public void setRoomrates(List<RoomRateEntity> roomrates) {
+        this.roomRates = roomrates;
+    }
+
+    public List<RoomEntity> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(List<RoomEntity> rooms) {
+        this.rooms = rooms;
     }
 
     @Override
@@ -92,144 +170,4 @@ public class RoomTypeEntity implements Serializable {
         return "entity.RoomTypeEntity[ id=" + roomTypeId + " ]";
     }
 
-    /**
-     * @return the roomTyppe
-     */
-    public String getRoomTyppe() {
-        return roomTyppe;
-    }
-
-    /**
-     * @param roomTyppe the roomTyppe to set
-     */
-    public void setRoomTyppe(String roomTyppe) {
-        this.roomTyppe = roomTyppe;
-    }
-
-    /**
-     * @return the isDisabled
-     */
-    public Boolean getIsDisabled() {
-        return isDisabled;
-    }
-
-    /**
-     * @param isDisabled the isDisabled to set
-     */
-    public void setIsDisabled(Boolean isDisabled) {
-        this.isDisabled = isDisabled;
-    }
-
-    /**
-     * @return the roomDescription
-     */
-    public String getRoomDescription() {
-        return roomDescription;
-    }
-
-    /**
-     * @param roomDescription the roomDescription to set
-     */
-    public void setRoomDescription(String roomDescription) {
-        this.roomDescription = roomDescription;
-    }
-
-    /**
-     * @return the roomImportance
-     */
-    public int getRoomImportance() {
-        return roomImportance;
-    }
-
-    /**
-     * @param roomImportance the roomImportance to set
-     */
-    public void setRoomImportance(int roomImportance) {
-        this.roomImportance = roomImportance;
-    }
-
-    /**
-     * @return the roomSize
-     */
-    public int getRoomSize() {
-        return roomSize;
-    }
-
-    /**
-     * @param roomSize the roomSize to set
-     */
-    public void setRoomSize(int roomSize) {
-        this.roomSize = roomSize;
-    }
-
-    /**
-     * @return the roomBed
-     */
-    public int getRoomBed() {
-        return roomBed;
-    }
-
-    /**
-     * @param roomBed the roomBed to set
-     */
-    public void setRoomBed(int roomBed) {
-        this.roomBed = roomBed;
-    }
-
-    /**
-     * @return the roomCapacity
-     */
-    public int getRoomCapacity() {
-        return roomCapacity;
-    }
-
-    /**
-     * @param roomCapacity the roomCapacity to set
-     */
-    public void setRoomCapacity(int roomCapacity) {
-        this.roomCapacity = roomCapacity;
-    }
-
-    /**
-     * @return the roomAmenities
-     */
-    public String getRoomAmenities() {
-        return roomAmenities;
-    }
-
-    /**
-     * @param roomAmenities the roomAmenities to set
-     */
-    public void setRoomAmenities(String roomAmenities) {
-        this.roomAmenities = roomAmenities;
-    }
-
-    /**
-     * @return the roomrates
-     */
-    public List<RoomRate> getRoomrates() {
-        return roomrates;
-    }
-
-    /**
-     * @param roomrates the roomrates to set
-     */
-    public void setRoomrates(List<RoomRate> roomrates) {
-        this.roomrates = roomrates;
-    }
-
-    /**
-     * @return the rooms
-     */
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    /**
-     * @param rooms the rooms to set
-     */
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
-    }
-    
 }

@@ -11,14 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-
 @Entity
 public class CustomerEntity extends GuestEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+//    private static final long serialVersionUID = 1L;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long customerId;
     private String password;
 
     public CustomerEntity() {
@@ -27,20 +26,26 @@ public class CustomerEntity extends GuestEntity implements Serializable {
     public CustomerEntity(String password) {
         this.password = password;
     }
-    
 
-    public Long getCustomerId() {
-        return customerId;
+    public String getPassword() {
+        return password;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
+//    public Long getCustomerId() {
+//        return customerId;
+//    }
+//
+//    public void setCustomerId(Long customerId) {
+//        this.customerId = customerId;
+//    }
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (customerId != null ? customerId.hashCode() : 0);
+        hash += (this.getGuestId() != null ? this.getGuestId().hashCode() : 0);
         return hash;
     }
 
@@ -51,7 +56,7 @@ public class CustomerEntity extends GuestEntity implements Serializable {
             return false;
         }
         CustomerEntity other = (CustomerEntity) object;
-        if ((this.customerId == null && other.customerId != null) || (this.customerId != null && !this.customerId.equals(other.customerId))) {
+        if ((this.getGuestId() == null && other.getGuestId() != null) || (this.getGuestId() != null && !this.getGuestId().equals(other.getGuestId()))) {
             return false;
         }
         return true;
@@ -59,21 +64,7 @@ public class CustomerEntity extends GuestEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.CustomerEntity[ id=" + customerId + " ]";
+        return "entity.CustomerEntity[ id=" + this.getGuestId() + " ]";
     }
 
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
 }
