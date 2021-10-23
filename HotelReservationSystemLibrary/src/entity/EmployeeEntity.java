@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import util.enumeration.EmployeeAccessRightEnum;
 
 /**
  *
@@ -22,7 +23,21 @@ public class EmployeeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
+    private String firstName;
+    private String lastName;
+    private String password;
+    private EmployeeAccessRightEnum employeeAccessRightEnum;
 
+    public EmployeeEntity() {
+    }
+
+    public EmployeeEntity(String firstName, String lastName, String password, EmployeeAccessRightEnum employeeAccessRightEnum) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.employeeAccessRightEnum = employeeAccessRightEnum;
+    }
+    
     public Long getEmployeeId() {
         return employeeId;
     }
@@ -54,6 +69,62 @@ public class EmployeeEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.EmployeeEntity[ id=" + employeeId + " ]";
+    }
+
+    /**
+     * @return the firstName
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the employeeAccessRightEnum
+     */
+    public EmployeeAccessRightEnum getEmployeeAccessRightEnum() {
+        return employeeAccessRightEnum;
+    }
+
+    /**
+     * @param employeeAccessRightEnum the employeeAccessRightEnum to set
+     */
+    public void setEmployeeAccessRightEnum(EmployeeAccessRightEnum employeeAccessRightEnum) {
+        this.employeeAccessRightEnum = employeeAccessRightEnum;
     }
     
 }
