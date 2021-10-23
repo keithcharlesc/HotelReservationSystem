@@ -12,10 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import util.enumeration.EmployeeAccessRightEnum;
 
-/**
- *
- * @author keithcharleschan
- */
+
 @Entity
 public class EmployeeEntity implements Serializable {
 
