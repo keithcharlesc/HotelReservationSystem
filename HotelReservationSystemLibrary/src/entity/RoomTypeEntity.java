@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,13 +26,21 @@ public class RoomTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
-    private String roomTyppe;
+    @Column(nullable = false, length = 32)
+    private String roomType;
+    @Column(nullable = false)
     private Boolean isDisabled;
+    @Column(nullable = false, length = 32)
     private String roomDescription;
-    private int roomImportance; // 1- least important, if add additional room type need to make sure everything changes
-    private int roomSize;
-    private int roomBed;
-    private int roomCapacity;
+    @Column(nullable = false)
+    private Integer roomImportance; // 1- least important, if add additional room type need to make sure everything changes
+    @Column(nullable = false)
+    private Integer roomSize;
+    @Column(nullable = false)
+    private Integer roomBed;
+    @Column(nullable = false)
+    private Integer roomCapacity;
+    @Column(nullable = false, length = 32)
     private String roomAmenities;
 
     @OneToMany(mappedBy = "roomType")
@@ -45,9 +54,9 @@ public class RoomTypeEntity implements Serializable {
         this.rooms = new ArrayList<>();
     }
 
-    public RoomTypeEntity(String roomTyppe, Boolean isDisabled, String roomDescription, int roomImportance, int roomSize, int roomBed, int roomCapacity, String roomAmenities) {
+    public RoomTypeEntity(String roomType, Boolean isDisabled, String roomDescription, int roomImportance, int roomSize, int roomBed, int roomCapacity, String roomAmenities) {
         this();
-        this.roomTyppe = roomTyppe;
+        this.roomType = roomType;
         this.isDisabled = isDisabled;
         this.roomDescription = roomDescription;
         this.roomImportance = roomImportance;
@@ -65,12 +74,12 @@ public class RoomTypeEntity implements Serializable {
         this.roomTypeId = roomTypeId;
     }
 
-    public String getRoomTyppe() {
-        return roomTyppe;
+    public String getRoomType() {
+        return roomType;
     }
 
-    public void setRoomTyppe(String roomTyppe) {
-        this.roomTyppe = roomTyppe;
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
     }
 
     public Boolean getIsDisabled() {

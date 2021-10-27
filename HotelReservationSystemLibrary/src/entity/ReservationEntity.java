@@ -10,11 +10,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import util.enumeration.ReservationTypeEnum;
@@ -30,21 +34,32 @@ public class ReservationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
+    
+    @Column(nullable = false, precision = 11, scale = 2)
     private BigDecimal reservationFee;
+    @Column(nullable = false)
     private LocalDateTime startDate;
+    @Column(nullable = false)
     private LocalDateTime endDate;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ReservationTypeEnum reservationType;
     
     @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private GuestEntity guest;
     
     @ManyToOne(fetch=FetchType.LAZY) //CHECK IF NEED TO SPECIFY @ManyToOne Annotation
+    @JoinColumn(nullable = false)
     private RoomTypeEntity roomType; 
     
     @OneToMany //Unidirectional (don't need mappedBy)
+    @JoinColumn(nullable = false)
     private List<NightEntity> nights;
     
     @OneToMany(mappedBy="reservation")
+    @JoinColumn(nullable = false)
     private List<ReservationRoomEntity> reservationRooms;
 
     public ReservationEntity() {

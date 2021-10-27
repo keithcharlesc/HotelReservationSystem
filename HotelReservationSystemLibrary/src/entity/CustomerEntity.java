@@ -18,7 +18,6 @@ public class CustomerEntity extends GuestEntity implements Serializable {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long customerId;
-    
     private String password;
 
     public CustomerEntity() {
