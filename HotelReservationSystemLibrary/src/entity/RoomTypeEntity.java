@@ -98,7 +98,7 @@ public class RoomTypeEntity implements Serializable {
         this.roomDescription = roomDescription;
     }
 
-    public int getRoomImportance() {
+    public Integer getRoomImportance() {
         return roomImportance;
     }
 
@@ -106,7 +106,7 @@ public class RoomTypeEntity implements Serializable {
         this.roomImportance = roomImportance;
     }
 
-    public int getRoomSize() {
+    public Integer getRoomSize() {
         return roomSize;
     }
 
@@ -114,7 +114,7 @@ public class RoomTypeEntity implements Serializable {
         this.roomSize = roomSize;
     }
 
-    public int getRoomBed() {
+    public Integer getRoomBed() {
         return roomBed;
     }
 
@@ -122,7 +122,7 @@ public class RoomTypeEntity implements Serializable {
         this.roomBed = roomBed;
     }
 
-    public int getRoomCapacity() {
+    public Integer getRoomCapacity() {
         return roomCapacity;
     }
 
@@ -138,12 +138,12 @@ public class RoomTypeEntity implements Serializable {
         this.roomAmenities = roomAmenities;
     }
 
-    public List<RoomRateEntity> getRoomrates() {
+    public List<RoomRateEntity> getRoomRates() {
         return roomRates;
     }
 
     public void setRoomrates(List<RoomRateEntity> roomrates) {
-        this.roomRates = roomrates;
+        this.roomRates = roomRates;
     }
 
     public List<RoomEntity> getRooms() {
