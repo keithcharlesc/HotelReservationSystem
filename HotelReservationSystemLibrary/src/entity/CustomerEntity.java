@@ -6,10 +6,8 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @Entity
 public class CustomerEntity extends GuestEntity implements Serializable {
@@ -18,6 +16,7 @@ public class CustomerEntity extends GuestEntity implements Serializable {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long customerId;
+    @Column(nullable = false, length = 32)
     private String password;
 
     public CustomerEntity() {

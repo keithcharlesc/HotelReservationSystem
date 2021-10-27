@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,7 +25,8 @@ public class ExceptionRecordEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long exceptionRecordId;
-    private int typeOfException;
+    @Column(nullable = false)
+    private Integer typeOfException;
 
     @OneToOne(fetch = FetchType.LAZY)
     private ReservationRoomEntity reservationRoom;
