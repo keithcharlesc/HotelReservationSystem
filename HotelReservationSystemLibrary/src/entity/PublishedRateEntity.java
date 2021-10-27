@@ -26,10 +26,11 @@ public class PublishedRateEntity extends RoomRateEntity implements Serializable 
         super();
     }
 
-    public PublishedRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled, RoomTypeEntity roomType) {
-        super(ratePerNight, startDate, endDate, isDisabled, roomType);
+    public PublishedRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
+        super(ratePerNight, startDate, endDate, isDisabled);
     }
 
+    
 //    @Override
 //    public int hashCode() {
 //        int hash = 0;

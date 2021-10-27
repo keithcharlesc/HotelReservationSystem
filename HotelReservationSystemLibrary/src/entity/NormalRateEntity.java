@@ -26,8 +26,8 @@ public class NormalRateEntity extends RoomRateEntity implements Serializable {
         super();
     }
     
-    public NormalRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled, RoomTypeEntity roomType) {
-        super(ratePerNight, startDate, endDate, isDisabled, roomType);
+    public NormalRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
+        super(ratePerNight, startDate, endDate, isDisabled);
     }
     
 
