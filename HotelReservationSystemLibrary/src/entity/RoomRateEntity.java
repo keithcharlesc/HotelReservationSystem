@@ -21,7 +21,7 @@ public abstract class RoomRateEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomRateId;
     @Column(nullable = false, precision = 11, scale = 2)
     private BigDecimal ratePerNight;
@@ -43,7 +43,7 @@ public abstract class RoomRateEntity implements Serializable {
         this.nights = new ArrayList<>();
     }
 
-    public RoomRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled, RoomTypeEntity roomType) {
+    public RoomRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
         this();
         this.ratePerNight = ratePerNight;
         this.startDate = startDate;
