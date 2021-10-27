@@ -23,7 +23,7 @@ public class PartnerEmployeeEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partnerId;
     private String name;
     private String username;
