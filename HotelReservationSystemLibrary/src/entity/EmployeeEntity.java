@@ -37,9 +37,10 @@ public class EmployeeEntity implements Serializable {
     public EmployeeEntity() {
     }
 
-    public EmployeeEntity(String firstName, String lastName, String password, EmployeeAccessRightEnum employeeAccessRightEnum) {
+    public EmployeeEntity(String firstName, String lastName, String username, String password, EmployeeAccessRightEnum employeeAccessRightEnum) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = username;
         this.password = password;
         this.employeeAccessRightEnum = employeeAccessRightEnum;
     }
@@ -51,32 +52,7 @@ public class EmployeeEntity implements Serializable {
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (employeeId != null ? employeeId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the employeeId fields are not set
-        if (!(object instanceof EmployeeEntity)) {
-            return false;
-        }
-        EmployeeEntity other = (EmployeeEntity) object;
-        if ((this.employeeId == null && other.employeeId != null) || (this.employeeId != null && !this.employeeId.equals(other.employeeId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.EmployeeEntity[ id=" + employeeId + " ]";
-    }
-
+    
     public String getFirstName() {
         return firstName;
     }
@@ -107,6 +83,39 @@ public class EmployeeEntity implements Serializable {
 
     public void setEmployeeAccessRightEnum(EmployeeAccessRightEnum employeeAccessRightEnum) {
         this.employeeAccessRightEnum = employeeAccessRightEnum;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (employeeId != null ? employeeId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the employeeId fields are not set
+        if (!(object instanceof EmployeeEntity)) {
+            return false;
+        }
+        EmployeeEntity other = (EmployeeEntity) object;
+        if ((this.employeeId == null && other.employeeId != null) || (this.employeeId != null && !this.employeeId.equals(other.employeeId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entity.EmployeeEntity[ id=" + employeeId + " ]";
     }
 
 }

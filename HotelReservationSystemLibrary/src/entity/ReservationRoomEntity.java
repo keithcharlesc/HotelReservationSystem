@@ -34,10 +34,10 @@ public class ReservationRoomEntity implements Serializable {
     @JoinColumn(nullable = false)
     private ReservationEntity reservation;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY) // can be null
     private ExceptionRecordEntity exceptionRecord;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) // can be null
     private RoomEntity room;
 
     public ReservationRoomEntity() {

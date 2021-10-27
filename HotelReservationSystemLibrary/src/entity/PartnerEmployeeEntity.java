@@ -28,7 +28,7 @@ public class PartnerEmployeeEntity implements Serializable {
     private Long partnerId;
     @Column(nullable = false, length = 32)
     private String name;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 32)
     private String username;
     @Column(nullable = false, length = 32)
     private String password;

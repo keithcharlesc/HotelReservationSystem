@@ -28,9 +28,9 @@ public class GuestEntity implements Serializable {
     private Long guestId;
     @Column(nullable = false, length = 32)
     private String guestName;
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, unique = true, length = 64)
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = false) //maybe can limit smaller
     private Long phoneNo;
     
     @OneToMany(mappedBy = "guest")

@@ -50,7 +50,7 @@ public class ReservationEntity implements Serializable {
     @JoinColumn(nullable = false)
     private GuestEntity guest;
     
-    @ManyToOne(fetch=FetchType.LAZY) //CHECK IF NEED TO SPECIFY @ManyToOne Annotation
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType; 
     
