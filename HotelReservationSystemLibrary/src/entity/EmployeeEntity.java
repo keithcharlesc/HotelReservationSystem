@@ -26,19 +26,19 @@ public class EmployeeEntity implements Serializable {
     private Long employeeId;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min=2, max = 32)
+    @Size(min = 2, max = 32)
     private String firstName;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min=2, max = 32)
+    @Size(min = 2, max = 32)
     private String lastName;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min=6, max = 32)
+    @Size(min = 6, max = 32)
     private String password;
     @Column(nullable = false, unique = true, length = 32)
     @NotNull
-    @Size(min=4, max = 32)
+    @Size(min = 4, max = 32)
     private String username;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -63,7 +63,7 @@ public class EmployeeEntity implements Serializable {
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
-    
+
     public String getFirstName() {
         return firstName;
     }
@@ -88,20 +88,20 @@ public class EmployeeEntity implements Serializable {
         this.password = password;
     }
 
-    public EmployeeAccessRightEnum getEmployeeAccessRightEnum() {
-        return employeeAccessRightEnum;
-    }
-
-    public void setEmployeeAccessRightEnum(EmployeeAccessRightEnum employeeAccessRightEnum) {
-        this.employeeAccessRightEnum = employeeAccessRightEnum;
-    }
-    
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public EmployeeAccessRightEnum getEmployeeAccessRightEnum() {
+        return employeeAccessRightEnum;
+    }
+
+    public void setEmployeeAccessRightEnum(EmployeeAccessRightEnum employeeAccessRightEnum) {
+        this.employeeAccessRightEnum = employeeAccessRightEnum;
     }
 
     @Override
@@ -111,7 +111,7 @@ public class EmployeeEntity implements Serializable {
             return false;
         }
         EmployeeEntity other = (EmployeeEntity) object;
-        if ((this.employeeId == null && other.employeeId != null) || (this.employeeId != null && !this.employeeId.equals(other.employeeId))) {
+        if ((this.getEmployeeId() == null && other.getEmployeeId() != null) || (this.getEmployeeId() != null && !this.employeeId.equals(other.employeeId))) {
             return false;
         }
         return true;
@@ -121,6 +121,5 @@ public class EmployeeEntity implements Serializable {
     public String toString() {
         return "EmployeeEntity{" + "employeeId=" + employeeId + ", firstName=" + firstName + ", lastName=" + lastName + ", password=" + password + ", username=" + username + ", employeeAccessRightEnum=" + employeeAccessRightEnum + '}';
     }
-
 
 }

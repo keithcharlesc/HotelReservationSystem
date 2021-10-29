@@ -19,9 +19,8 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class GuestEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,21 +29,21 @@ public class GuestEntity implements Serializable {
     private Long guestId;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min=4, max = 32)
+    @Size(min = 4, max = 32)
     private String guestName;
     @Column(nullable = false, unique = true, length = 64)
     @NotNull
-    @Size(min=4, max = 64)
+    @Size(min = 4, max = 64)
     private String email;
     @Column(nullable = false) //maybe can limit smaller
     @NotNull
     private Long phoneNo;
-    
+
     @OneToMany(mappedBy = "guest")
     private List<ReservationEntity> reservations;
 
     public GuestEntity() {
-        this.reservations = new ArrayList<>(); 
+        this.reservations = new ArrayList<>();
     }
 
     public GuestEntity(String guestName, String email, Long phoneNo) {
@@ -61,7 +60,7 @@ public class GuestEntity implements Serializable {
     public void setGuestId(Long guestId) {
         this.guestId = guestId;
     }
-    
+
     public String getGuestName() {
         return guestName;
     }
@@ -112,5 +111,4 @@ public class GuestEntity implements Serializable {
         return "GuestEntity{" + "guestId=" + guestId + ", guestName=" + guestName + ", email=" + email + ", phoneNo=" + phoneNo + ", reservations=" + reservations + '}';
     }
 
-    
 }

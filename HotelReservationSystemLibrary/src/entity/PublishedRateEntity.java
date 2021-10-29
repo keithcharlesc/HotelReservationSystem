@@ -7,16 +7,10 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
-/**
- *
- * @author keithcharleschan
- */
 @Entity
 public class PublishedRateEntity extends RoomRateEntity implements Serializable {
 
@@ -26,7 +20,7 @@ public class PublishedRateEntity extends RoomRateEntity implements Serializable 
         super();
     }
 
-    public PublishedRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
+    public PublishedRateEntity(BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate, Boolean isDisabled) {
         super(ratePerNight, startDate, endDate, isDisabled);
     }
 

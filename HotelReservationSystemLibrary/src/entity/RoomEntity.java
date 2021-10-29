@@ -22,10 +22,6 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import util.enumeration.RoomStatusEnum;
 
-/**
- *
- * @author keithcharleschan
- */
 @Entity
 public class RoomEntity implements Serializable {
 
@@ -78,19 +74,19 @@ public class RoomEntity implements Serializable {
         this.roomStatusEnum = roomStatusEnum;
     }
 
-    public boolean isRoomAllocated() {
+    public Boolean getRoomAllocated() {
         return roomAllocated;
     }
 
-    public void setRoomAllocated(boolean roomAllocated) {
+    public void setRoomAllocated(Boolean roomAllocated) {
         this.roomAllocated = roomAllocated;
     }
 
-    public boolean isIsDisabled() {
+    public Boolean getIsDisabled() {
         return isDisabled;
     }
 
-    public void setIsDisabled(boolean isDisabled) {
+    public void setIsDisabled(Boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
 
@@ -117,7 +113,7 @@ public class RoomEntity implements Serializable {
             return false;
         }
         RoomEntity other = (RoomEntity) object;
-        if ((this.roomId == null && other.roomId != null) || (this.roomId != null && !this.roomId.equals(other.roomId))) {
+        if ((this.getRoomId() == null && other.getRoomId() != null) || (this.getRoomId() != null && !this.roomId.equals(other.roomId))) {
             return false;
         }
         return true;
@@ -125,7 +121,7 @@ public class RoomEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RoomEntity{" + "roomId=" + roomId + ", roomStatusEnum=" + roomStatusEnum + ", roomAllocated=" + roomAllocated + ", isDisabled=" + isDisabled + ", roomType=" + roomType + ", reservationRooms=" + reservationRooms + '}';
+        return "RoomEntity{" + "roomId=" + getRoomId() + ", roomStatusEnum=" + getRoomStatusEnum() + ", roomAllocated=" + getRoomAllocated() + ", isDisabled=" + getIsDisabled() + ", roomType=" + getRoomType() + ", reservationRooms=" + getReservationRooms() + '}';
     }
 
 }

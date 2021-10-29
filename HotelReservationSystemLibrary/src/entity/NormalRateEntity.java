@@ -7,16 +7,9 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
-/**
- *
- * @author keithcharleschan
- */
 @Entity
 public class NormalRateEntity extends RoomRateEntity implements Serializable {
 
@@ -25,11 +18,11 @@ public class NormalRateEntity extends RoomRateEntity implements Serializable {
     public NormalRateEntity() {
         super();
     }
-    
-    public NormalRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
+
+    public NormalRateEntity(BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate, Boolean isDisabled) {
         super(ratePerNight, startDate, endDate, isDisabled);
     }
-    
+
 //    @Override
 //    public boolean equals(Object object) {
 //        // TODO: Warning - this method won't work in the case the id fields are not set
@@ -42,12 +35,9 @@ public class NormalRateEntity extends RoomRateEntity implements Serializable {
 //        }
 //        return true;
 //    }
-
     @Override
     public String toString() {
         return "NormalRateEntity{" + super.toString() + '}';
     }
-
-    
 
 }

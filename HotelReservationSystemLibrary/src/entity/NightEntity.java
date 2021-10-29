@@ -6,15 +6,16 @@
 package entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class NightEntity implements Serializable {
@@ -23,12 +24,21 @@ public class NightEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nightId;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private RoomRateEntity roomRate;
+    
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime date;
 
     public NightEntity() {
+    }
+
+    public NightEntity(RoomRateEntity roomRate, LocalDateTime date) {
+        this.roomRate = roomRate;
+        this.date = date;
     }
 
     public Long getNightId() {
@@ -39,6 +49,22 @@ public class NightEntity implements Serializable {
         this.nightId = nightId;
     }
 
+    public RoomRateEntity getRoomRate() {
+        return roomRate;
+    }
+
+    public void setRoomRate(RoomRateEntity roomRate) {
+        this.roomRate = roomRate;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the nightId fields are not set
@@ -46,7 +72,7 @@ public class NightEntity implements Serializable {
             return false;
         }
         NightEntity other = (NightEntity) object;
-        if ((this.nightId == null && other.nightId != null) || (this.nightId != null && !this.nightId.equals(other.nightId))) {
+        if ((this.getNightId() == null && other.getNightId() != null) || (this.getNightId() != null && !this.nightId.equals(other.nightId))) {
             return false;
         }
         return true;
@@ -54,7 +80,7 @@ public class NightEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "NightEntity{" + "nightId=" + nightId + ", roomRate=" + roomRate + '}';
+        return "NightEntity{" + "nightId=" + getNightId() + ", roomRate=" + getRoomRate() + ", date=" + getDate() + '}';
     }
-    
+
 }

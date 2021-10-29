@@ -18,10 +18,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- *
- * @author xianhui
- */
 @Entity
 public class RoomTypeEntity implements Serializable {
 
@@ -120,7 +116,7 @@ public class RoomTypeEntity implements Serializable {
         return roomImportance;
     }
 
-    public void setRoomImportance(int roomImportance) {
+    public void setRoomImportance(Integer roomImportance) {
         this.roomImportance = roomImportance;
     }
 
@@ -128,7 +124,7 @@ public class RoomTypeEntity implements Serializable {
         return roomSize;
     }
 
-    public void setRoomSize(int roomSize) {
+    public void setRoomSize(Integer roomSize) {
         this.roomSize = roomSize;
     }
 
@@ -136,7 +132,7 @@ public class RoomTypeEntity implements Serializable {
         return roomBed;
     }
 
-    public void setRoomBed(int roomBed) {
+    public void setRoomBed(Integer roomBed) {
         this.roomBed = roomBed;
     }
 
@@ -144,7 +140,7 @@ public class RoomTypeEntity implements Serializable {
         return roomCapacity;
     }
 
-    public void setRoomCapacity(int roomCapacity) {
+    public void setRoomCapacity(Integer roomCapacity) {
         this.roomCapacity = roomCapacity;
     }
 
@@ -160,7 +156,7 @@ public class RoomTypeEntity implements Serializable {
         return roomRates;
     }
 
-    public void setRoomrates(List<RoomRateEntity> roomrates) {
+    public void setRoomRates(List<RoomRateEntity> roomRates) {
         this.roomRates = roomRates;
     }
 
@@ -179,7 +175,7 @@ public class RoomTypeEntity implements Serializable {
             return false;
         }
         RoomTypeEntity other = (RoomTypeEntity) object;
-        if ((this.roomTypeId == null && other.roomTypeId != null) || (this.roomTypeId != null && !this.roomTypeId.equals(other.roomTypeId))) {
+        if ((this.getRoomTypeId() == null && other.getRoomTypeId() != null) || (this.getRoomTypeId() != null && !this.roomTypeId.equals(other.roomTypeId))) {
             return false;
         }
         return true;
@@ -187,8 +183,7 @@ public class RoomTypeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RoomTypeEntity{" + "roomTypeId=" + roomTypeId + ", roomType=" + roomType + ", isDisabled=" + isDisabled + ", roomDescription=" + roomDescription + ", roomImportance=" + roomImportance + ", roomSize=" + roomSize + ", roomBed=" + roomBed + ", roomCapacity=" + roomCapacity + ", roomAmenities=" + roomAmenities + ", roomRates=" + roomRates + ", rooms=" + rooms + '}';
+        return "RoomTypeEntity{" + "roomTypeId=" + getRoomTypeId() + ", roomType=" + getRoomType() + ", isDisabled=" + getIsDisabled() + ", roomDescription=" + getRoomDescription() + ", roomImportance=" + getRoomImportance() + ", roomSize=" + getRoomSize() + ", roomBed=" + getRoomBed() + ", roomCapacity=" + getRoomCapacity() + ", roomAmenities=" + getRoomAmenities() + ", roomRates=" + getRoomRates() + ", rooms=" + getRooms() + '}';
     }
-    
 
 }
