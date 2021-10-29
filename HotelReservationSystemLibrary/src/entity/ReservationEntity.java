@@ -21,6 +21,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 import util.enumeration.ReservationTypeEnum;
 
 /**
@@ -36,14 +39,20 @@ public class ReservationEntity implements Serializable {
     private Long reservationId;
 
     @Column(nullable = false, precision = 11, scale = 2)
+    @NotNull
+    @Digits(integer = 9, fraction = 2)
     private BigDecimal reservationFee;
     @Column(nullable = false)
+    @NotNull
     private LocalDateTime startDate;
     @Column(nullable = false)
+    @Future
+    @NotNull
     private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private ReservationTypeEnum reservationType;
 
     @ManyToOne(fetch = FetchType.LAZY)

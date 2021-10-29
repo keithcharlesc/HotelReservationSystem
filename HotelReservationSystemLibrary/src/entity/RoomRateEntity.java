@@ -16,6 +16,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 
 //need to fix import for room type before can refract it, and create overloaded constructor 
 @Entity
@@ -27,12 +30,18 @@ public abstract class RoomRateEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomRateId;
     @Column(nullable = false, precision = 11, scale = 2)
+    @NotNull
+    @Digits(integer = 9, fraction = 2)
     private BigDecimal ratePerNight;
     @Column(nullable = false)
+    @NotNull
     private Date startDate;
     @Column(nullable = false)
+    @Future
+    @NotNull
     private Date endDate;
     @Column(nullable = false)
+    @NotNull
     private Boolean isDisabled;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -14,6 +14,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -27,6 +30,9 @@ public class ExceptionRecordEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long exceptionRecordId;
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
+    @Max(2)
     private Integer typeOfException;
 
     @OneToOne(fetch = FetchType.LAZY)

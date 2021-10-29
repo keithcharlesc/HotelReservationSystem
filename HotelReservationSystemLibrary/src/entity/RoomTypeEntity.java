@@ -14,6 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -27,20 +30,35 @@ public class RoomTypeEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 2, max = 32)
     private String roomType;
     @Column(nullable = false)
+    @NotNull
     private Boolean isDisabled;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 250)
+    @NotNull
+    @Size(min = 2, max = 250)
     private String roomDescription;
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
     private Integer roomImportance; // 1- least important, if add additional room type need to make sure everything changes
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
     private Integer roomSize;
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
     private Integer roomBed;
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
     private Integer roomCapacity;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 128)
+    @NotNull
+    @Size(min = 2, max = 128)
     private String roomAmenities;
 
     @OneToMany(mappedBy = "roomType")

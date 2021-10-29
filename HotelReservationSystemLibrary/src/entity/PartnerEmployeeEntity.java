@@ -14,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -27,10 +29,16 @@ public class PartnerEmployeeEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partnerId;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min=2, max = 32)
     private String name;
     @Column(nullable = false, unique = true, length = 32)
+    @NotNull
+    @Size(min=4, max = 32)
     private String username;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min=4, max = 32)
     private String password;
 
     @OneToMany(targetEntity=ReservationEntity.class)

@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import util.enumeration.RoomStatusEnum;
 
 /**
@@ -34,10 +35,13 @@ public class RoomEntity implements Serializable {
     private Long roomId;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private RoomStatusEnum roomStatusEnum;
     @Column(nullable = false)
+    @NotNull
     private Boolean roomAllocated;
     @Column(nullable = false)
+    @NotNull
     private Boolean isDisabled;
 
     @ManyToOne(fetch = FetchType.LAZY)

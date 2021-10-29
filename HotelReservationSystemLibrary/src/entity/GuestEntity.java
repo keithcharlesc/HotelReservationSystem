@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 @Entity
@@ -27,10 +29,15 @@ public class GuestEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guestId;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min=4, max = 32)
     private String guestName;
     @Column(nullable = false, unique = true, length = 64)
+    @NotNull
+    @Size(min=4, max = 64)
     private String email;
     @Column(nullable = false) //maybe can limit smaller
+    @NotNull
     private Long phoneNo;
     
     @OneToMany(mappedBy = "guest")

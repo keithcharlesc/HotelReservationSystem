@@ -8,6 +8,8 @@ package entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 public class CustomerEntity extends GuestEntity implements Serializable {
@@ -15,6 +17,8 @@ public class CustomerEntity extends GuestEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min=6, max = 32)
     private String password;
 
     public CustomerEntity() {
