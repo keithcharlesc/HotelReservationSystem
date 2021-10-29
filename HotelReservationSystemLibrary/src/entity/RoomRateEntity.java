@@ -44,7 +44,7 @@ public abstract class RoomRateEntity implements Serializable {
     @NotNull
     private Boolean isDisabled;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 

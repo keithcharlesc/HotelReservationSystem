@@ -24,7 +24,7 @@ public class NightEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nightId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(nullable = false)
     private RoomRateEntity roomRate;
 
