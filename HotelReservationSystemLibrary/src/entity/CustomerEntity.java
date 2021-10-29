@@ -22,9 +22,11 @@ public class CustomerEntity extends GuestEntity implements Serializable {
     private String password;
 
     public CustomerEntity() {
+        super();
     }
 
     public CustomerEntity(String password) {
+        this();
         this.password = password;
     }
 

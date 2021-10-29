@@ -42,12 +42,9 @@ public class PublishedRateEntity extends RoomRateEntity implements Serializable 
 //        }
 //        return true;
 //    }
-
     @Override
     public String toString() {
         return "PublishedRateEntity{" + super.toString() + "}";
     }
-
-    
 
 }

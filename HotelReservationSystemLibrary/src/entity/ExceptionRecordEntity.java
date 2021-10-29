@@ -42,7 +42,7 @@ public class ExceptionRecordEntity implements Serializable {
     public ExceptionRecordEntity() {
     }
 
-    public ExceptionRecordEntity(int typeOfException) {
+    public ExceptionRecordEntity(Integer typeOfException) {
         this.typeOfException = typeOfException;
     }
 
@@ -58,7 +58,7 @@ public class ExceptionRecordEntity implements Serializable {
         return typeOfException;
     }
 
-    public void setTypeOfException(int typeOfException) {
+    public void setTypeOfException(Integer typeOfException) {
         this.typeOfException = typeOfException;
     }
 
