@@ -8,7 +8,7 @@ package ejb.session.stateless;
 import entity.EmployeeEntity;
 import java.util.List;
 import javax.ejb.Remote;
-import util.exception.EmployeeExistException;
+import util.exception.EmployeeUsernameExistException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.UnknownPersistenceException;
 
@@ -16,7 +16,7 @@ import util.exception.UnknownPersistenceException;
 @Remote
 public interface EmployeeSessionBeanRemote {
     
-    public EmployeeEntity createNewEmployee(EmployeeEntity newEmployeeEntity) throws EmployeeExistException, UnknownPersistenceException;
+    public EmployeeEntity createNewEmployee(EmployeeEntity newEmployeeEntity) throws EmployeeUsernameExistException, UnknownPersistenceException;
     public List<EmployeeEntity> retrieveAllEmployees();
     public EmployeeEntity retrieveEmployeeByEmployeeId(Long employeeId) throws EmployeeNotFoundException;
     public EmployeeEntity retrieveEmployeeByEmployeeUsername(String username) throws EmployeeNotFoundException;

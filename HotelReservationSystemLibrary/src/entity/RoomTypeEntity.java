@@ -25,10 +25,10 @@ public class RoomTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 32)
     @NotNull
     @Size(min = 2, max = 32)
-    private String roomType;
+    private String roomTypeName;
     @Column(nullable = false)
     @NotNull
     private Boolean isDisabled;
@@ -68,9 +68,9 @@ public class RoomTypeEntity implements Serializable {
         this.rooms = new ArrayList<>();
     }
 
-    public RoomTypeEntity(String roomType, Boolean isDisabled, String roomDescription, int roomImportance, int roomSize, int roomBed, int roomCapacity, String roomAmenities) {
+    public RoomTypeEntity(String roomTypeName, Boolean isDisabled, String roomDescription, int roomImportance, int roomSize, int roomBed, int roomCapacity, String roomAmenities) {
         this();
-        this.roomType = roomType;
+        this.roomTypeName = roomTypeName;
         this.isDisabled = isDisabled;
         this.roomDescription = roomDescription;
         this.roomImportance = roomImportance;
@@ -88,12 +88,12 @@ public class RoomTypeEntity implements Serializable {
         this.roomTypeId = roomTypeId;
     }
 
-    public String getRoomType() {
-        return roomType;
+    public String getRoomTypeName() {
+        return roomTypeName;
     }
 
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
+    public void setRoomTypeName(String roomTypeName) {
+        this.roomTypeName = roomTypeName;
     }
 
     public Boolean getIsDisabled() {
@@ -183,7 +183,9 @@ public class RoomTypeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RoomTypeEntity{" + "roomTypeId=" + getRoomTypeId() + ", roomType=" + getRoomType() + ", isDisabled=" + getIsDisabled() + ", roomDescription=" + getRoomDescription() + ", roomImportance=" + getRoomImportance() + ", roomSize=" + getRoomSize() + ", roomBed=" + getRoomBed() + ", roomCapacity=" + getRoomCapacity() + ", roomAmenities=" + getRoomAmenities() + ", roomRates=" + getRoomRates() + ", rooms=" + getRooms() + '}';
+        return "RoomTypeEntity{" + "roomTypeId=" + roomTypeId + ", roomTypeName=" + roomTypeName + ", isDisabled=" + isDisabled + ", roomDescription=" + roomDescription + ", roomImportance=" + roomImportance + ", roomSize=" + roomSize + ", roomBed=" + roomBed + ", roomCapacity=" + roomCapacity + ", roomAmenities=" + roomAmenities + ", roomRates=" + roomRates + ", rooms=" + rooms + '}';
     }
+
+    
 
 }
