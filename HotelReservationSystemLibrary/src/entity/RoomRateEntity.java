@@ -2,6 +2,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,9 +21,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
-//need to fix import for room type before can refract it, and create overloaded constructor 
 @Entity
-@Inheritance(strategy= InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class RoomRateEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,11 +35,11 @@ public abstract class RoomRateEntity implements Serializable {
     private BigDecimal ratePerNight;
     @Column(nullable = false)
     @NotNull
-    private Date startDate;
+    private LocalDateTime startDate;
     @Column(nullable = false)
     @Future
     @NotNull
-    private Date endDate;
+    private LocalDateTime endDate;
     @Column(nullable = false)
     @NotNull
     private Boolean isDisabled;
@@ -55,7 +55,7 @@ public abstract class RoomRateEntity implements Serializable {
         this.nights = new ArrayList<>();
     }
 
-    public RoomRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
+    public RoomRateEntity(BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate, Boolean isDisabled) {
         this();
         this.ratePerNight = ratePerNight;
         this.startDate = startDate;
@@ -80,19 +80,19 @@ public abstract class RoomRateEntity implements Serializable {
         this.ratePerNight = ratePerNight;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -104,20 +104,20 @@ public abstract class RoomRateEntity implements Serializable {
         this.isDisabled = isDisabled;
     }
 
-    public List<NightEntity> getNights() {
-        return nights;
-    }
-
-    public void setNights(List<NightEntity> nights) {
-        this.nights = nights;
-    }
-
     public RoomTypeEntity getRoomType() {
         return roomType;
     }
 
     public void setRoomType(RoomTypeEntity roomType) {
         this.roomType = roomType;
+    }
+
+    public List<NightEntity> getNights() {
+        return nights;
+    }
+
+    public void setNights(List<NightEntity> nights) {
+        this.nights = nights;
     }
 
     @Override
@@ -127,7 +127,7 @@ public abstract class RoomRateEntity implements Serializable {
             return false;
         }
         RoomRateEntity other = (RoomRateEntity) object;
-        if ((this.roomRateId == null && other.roomRateId != null) || (this.roomRateId != null && !this.roomRateId.equals(other.roomRateId))) {
+        if ((this.getRoomRateId() == null && other.getRoomRateId() != null) || (this.getRoomRateId() != null && !this.roomRateId.equals(other.roomRateId))) {
             return false;
         }
         return true;
@@ -135,9 +135,7 @@ public abstract class RoomRateEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "roomRateId=" + roomRateId + ", ratePerNight=" + ratePerNight + ", startDate=" + startDate + ", endDate=" + endDate + ", isDisabled=" + isDisabled + ", roomType=" + roomType + ", nights=" + nights;
+        return "roomRateId=" + getRoomRateId() + ", ratePerNight=" + getRatePerNight() + ", startDate=" + getStartDate() + ", endDate=" + getEndDate() + ", isDisabled=" + getIsDisabled() + ", roomType=" + getRoomType() + ", nights=" + getNights();
     }
-
-    
 
 }

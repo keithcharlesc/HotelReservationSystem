@@ -17,10 +17,6 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- *
- * @author xianhui
- */
 @Entity
 public class PartnerEmployeeEntity implements Serializable {
 
@@ -30,19 +26,23 @@ public class PartnerEmployeeEntity implements Serializable {
     private Long partnerId;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min=2, max = 32)
+    @Size(min = 2, max = 32)
     private String name;
     @Column(nullable = false, unique = true, length = 32)
     @NotNull
-    @Size(min=4, max = 32)
+    @Size(min = 4, max = 32)
     private String username;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min=4, max = 32)
+    @Size(min = 4, max = 32)
     private String password;
 
-    @OneToMany(targetEntity=ReservationEntity.class)
+    @OneToMany(targetEntity = ReservationEntity.class)
     private List<ReservationEntity> reservations;
+
+    public PartnerEmployeeEntity() {
+        this.reservations = new ArrayList<>();
+    }
 
     public PartnerEmployeeEntity(String name, String username, String password) {
         this();
@@ -50,10 +50,6 @@ public class PartnerEmployeeEntity implements Serializable {
         this.username = username;
         this.password = password;
         this.reservations = reservations;
-    }
-
-    public PartnerEmployeeEntity() {
-        this.reservations = new ArrayList<>();
     }
 
     public Long getPartnerId() {
@@ -103,7 +99,7 @@ public class PartnerEmployeeEntity implements Serializable {
             return false;
         }
         PartnerEmployeeEntity other = (PartnerEmployeeEntity) object;
-        if ((this.partnerId == null && other.partnerId != null) || (this.partnerId != null && !this.partnerId.equals(other.partnerId))) {
+        if ((this.getPartnerId() == null && other.getPartnerId() != null) || (this.getPartnerId() != null && !this.partnerId.equals(other.partnerId))) {
             return false;
         }
         return true;
@@ -111,8 +107,7 @@ public class PartnerEmployeeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "PartnerEmployeeEntity{" + "partnerId=" + partnerId + ", name=" + name + ", username=" + username + ", password=" + password + ", reservations=" + reservations + '}';
+        return "PartnerEmployeeEntity{" + "partnerId=" + getPartnerId() + ", name=" + getName() + ", username=" + getUsername() + ", password=" + getPassword() + ", reservations=" + getReservations() + '}';
     }
-
 
 }

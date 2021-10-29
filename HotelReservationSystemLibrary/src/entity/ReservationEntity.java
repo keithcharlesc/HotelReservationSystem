@@ -26,10 +26,6 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import util.enumeration.ReservationTypeEnum;
 
-/**
- *
- * @author keithcharleschan
- */
 @Entity
 public class ReservationEntity implements Serializable {
 
@@ -63,12 +59,12 @@ public class ReservationEntity implements Serializable {
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 
-    @OneToMany(targetEntity=NightEntity.class)
-    @JoinColumn(nullable = false)
+    @OneToMany(targetEntity = NightEntity.class)
+//    @JoinColumn(nullable = false) 
     private List<NightEntity> nights;
 
     @OneToMany(mappedBy = "reservation")
-    @JoinColumn(nullable = false)
+//    @JoinColumn(nullable = false)
     private List<ReservationRoomEntity> reservationRooms;
 
     public ReservationEntity() {
@@ -148,11 +144,11 @@ public class ReservationEntity implements Serializable {
         this.nights = nights;
     }
 
-    public List<ReservationRoomEntity> getReservationRoom() {
+    public List<ReservationRoomEntity> getReservationRooms() {
         return reservationRooms;
     }
 
-    public void setReservationRoom(List<ReservationRoomEntity> reservationRooms) {
+    public void setReservationRooms(List<ReservationRoomEntity> reservationRooms) {
         this.reservationRooms = reservationRooms;
     }
 
@@ -163,7 +159,7 @@ public class ReservationEntity implements Serializable {
             return false;
         }
         ReservationEntity other = (ReservationEntity) object;
-        if ((this.reservationId == null && other.reservationId != null) || (this.reservationId != null && !this.reservationId.equals(other.reservationId))) {
+        if ((this.getReservationId() == null && other.getReservationId() != null) || (this.getReservationId() != null && !this.reservationId.equals(other.reservationId))) {
             return false;
         }
         return true;
@@ -171,7 +167,7 @@ public class ReservationEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "ReservationEntity{" + "reservationId=" + reservationId + ", reservationFee=" + reservationFee + ", startDate=" + startDate + ", endDate=" + endDate + ", reservationType=" + reservationType + ", guest=" + guest + ", roomType=" + roomType + ", nights=" + nights + ", reservationRooms=" + reservationRooms + '}';
+        return "ReservationEntity{" + "reservationId=" + getReservationId() + ", reservationFee=" + getReservationFee() + ", startDate=" + getStartDate() + ", endDate=" + getEndDate() + ", reservationType=" + getReservationType() + ", guest=" + getGuest() + ", roomType=" + getRoomType() + ", nights=" + getNights() + ", reservationRooms=" + getReservationRooms() + '}';
     }
 
 }

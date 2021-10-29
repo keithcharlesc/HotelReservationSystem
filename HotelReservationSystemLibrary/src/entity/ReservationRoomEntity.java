@@ -15,10 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-/**
- *
- * @author keithcharleschan
- */
 //WEAK ENTITY 
 @Entity
 public class ReservationRoomEntity implements Serializable {
@@ -80,7 +76,7 @@ public class ReservationRoomEntity implements Serializable {
             return false;
         }
         ReservationRoomEntity other = (ReservationRoomEntity) object;
-        if ((this.reservationRoomId == null && other.reservationRoomId != null) || (this.reservationRoomId != null && !this.reservationRoomId.equals(other.reservationRoomId))) {
+        if ((this.getReservationRoomId() == null && other.getReservationRoomId() != null) || (this.getReservationRoomId() != null && !this.reservationRoomId.equals(other.reservationRoomId))) {
             return false;
         }
         return true;
@@ -88,7 +84,7 @@ public class ReservationRoomEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "ReservationRoomEntity{" + "reservationRoomId=" + reservationRoomId + ", reservation=" + reservation + ", exceptionRecord=" + exceptionRecord + ", room=" + room + '}';
+        return "ReservationRoomEntity{" + "reservationRoomId=" + getReservationRoomId() + ", reservation=" + getReservation() + ", exceptionRecord=" + getExceptionRecord() + ", room=" + getRoom() + '}';
     }
 
 }

@@ -18,10 +18,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-/**
- *
- * @author keithcharleschan
- */
 @Entity
 public class ExceptionRecordEntity implements Serializable {
 
@@ -41,7 +37,7 @@ public class ExceptionRecordEntity implements Serializable {
 
     public ExceptionRecordEntity() {
     }
-
+    
     public ExceptionRecordEntity(Integer typeOfException) {
         this.typeOfException = typeOfException;
     }
@@ -54,7 +50,7 @@ public class ExceptionRecordEntity implements Serializable {
         this.exceptionRecordId = exceptionRecordId;
     }
 
-    public int getTypeOfException() {
+    public Integer getTypeOfException() {
         return typeOfException;
     }
 
@@ -77,7 +73,7 @@ public class ExceptionRecordEntity implements Serializable {
             return false;
         }
         ExceptionRecordEntity other = (ExceptionRecordEntity) object;
-        if ((this.exceptionRecordId == null && other.exceptionRecordId != null) || (this.exceptionRecordId != null && !this.exceptionRecordId.equals(other.exceptionRecordId))) {
+        if ((this.getExceptionRecordId() == null && other.getExceptionRecordId() != null) || (this.getExceptionRecordId() != null && !this.exceptionRecordId.equals(other.exceptionRecordId))) {
             return false;
         }
         return true;
@@ -85,7 +81,7 @@ public class ExceptionRecordEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "ExceptionRecordEntity{" + "exceptionRecordId=" + exceptionRecordId + ", typeOfException=" + typeOfException + ", reservationRoom=" + reservationRoom + '}';
+        return "ExceptionRecordEntity{" + "exceptionRecordId=" + getExceptionRecordId() + ", typeOfException=" + getTypeOfException() + ", reservationRoom=" + getReservationRoom() + '}';
     }
 
 }

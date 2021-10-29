@@ -18,7 +18,7 @@ public class CustomerEntity extends GuestEntity implements Serializable {
 
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min=6, max = 32)
+    @Size(min = 6, max = 32)
     private String password;
 
     public CustomerEntity() {
@@ -55,6 +55,5 @@ public class CustomerEntity extends GuestEntity implements Serializable {
     public String toString() {
         return super.toString() + "CustomerEntity{" + "password=" + password + '}';
     }
-
 
 }
