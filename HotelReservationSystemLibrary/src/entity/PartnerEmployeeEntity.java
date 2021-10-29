@@ -33,7 +33,7 @@ public class PartnerEmployeeEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String password;
 
-    @OneToMany
+    @OneToMany(targetEntity=ReservationEntity.class)
     private List<ReservationEntity> reservations;
 
     public PartnerEmployeeEntity(String name, String username, String password) {

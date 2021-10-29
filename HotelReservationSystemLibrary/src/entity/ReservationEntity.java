@@ -54,7 +54,7 @@ public class ReservationEntity implements Serializable {
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 
-    @OneToMany //Unidirectional (don't need mappedBy)
+    @OneToMany(targetEntity=NightEntity.class)
     @JoinColumn(nullable = false)
     private List<NightEntity> nights;
 
