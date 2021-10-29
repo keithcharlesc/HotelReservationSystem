@@ -39,12 +39,12 @@ public class RoomEntity implements Serializable {
     private Boolean roomAllocated;
     @Column(nullable = false)
     private Boolean isDisabled;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
-    
-    @OneToMany(mappedBy="room")
+
+    @OneToMany(mappedBy = "room")
     private List<ReservationRoomEntity> reservationRooms;
 
     public RoomEntity() {
@@ -57,7 +57,7 @@ public class RoomEntity implements Serializable {
         this.roomAllocated = roomAllocated;
         this.isDisabled = isDisabled;
     }
-    
+
     public Long getRoomId() {
         return roomId;
     }
@@ -105,13 +105,6 @@ public class RoomEntity implements Serializable {
     public void setReservationRooms(List<ReservationRoomEntity> reservationRooms) {
         this.reservationRooms = reservationRooms;
     }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (roomId != null ? roomId.hashCode() : 0);
-        return hash;
-    }
 
     @Override
     public boolean equals(Object object) {
@@ -128,7 +121,7 @@ public class RoomEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.RoomEntity[ id=" + roomId + " ]";
+        return "RoomEntity{" + "roomId=" + roomId + ", roomStatusEnum=" + roomStatusEnum + ", roomAllocated=" + roomAllocated + ", isDisabled=" + isDisabled + ", roomType=" + roomType + ", reservationRooms=" + reservationRooms + '}';
     }
 
 }

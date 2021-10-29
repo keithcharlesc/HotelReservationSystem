@@ -34,31 +34,31 @@ public class ReservationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
-    
+
     @Column(nullable = false, precision = 11, scale = 2)
     private BigDecimal reservationFee;
     @Column(nullable = false)
     private LocalDateTime startDate;
     @Column(nullable = false)
     private LocalDateTime endDate;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationTypeEnum reservationType;
-    
-    @ManyToOne(fetch=FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private GuestEntity guest;
-    
-    @ManyToOne(fetch=FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private RoomTypeEntity roomType; 
-    
+    private RoomTypeEntity roomType;
+
     @OneToMany //Unidirectional (don't need mappedBy)
     @JoinColumn(nullable = false)
     private List<NightEntity> nights;
-    
-    @OneToMany(mappedBy="reservation")
+
+    @OneToMany(mappedBy = "reservation")
     @JoinColumn(nullable = false)
     private List<ReservationRoomEntity> reservationRooms;
 
@@ -74,7 +74,7 @@ public class ReservationEntity implements Serializable {
         this.endDate = endDate;
         this.reservationType = reservationType;
     }
-    
+
     public Long getReservationId() {
         return reservationId;
     }
@@ -82,7 +82,7 @@ public class ReservationEntity implements Serializable {
     public void setReservationId(Long reservationId) {
         this.reservationId = reservationId;
     }
-    
+
     public BigDecimal getReservationFee() {
         return reservationFee;
     }
@@ -148,13 +148,6 @@ public class ReservationEntity implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (reservationId != null ? reservationId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the reservationId fields are not set
         if (!(object instanceof ReservationEntity)) {
@@ -169,7 +162,7 @@ public class ReservationEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.ReservationEntity[ id=" + reservationId + " ]";
+        return "ReservationEntity{" + "reservationId=" + reservationId + ", reservationFee=" + reservationFee + ", startDate=" + startDate + ", endDate=" + endDate + ", reservationType=" + reservationType + ", guest=" + guest + ", roomType=" + roomType + ", nights=" + nights + ", reservationRooms=" + reservationRooms + '}';
     }
-    
+
 }

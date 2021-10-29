@@ -19,7 +19,7 @@ import javax.persistence.Id;
  */
 @Entity
 public class PromotionRateEntity extends RoomRateEntity implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     public PromotionRateEntity() {
@@ -29,5 +29,10 @@ public class PromotionRateEntity extends RoomRateEntity implements Serializable 
     public PromotionRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
         super(ratePerNight, startDate, endDate, isDisabled);
     }
-    
+
+    @Override
+    public String toString() {
+        return "PromotionRateEntity{" + super.toString() + '}';
+    }
+
 }

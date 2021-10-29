@@ -19,9 +19,7 @@ import javax.persistence.OneToOne;
  *
  * @author keithcharleschan
  */
-
 //WEAK ENTITY 
-
 @Entity
 public class ReservationRoomEntity implements Serializable {
 
@@ -29,20 +27,20 @@ public class ReservationRoomEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationRoomId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private ReservationEntity reservation;
-    
+
     @OneToOne(fetch = FetchType.LAZY) // can be null
     private ExceptionRecordEntity exceptionRecord;
-    
+
     @ManyToOne(fetch = FetchType.LAZY) // can be null
     private RoomEntity room;
 
     public ReservationRoomEntity() {
     }
-    
+
     public Long getReservationRoomId() {
         return reservationRoomId;
     }
@@ -50,7 +48,7 @@ public class ReservationRoomEntity implements Serializable {
     public void setReservationRoomId(Long reservationRoomId) {
         this.reservationRoomId = reservationRoomId;
     }
-    
+
     public ReservationEntity getReservation() {
         return reservation;
     }
@@ -74,13 +72,6 @@ public class ReservationRoomEntity implements Serializable {
     public void setRoom(RoomEntity room) {
         this.room = room;
     }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (reservationRoomId != null ? reservationRoomId.hashCode() : 0);
-        return hash;
-    }
 
     @Override
     public boolean equals(Object object) {
@@ -97,7 +88,7 @@ public class ReservationRoomEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.ReservationRoomEntity[ id=" + reservationRoomId + " ]";
+        return "ReservationRoomEntity{" + "reservationRoomId=" + reservationRoomId + ", reservation=" + reservation + ", exceptionRecord=" + exceptionRecord + ", room=" + room + '}';
     }
-    
+
 }

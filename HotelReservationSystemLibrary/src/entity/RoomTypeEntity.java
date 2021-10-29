@@ -155,13 +155,6 @@ public class RoomTypeEntity implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (roomTypeId != null ? roomTypeId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the roomTypeId fields are not set
         if (!(object instanceof RoomTypeEntity)) {
@@ -176,7 +169,8 @@ public class RoomTypeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.RoomTypeEntity[ id=" + roomTypeId + " ]";
+        return "RoomTypeEntity{" + "roomTypeId=" + roomTypeId + ", roomType=" + roomType + ", isDisabled=" + isDisabled + ", roomDescription=" + roomDescription + ", roomImportance=" + roomImportance + ", roomSize=" + roomSize + ", roomBed=" + roomBed + ", roomCapacity=" + roomCapacity + ", roomAmenities=" + roomAmenities + ", roomRates=" + roomRates + ", rooms=" + rooms + '}';
     }
+    
 
 }
