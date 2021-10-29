@@ -23,10 +23,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     {
     }
     
-    
-    
-    // Updated in v4.1
-    
     @Override
     public EmployeeEntity createNewEmployee(EmployeeEntity newEmployeeEntity) throws EmployeeExistException, UnknownPersistenceException
     {
@@ -57,8 +53,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         }
     }
     
-    
-    
+   
     @Override
     public List<EmployeeEntity> retrieveAllEmployees()
     {
@@ -116,7 +111,5 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
             throw new EmployeeNotFoundException("Employee ID " + employeeId + " is not found");
         }
     }
-    
-
-    
+ 
 }
