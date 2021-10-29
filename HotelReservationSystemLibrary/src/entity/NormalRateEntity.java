@@ -30,14 +30,6 @@ public class NormalRateEntity extends RoomRateEntity implements Serializable {
         super(ratePerNight, startDate, endDate, isDisabled);
     }
     
-
-//    @Override
-//    public int hashCode() {
-//        int hash = 0;
-//        hash += (id != null ? id.hashCode() : 0);
-//        return hash;
-//    }
-//
 //    @Override
 //    public boolean equals(Object object) {
 //        // TODO: Warning - this method won't work in the case the id fields are not set
@@ -50,10 +42,12 @@ public class NormalRateEntity extends RoomRateEntity implements Serializable {
 //        }
 //        return true;
 //    }
-//
-//    @Override
-//    public String toString() {
-//        return "entity.NormalRateEntity[ id=" + id + " ]";
-//    }
+
+    @Override
+    public String toString() {
+        return "NormalRateEntity{" + super.toString() + '}';
+    }
+
+    
 
 }

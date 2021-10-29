@@ -12,10 +12,8 @@ import javax.persistence.Entity;
 @Entity
 public class CustomerEntity extends GuestEntity implements Serializable {
 
-//    private static final long serialVersionUID = 1L;
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long customerId;
+    private static final long serialVersionUID = 1L;
+
     @Column(nullable = false, length = 32)
     private String password;
 
@@ -34,20 +32,6 @@ public class CustomerEntity extends GuestEntity implements Serializable {
         this.password = password;
     }
 
-//    public Long getCustomerId() {
-//        return customerId;
-//    }
-//
-//    public void setCustomerId(Long customerId) {
-//        this.customerId = customerId;
-//    }
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (this.getGuestId() != null ? this.getGuestId().hashCode() : 0);
-        return hash;
-    }
-
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the customerId fields are not set
@@ -63,7 +47,8 @@ public class CustomerEntity extends GuestEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.CustomerEntity[ id=" + this.getGuestId() + " ]";
+        return super.toString() + "CustomerEntity{" + "password=" + password + '}';
     }
+
 
 }

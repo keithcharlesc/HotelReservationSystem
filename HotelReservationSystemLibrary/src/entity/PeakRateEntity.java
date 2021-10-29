@@ -29,6 +29,10 @@ public class PeakRateEntity extends RoomRateEntity implements Serializable {
     public PeakRateEntity(BigDecimal ratePerNight, Date startDate, Date endDate, Boolean isDisabled) {
         super(ratePerNight, startDate, endDate, isDisabled);
     }
-    
+
+    @Override
+    public String toString() {
+        return "PeakRateEntity{" + super.toString() + '}';
+    }
     
 }

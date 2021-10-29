@@ -89,13 +89,6 @@ public class PartnerEmployeeEntity implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (partnerId != null ? partnerId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the partnerId fields are not set
         if (!(object instanceof PartnerEmployeeEntity)) {
@@ -110,7 +103,8 @@ public class PartnerEmployeeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.PartnerEmployeeEntity[ id=" + partnerId + " ]";
+        return "PartnerEmployeeEntity{" + "partnerId=" + partnerId + ", name=" + name + ", username=" + username + ", password=" + password + ", reservations=" + reservations + '}';
     }
+
 
 }

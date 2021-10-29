@@ -15,8 +15,8 @@
     <class>entity.RoomRateEntity</class>
     <class>entity.PromotionRateEntity</class>
     <class>entity.NormalRateEntity</class>
-    <class>entity.PublishedRateEntity</class>
     <class>entity.PeakRateEntity</class>
+    <class>entity.PublishedRateEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

@@ -88,13 +88,6 @@ public class GuestEntity implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (getGuestId() != null ? getGuestId().hashCode() : 0);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the guestId fields are not set
         if (!(object instanceof GuestEntity)) {
@@ -109,7 +102,8 @@ public class GuestEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.GuestEntity[ id=" + getGuestId() + " ]";
+        return "GuestEntity{" + "guestId=" + guestId + ", guestName=" + guestName + ", email=" + email + ", phoneNo=" + phoneNo + ", reservations=" + reservations + '}';
     }
+
     
 }

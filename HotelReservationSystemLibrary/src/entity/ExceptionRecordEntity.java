@@ -65,13 +65,6 @@ public class ExceptionRecordEntity implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (exceptionRecordId != null ? exceptionRecordId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the exceptionRecordId fields are not set
         if (!(object instanceof ExceptionRecordEntity)) {
@@ -86,7 +79,7 @@ public class ExceptionRecordEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.ExceptionReccordEntity[ id=" + exceptionRecordId + " ]";
+        return "ExceptionRecordEntity{" + "exceptionRecordId=" + exceptionRecordId + ", typeOfException=" + typeOfException + ", reservationRoom=" + reservationRoom + '}';
     }
 
 }
