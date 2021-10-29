@@ -36,7 +36,7 @@ public class ReservationEntity implements Serializable {
 
     @Column(nullable = false, precision = 11, scale = 2)
     @NotNull
-    @Digits(integer = 9, fraction = 2)
+    @Digits(integer = 11, fraction = 2)
     private BigDecimal reservationFee;
     @Column(nullable = false)
     @NotNull
@@ -51,11 +51,11 @@ public class ReservationEntity implements Serializable {
     @NotNull
     private ReservationTypeEnum reservationType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(nullable = false)
     private GuestEntity guest;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 

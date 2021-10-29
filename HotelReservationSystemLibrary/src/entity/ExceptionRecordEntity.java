@@ -31,7 +31,7 @@ public class ExceptionRecordEntity implements Serializable {
     @Max(2)
     private Integer typeOfException;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(nullable = false)
     private ReservationRoomEntity reservationRoom;
 
