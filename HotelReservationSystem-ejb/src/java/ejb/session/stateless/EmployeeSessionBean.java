@@ -102,7 +102,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
             EmployeeEntity employeeEntity = retrieveEmployeeByUsername(username);
 
             if (employeeEntity.getPassword().equals(password)) {
-                employeeEntity.getSaleTransactionEntities().size();
                 return employeeEntity;
             } else {
                 throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
@@ -126,7 +125,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
                 if (employeeEntityToUpdate.getUsername().equals(employeeEntity.getUsername())) {
                     employeeEntityToUpdate.setFirstName(employeeEntity.getFirstName());
                     employeeEntityToUpdate.setLastName(employeeEntity.getLastName());
-                    employeeEntityToUpdate.setAccessRightEnum(employeeEntity.getAccessRightEnum());
+                    employeeEntityToUpdate.setEmployeeAccessRightEnum(employeeEntity.getEmployeeAccessRightEnum());
                     // Username and password are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
                 } else {
                     throw new UpdateEmployeeException("Username of employee record to be updated does not match the existing record");
@@ -144,12 +143,12 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
     public void deleteEmployee(Long employeeId) throws EmployeeNotFoundException, DeleteEmployeeException {
         EmployeeEntity employeeEntityToRemove = retrieveEmployeeByEmployeeId(employeeId);
 
-        if (employeeEntityToRemove.getSaleTransactionEntities().isEmpty()) {
+//        if (employeeEntityToRemove.getSaleTransactionEntities().isEmpty()) {
             em.remove(employeeEntityToRemove);
-        } else {
+//        } else {
             // New in v4.1 to prevent deleting employee with existing sale transaction(s)
-            throw new DeleteEmployeeException("Employee ID " + employeeId + " is associated with existing sale transaction(s) and cannot be deleted!");
-        }
+//            throw new DeleteEmployeeException("Employee ID " + employeeId + " is associated with existing sale transaction(s) and cannot be deleted!");
+//        }
     }
 
     // Added in v4.2
