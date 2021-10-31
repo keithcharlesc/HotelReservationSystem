@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.RoomEntity;
+import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.util.List;
 import java.util.Set;
@@ -38,9 +40,9 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     private EntityManager entityManager;
     
     //need change this and have more 
-    @EJB
-    private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
-    private RoomSessionBeanLocal roomSessionBeanLocal;
+//    @EJB
+//    private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
+//    private RoomSessionBeanLocal roomSessionBeanLocal;
     
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -64,6 +66,19 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
             try
             {
                 entityManager.persist(newRoomTypeEntity);
+                
+                if(newRoomTypeEntity.getRooms().size() > 0) {
+                    for(RoomEntity room: newRoomTypeEntity.getRooms()) {
+                        entityManager.persist(room);
+                    }
+                }
+                
+                if(newRoomTypeEntity.getRoomRates().size() > 0) {
+                    for(RoomRateEntity roomRate: newRoomTypeEntity.getRoomRates()) {
+                        entityManager.persist(roomRate);
+                    }
+                }
+                
                 entityManager.flush();
 
                 return newRoomTypeEntity;
@@ -184,22 +199,28 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     
     
     
-    // need change this !! 
-    
+
     @Override
     public void deleteRoomType(Long roomTypeId) throws RoomTypeNotFoundException, DeleteRoomTypeException
     {
         RoomTypeEntity roomTypeEntityToRemove = retrieveRoomTypeByRoomTypeId(roomTypeId);
         
-        List<SaleTransactionLineItemEntity> saleTransactionLineItemEntities = saleTransactionEntitySessionBeanLocal.retrieveSaleTransactionLineItemsByRoomTypeId(roomTypeId);
+        List<RoomRateEntity> roomRateEntities = roomTypeEntityToRemove.getRoomRates();
+        List<RoomEntity> rooms = roomTypeEntityToRemove.getRooms();        
         
-        if(saleTransactionLineItemEntities.isEmpty())
+        if(roomRateEntities.isEmpty() && rooms.isEmpty())
         {
             entityManager.remove(roomTypeEntityToRemove);
         }
         else
         {
-            throw new DeleteRoomTypeException("RoomType ID " + roomTypeId + " is associated with existing sale transaction line item(s) and cannot be deleted!");
+            for(RoomRateEntity roomRate: roomRateEntities) {
+                roomRate.setIsDisabled(true);
+            }
+            for(RoomEntity room: rooms) {
+                room.setIsDisabled(true);
+            }
+            roomTypeEntityToRemove.setIsDisabled(true);
         }
     }
     

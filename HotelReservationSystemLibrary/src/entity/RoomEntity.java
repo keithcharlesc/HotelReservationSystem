@@ -51,11 +51,11 @@ public class RoomEntity implements Serializable {
         this.reservationRooms = new ArrayList<>();
     }
 
-    public RoomEntity(RoomStatusEnum roomStatusEnum, boolean roomAllocated, boolean isDisabled) {
+    public RoomEntity(RoomStatusEnum roomStatusEnum) {
         this();
         this.roomStatusEnum = roomStatusEnum;
-        this.roomAllocated = roomAllocated;
-        this.isDisabled = isDisabled;
+        this.roomAllocated = false;
+        this.isDisabled = false;
     }
 
     public Long getRoomId() {

@@ -55,12 +55,12 @@ public abstract class RoomRateEntity implements Serializable {
         this.nights = new ArrayList<>();
     }
 
-    public RoomRateEntity(BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate, Boolean isDisabled) {
+    public RoomRateEntity(BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate) {
         this();
         this.ratePerNight = ratePerNight;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.isDisabled = isDisabled;
+        this.isDisabled = false;
         this.roomType = roomType;
     }
 
