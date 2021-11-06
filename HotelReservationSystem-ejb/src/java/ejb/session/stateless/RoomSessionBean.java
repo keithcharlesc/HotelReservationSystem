@@ -24,9 +24,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.DeleteRoomException;
 import util.exception.InputDataValidationException;
-import util.exception.NoRoomTypeException;
 import util.exception.RoomNameExistException;
 import util.exception.RoomNotFoundException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
@@ -54,7 +54,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     @Override
-    public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNameExistException, UnknownPersistenceException, InputDataValidationException {
+    public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException {
         Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(newRoomEntity);
 
         if (constraintViolations.isEmpty()) {
@@ -84,6 +84,8 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
+            } catch (RoomTypeNotFoundException ex) {
+                throw new RoomTypeNotFoundException("Room type "  + roomTypeName + " not found!");
             }
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));

@@ -9,7 +9,7 @@ package util.exception;
  *
  * @author xianhui
  */
-public class RoomTypeNotFoundException extends Exception {
+public class RoomTypeNotFoundException extends Exception{
 
     public RoomTypeNotFoundException() {
     }

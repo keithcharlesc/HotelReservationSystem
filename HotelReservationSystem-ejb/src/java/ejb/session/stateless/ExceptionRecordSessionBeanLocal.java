@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.ExceptionRecordNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ReservationRoomNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 /**
@@ -18,7 +19,7 @@ import util.exception.UnknownPersistenceException;
  */
 @Local
 public interface ExceptionRecordSessionBeanLocal {
-    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, String reservationRoomId) throws UnknownPersistenceException, InputDataValidationException;
+    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, Long reservationRoomId) throws UnknownPersistenceException, InputDataValidationException, ReservationRoomNotFoundException;
     public List<ExceptionRecordEntity> retrieveAllExceptionRecords();
     public List<ExceptionRecordEntity> retrieveUnresolvedExceptionRecords();
     public ExceptionRecordEntity retrieveExceptionRecordByExceptionRecordId(Long exceptionRecordId) throws ExceptionRecordNotFoundException;

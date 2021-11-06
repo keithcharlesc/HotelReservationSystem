@@ -21,6 +21,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.InputDataValidationException;
 import util.exception.ExceptionRecordNotFoundException;
+import util.exception.ReservationRoomNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 /**
@@ -45,14 +46,14 @@ public class ExceptionRecordSessionBean implements ExceptionRecordSessionBeanRem
     }
 
     @Override
-    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, String reservationRoomId) throws UnknownPersistenceException, InputDataValidationException {
+    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, Long reservationRoomId) throws UnknownPersistenceException, InputDataValidationException, ReservationRoomNotFoundException {
         Set<ConstraintViolation<ExceptionRecordEntity>> constraintViolations = validator.validate(newExceptionRecordEntity);
 
         if (constraintViolations.isEmpty()) {
             try {
                 entityManager.persist(newExceptionRecordEntity);
 
-                ReservationRoomEntity reservationRoom = ReservationRoomSessionBeanLocal.retrieveReservationRoomByReservationRoomId(reservationRoomId);
+                ReservationRoomEntity reservationRoom = reservationRoomSessionBeanLocal.retrieveReservationRoomByReservationRoomId(reservationRoomId);
                 reservationRoom.setExceptionRecord(newExceptionRecordEntity);
                 newExceptionRecordEntity.setReservationRoom(reservationRoom);
                 entityManager.flush();
@@ -60,6 +61,8 @@ public class ExceptionRecordSessionBean implements ExceptionRecordSessionBeanRem
                 return newExceptionRecordEntity;
             } catch (PersistenceException ex) {
                 throw new UnknownPersistenceException(ex.getMessage());
+            } catch (ReservationRoomNotFoundException ex) {
+                throw new ReservationRoomNotFoundException("Reservation room not found!");
             }
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
