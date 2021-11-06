@@ -30,14 +30,14 @@ public class GuestEntity implements Serializable {
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(min = 4, max = 32)
-    private String guestName;
+    private String name;
     @Column(nullable = false, unique = true, length = 64)
     @NotNull
     @Size(min = 4, max = 64)
     private String email;
     @Column(nullable = false) //maybe can limit smaller
     @NotNull
-    private Long phoneNo;
+    private String phoneNumber;
 
     @OneToMany(mappedBy = "guest")
     private List<ReservationEntity> reservations;
@@ -46,11 +46,11 @@ public class GuestEntity implements Serializable {
         this.reservations = new ArrayList<>();
     }
 
-    public GuestEntity(String guestName, String email, Long phoneNo) {
+    public GuestEntity(String name, String email, String phoneNumber) {
         this();
-        this.guestName = guestName;
+        this.name = name;
         this.email = email;
-        this.phoneNo = phoneNo;
+        this.phoneNumber = phoneNumber;
     }
 
     public Long getGuestId() {
@@ -61,12 +61,12 @@ public class GuestEntity implements Serializable {
         this.guestId = guestId;
     }
 
-    public String getGuestName() {
-        return guestName;
+    public String getName() {
+        return name;
     }
 
-    public void setGuestName(String guestName) {
-        this.guestName = guestName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -77,12 +77,12 @@ public class GuestEntity implements Serializable {
         this.email = email;
     }
 
-    public Long getPhoneNo() {
-        return phoneNo;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhoneNo(Long phoneNo) {
-        this.phoneNo = phoneNo;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public List<ReservationEntity> getReservations() {
@@ -108,7 +108,7 @@ public class GuestEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "GuestEntity{" + "guestId=" + guestId + ", guestName=" + guestName + ", email=" + email + ", phoneNo=" + phoneNo + ", reservations=" + reservations + '}';
+        return "GuestEntity{" + "guestId=" + guestId + ", name=" + name + ", email=" + email + ", phoneNumber=" + phoneNumber + ", reservations=" + reservations + '}';
     }
 
 }

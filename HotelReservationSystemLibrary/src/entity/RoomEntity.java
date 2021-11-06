@@ -123,5 +123,5 @@ public class RoomEntity implements Serializable {
     public String toString() {
         return "RoomEntity{" + "roomId=" + getRoomId() + ", roomStatusEnum=" + getRoomStatusEnum() + ", roomAllocated=" + getRoomAllocated() + ", isDisabled=" + getIsDisabled() + ", roomType=" + getRoomType() + ", reservationRooms=" + getReservationRooms() + '}';
     }
-
+    
 }

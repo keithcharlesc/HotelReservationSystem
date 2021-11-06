@@ -9,12 +9,12 @@ package util.exception;
  *
  * @author xianhui
  */
-public class DeleteEmployeeException extends Exception {
+public class GuestNotFoundException extends Exception {
 
-    public DeleteEmployeeException() {
+    public GuestNotFoundException() {
     }
 
-    public DeleteEmployeeException(String string) {
+    public GuestNotFoundException(String string) {
         super(string);
     }
 

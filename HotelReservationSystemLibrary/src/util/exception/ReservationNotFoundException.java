@@ -9,13 +9,13 @@ package util.exception;
  *
  * @author xianhui
  */
-public class DeleteEmployeeException extends Exception {
+public class ReservationNotFoundException extends Exception {
 
-    public DeleteEmployeeException() {
+    public ReservationNotFoundException() {
     }
 
-    public DeleteEmployeeException(String string) {
+    public ReservationNotFoundException(String string) {
         super(string);
     }
-
+    
 }

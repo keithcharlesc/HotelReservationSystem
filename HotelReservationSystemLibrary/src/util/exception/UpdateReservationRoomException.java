@@ -9,12 +9,12 @@ package util.exception;
  *
  * @author xianhui
  */
-public class DeleteEmployeeException extends Exception {
+public class UpdateReservationRoomException extends Exception {
 
-    public DeleteEmployeeException() {
+    public UpdateReservationRoomException() {
     }
 
-    public DeleteEmployeeException(String string) {
+    public UpdateReservationRoomException(String string) {
         super(string);
     }
 

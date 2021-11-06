@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 //WEAK ENTITY 
 @Entity
@@ -23,6 +25,10 @@ public class ReservationRoomEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationRoomId;
+
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isAllocated;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
@@ -35,6 +41,7 @@ public class ReservationRoomEntity implements Serializable {
     private RoomEntity room;
 
     public ReservationRoomEntity() {
+        this.isAllocated = false;
     }
 
     public Long getReservationRoomId() {
@@ -43,6 +50,14 @@ public class ReservationRoomEntity implements Serializable {
 
     public void setReservationRoomId(Long reservationRoomId) {
         this.reservationRoomId = reservationRoomId;
+    }
+
+    public Boolean getIsAllocated() {
+        return isAllocated;
+    }
+
+    public void setIsAllocated(Boolean isAllocated) {
+        this.isAllocated = isAllocated;
     }
 
     public ReservationEntity getReservation() {
@@ -84,7 +99,7 @@ public class ReservationRoomEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "ReservationRoomEntity{" + "reservationRoomId=" + getReservationRoomId() + ", reservation=" + getReservation() + ", exceptionRecord=" + getExceptionRecord() + ", room=" + getRoom() + '}';
+        return "ReservationRoomEntity{" + "reservationRoomId=" + reservationRoomId + ", isAllocated=" + isAllocated + ", reservation=" + reservation + ", exceptionRecord=" + exceptionRecord + ", room=" + room + '}';
     }
 
 }

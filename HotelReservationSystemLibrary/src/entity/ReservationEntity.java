@@ -23,6 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Future;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import util.enumeration.ReservationTypeEnum;
 
@@ -33,6 +34,11 @@ public class ReservationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
+
+    @Column(nullable = false)
+    @NotNull
+    @Min(1)
+    private Integer numberOfRooms;
 
     @Column(nullable = false, precision = 11, scale = 2)
     @NotNull
@@ -51,11 +57,11 @@ public class ReservationEntity implements Serializable {
     @NotNull
     private ReservationTypeEnum reservationType;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(nullable = false)
     private GuestEntity guest;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 
@@ -64,7 +70,6 @@ public class ReservationEntity implements Serializable {
     private List<NightEntity> nights;
 
     @OneToMany(mappedBy = "reservation")
-//    @JoinColumn(nullable = false)
     private List<ReservationRoomEntity> reservationRooms;
 
     public ReservationEntity() {
@@ -72,8 +77,9 @@ public class ReservationEntity implements Serializable {
         this.reservationRooms = new ArrayList<>();
     }
 
-    public ReservationEntity(BigDecimal reservationFee, LocalDateTime startDate, LocalDateTime endDate, ReservationTypeEnum reservationType) {
+    public ReservationEntity(Integer numberOfRooms, BigDecimal reservationFee, LocalDateTime startDate, LocalDateTime endDate, ReservationTypeEnum reservationType) {
         this();
+        this.numberOfRooms = numberOfRooms;
         this.reservationFee = reservationFee;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -86,6 +92,14 @@ public class ReservationEntity implements Serializable {
 
     public void setReservationId(Long reservationId) {
         this.reservationId = reservationId;
+    }
+
+    public Integer getNumberOfRooms() {
+        return numberOfRooms;
+    }
+
+    public void setNumberOfRooms(Integer numberOfRooms) {
+        this.numberOfRooms = numberOfRooms;
     }
 
     public BigDecimal getReservationFee() {
@@ -167,7 +181,7 @@ public class ReservationEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "ReservationEntity{" + "reservationId=" + getReservationId() + ", reservationFee=" + getReservationFee() + ", startDate=" + getStartDate() + ", endDate=" + getEndDate() + ", reservationType=" + getReservationType() + ", guest=" + getGuest() + ", roomType=" + getRoomType() + ", nights=" + getNights() + ", reservationRooms=" + getReservationRooms() + '}';
+        return "ReservationEntity{" + "reservationId=" + reservationId + ", numberOfRooms=" + numberOfRooms + ", reservationFee=" + reservationFee + ", startDate=" + startDate + ", endDate=" + endDate + ", reservationType=" + reservationType + ", guest=" + guest + ", roomType=" + roomType + ", nights=" + nights + ", reservationRooms=" + reservationRooms + '}';
     }
 
 }
