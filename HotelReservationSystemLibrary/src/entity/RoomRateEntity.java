@@ -29,6 +29,9 @@ public abstract class RoomRateEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomRateId;
+    @Column(nullable=false, unique=true)
+    @NotNull
+    private String name;
     @Column(nullable = false, precision = 11, scale = 2)
     @NotNull
     @Digits(integer = 9, fraction = 2)
@@ -55,8 +58,9 @@ public abstract class RoomRateEntity implements Serializable {
         this.nights = new ArrayList<>();
     }
 
-    public RoomRateEntity(BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate) {
+    public RoomRateEntity(String name, BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate) {
         this();
+        this.name = name;
         this.ratePerNight = ratePerNight;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -119,6 +123,14 @@ public abstract class RoomRateEntity implements Serializable {
     public void setNights(List<NightEntity> nights) {
         this.nights = nights;
     }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -135,7 +147,8 @@ public abstract class RoomRateEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "roomRateId=" + getRoomRateId() + ", ratePerNight=" + getRatePerNight() + ", startDate=" + getStartDate() + ", endDate=" + getEndDate() + ", isDisabled=" + getIsDisabled() + ", roomType=" + getRoomType() + ", nights=" + getNights();
+        return "RoomRateEntity{" + "roomRateId=" + roomRateId + ", name=" + name + ", ratePerNight=" + ratePerNight + ", startDate=" + startDate + ", endDate=" + endDate + ", isDisabled=" + isDisabled + ", roomType=" + roomType + ", nights=" + nights + '}';
     }
+    
 
 }

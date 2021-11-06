@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.EmployeeEntity;
 import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
@@ -39,10 +40,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
     
-    //need change this and have more 
-//    @EJB
-//    private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
-//    private RoomSessionBeanLocal roomSessionBeanLocal;
+
+    @EJB
+    private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
+    @EJB
+    private RoomSessionBeanLocal roomSessionBeanLocal;
     
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -142,7 +144,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     @Override
     public RoomTypeEntity retrieveRoomTypeByRoomTypeRoomTypeName(String name) throws RoomTypeNotFoundException
     {
-        Query query = entityManager.createQuery("SELECT p FROM RoomTypeEntity p WHERE p.skuCode = :inRoomTypeName");
+        Query query = entityManager.createQuery("SELECT p FROM RoomTypeEntity p WHERE p.roomTypeName = :inRoomTypeName");
         query.setParameter("inRoomTypeName", name);
         
         try
@@ -222,6 +224,16 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
             }
             roomTypeEntityToRemove.setIsDisabled(true);
         }
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<RoomTypeEntity>> constraintViolations) {
+        String msg = "Input data validation error!:";
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+
+        return msg;
     }
     
 }
