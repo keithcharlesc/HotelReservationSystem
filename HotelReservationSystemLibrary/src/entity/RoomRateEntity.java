@@ -65,7 +65,6 @@ public abstract class RoomRateEntity implements Serializable {
         this.startDate = startDate;
         this.endDate = endDate;
         this.isDisabled = false;
-        this.roomType = roomType;
     }
 
     public Long getRoomRateId() {

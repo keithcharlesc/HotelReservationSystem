@@ -61,7 +61,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             try {
                 entityManager.persist(newRoomEntity);
 
-                RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeRoomTypeName(roomTypeName);
+                RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
                 roomType.getRooms().add(newRoomEntity);
                 newRoomEntity.setRoomType(roomType);
 
@@ -94,7 +94,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     @Override
     public List<RoomEntity> retrieveAllRooms() {
-        Query query = entityManager.createQuery("SELECT r FROM RoomEntity r ORDER BY r.roomName");
+        Query query = entityManager.createQuery("SELECT r FROM RoomEntity r ORDER BY r.number");
 
         return query.getResultList();
     }
@@ -113,7 +113,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     @Override
-    public RoomEntity retrieveRoomByRoomNumber(long number) throws RoomNotFoundException {
+    public RoomEntity retrieveRoomByRoomNumber(Integer number) throws RoomNotFoundException {
         Query query = entityManager.createQuery("SELECT p FROM RoomEntity p WHERE p.number = :inRoomNumber");
         query.setParameter("inRoomNumber", number);
 
