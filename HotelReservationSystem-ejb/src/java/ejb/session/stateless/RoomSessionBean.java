@@ -54,43 +54,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     @Override
-    public RoomEntity createNewRoom(RoomEntity newRoomEntity) throws RoomNameExistException, NoRoomTypeException, UnknownPersistenceException, InputDataValidationException {
-        Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(newRoomEntity);
-
-        if (constraintViolations.isEmpty()) {
-            try {
-
-                if (newRoomEntity.getRoomType() != null) {
-                    entityManager.persist(newRoomEntity.getRoomType());
-                    entityManager.persist(newRoomEntity);
-                    if (newRoomEntity.getReservationRooms().size() > 0) {
-                        for (ReservationRoomEntity reservationRoom : newRoomEntity.getReservationRooms()) {
-                            entityManager.persist(reservationRoom);
-                        }
-                        entityManager.flush();
-                        return newRoomEntity;
-                    }
-                }
-
-                throw new NoRoomTypeException("Room cannot be created because it is not linked to any room type");
-
-            } catch (PersistenceException ex) {
-                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                        throw new RoomNameExistException();
-                    } else {
-                        throw new UnknownPersistenceException(ex.getMessage());
-                    }
-                } else {
-                    throw new UnknownPersistenceException(ex.getMessage());
-                }
-            }
-        } else {
-            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-        }
-    }
-
-    @Override
     public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNameExistException, UnknownPersistenceException, InputDataValidationException {
         Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(newRoomEntity);
 

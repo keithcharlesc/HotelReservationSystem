@@ -23,7 +23,7 @@ import util.exception.UpdateRoomException;
 @Local
 public interface RoomSessionBeanLocal {
     
-    public RoomEntity createNewRoom(RoomEntity newRoomEntity) throws RoomNameExistException, NoRoomTypeException, UnknownPersistenceException, InputDataValidationException;
+    public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNameExistException, NoRoomTypeException, UnknownPersistenceException, InputDataValidationException;
     public List<RoomEntity> retrieveAllRooms();
     public RoomEntity retrieveRoomByRoomId(Long roomId) throws RoomNotFoundException;
     public RoomEntity retrieveRoomByRoomNumber(long number) throws RoomNotFoundException;
