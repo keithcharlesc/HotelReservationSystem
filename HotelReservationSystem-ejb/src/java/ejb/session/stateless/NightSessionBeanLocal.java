@@ -5,7 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.NightEntity;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.InputDataValidationException;
+import util.exception.NightNotFoundException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -13,5 +18,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface NightSessionBeanLocal {
-    
+    public NightEntity createNewNight(NightEntity newNightEntity, String roomRateName) throws UnknownPersistenceException, InputDataValidationException;
+    public List<NightEntity> retrieveAllNights();
+    public NightEntity retrieveNightByNightId(Long nightId) throws NightNotFoundException;
 }

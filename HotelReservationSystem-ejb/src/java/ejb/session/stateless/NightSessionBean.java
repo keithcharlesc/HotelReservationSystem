@@ -6,7 +6,7 @@
 package ejb.session.stateless;
 
 import entity.NightEntity;
-import entity.ReservationRoomEntity;
+import entity.RoomRateEntity;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -45,16 +45,16 @@ public class NightSessionBean implements NightSessionBeanRemote, NightSessionBea
     }
 
     @Override
-    public NightEntity createNewNight(NightEntity newNightEntity, String reservationRoomId) throws UnknownPersistenceException, InputDataValidationException {
+    public NightEntity createNewNight(NightEntity newNightEntity, String roomRateName) throws UnknownPersistenceException, InputDataValidationException {
         Set<ConstraintViolation<NightEntity>> constraintViolations = validator.validate(newNightEntity);
 
         if (constraintViolations.isEmpty()) {
             try {
                 entityManager.persist(newNightEntity);
 
-                ReservationRoomEntity reservationRoom = ReservationRoomSessionBeanLocal.retrieveReservationRoomByReservationRoomId(reservationRoomId);
-                reservationRoom.setNight(newNightEntity);
-                newNightEntity.setReservationRoom(reservationRoom);
+                RoomRateEntity roomRate = roomRateSessionBeanLocal.retrieveRoomRateByRoomRateName(roomRateName);
+                roomRate.getNights().add(newNightEntity);
+                newNightEntity.setRoomRate(roomRate);
                 entityManager.flush();
 
                 return newNightEntity;
@@ -68,15 +68,7 @@ public class NightSessionBean implements NightSessionBeanRemote, NightSessionBea
 
     @Override
     public List<NightEntity> retrieveAllNights() {
-        Query query = entityManager.createQuery("SELECT e FROM NightEntity e");
-
-        return query.getResultList();
-    }
-    
-    //check JPQL if falsed can be equate this way 
-    @Override
-    public List<NightEntity> retrieveUnresolvedNights() {
-        Query query = entityManager.createQuery("SELECT e FROM NightEntity e WHERE e.resolved = false ORDER BY e.typeOfException");
+        Query query = entityManager.createQuery("SELECT n FROM NightEntity n");
 
         return query.getResultList();
     }
@@ -86,26 +78,10 @@ public class NightSessionBean implements NightSessionBeanRemote, NightSessionBea
         NightEntity nightEntity = entityManager.find(NightEntity.class, nightId);
 
         if (nightEntity != null) {
-            nightEntity.getReservationRoom();
+            nightEntity.getRoomRate();
             return nightEntity;
         } else {
             throw new NightNotFoundException("Night ID " + nightId + " does not exist!");
-        }
-    }
-
-    @Override
-    public void updateNight(NightEntity nightEntity) throws NightNotFoundException, InputDataValidationException {
-        if (nightEntity != null && nightEntity.getNightId() != null) {
-            Set<ConstraintViolation<NightEntity>> constraintViolations = validator.validate(nightEntity);
-
-            if (constraintViolations.isEmpty()) {
-                NightEntity nightEntityToUpdate = retrieveNightByNightId(nightEntity.getNightId());
-                nightEntityToUpdate.setResolved(nightEntity.getResolved());
-            } else {
-                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-            }
-        } else {
-            throw new NightNotFoundException("Night ID not provided for night to be updated");
         }
     }
 
@@ -118,5 +94,4 @@ public class NightSessionBean implements NightSessionBeanRemote, NightSessionBea
 
         return msg;
     }
-}
 }
