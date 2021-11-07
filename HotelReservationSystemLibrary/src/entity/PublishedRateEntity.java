@@ -20,8 +20,10 @@ public class PublishedRateEntity extends RoomRateEntity implements Serializable 
         super();
     }
 
-    public PublishedRateEntity(String name, BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate) {
-        super(name, ratePerNight, startDate, endDate);
+    public PublishedRateEntity(String name, BigDecimal ratePerNight) {
+        this();
+        this.name = name;
+        this.ratePerNight = ratePerNight;
     }
 
 //    @Override

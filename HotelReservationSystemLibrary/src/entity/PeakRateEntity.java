@@ -8,24 +8,59 @@ package entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class PeakRateEntity extends RoomRateEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime startDate;
+    @Column(nullable = false)
+    @Future
+    @NotNull
+    private LocalDateTime endDate;
+
     public PeakRateEntity() {
         super();
     }
 
+    public PeakRateEntity(String name, BigDecimal ratePerNight) {
+        this();
+        this.name = name;
+        this.ratePerNight = ratePerNight;
+    }
+
     public PeakRateEntity(String name, BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate) {
-        super(name, ratePerNight, startDate, endDate);
+        this(name, ratePerNight);
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
     @Override
     public String toString() {
-        return "PeakRateEntity{" + super.toString() + '}';
+        return "PeakRateEntity{" + super.toString() + ", startDate : " + getStartDate() + ", endDate : " + getEndDate() + '}';
     }
 
 }

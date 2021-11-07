@@ -56,7 +56,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     @Override
     public RoomTypeEntity createNewRoomType(RoomTypeEntity newRoomTypeEntity) throws RoomTypeNameExistException, UnknownPersistenceException, InputDataValidationException {
         Set<ConstraintViolation<RoomTypeEntity>> constraintViolations = validator.validate(newRoomTypeEntity);
-
+  
         if (constraintViolations.isEmpty()) {
             try {
                 entityManager.persist(newRoomTypeEntity);
@@ -139,11 +139,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                 if (roomTypeEntityToUpdate.getRoomTypeName().equals(roomTypeEntity.getRoomTypeName())) {
                     roomTypeEntityToUpdate.setIsDisabled(roomTypeEntity.getIsDisabled());
                     roomTypeEntityToUpdate.setRoomDescription(roomTypeEntity.getRoomDescription());
-                    roomTypeEntityToUpdate.setRoomImportance(roomTypeEntity.getRoomImportance());
                     roomTypeEntityToUpdate.setRoomSize(roomTypeEntity.getRoomSize());
                     roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
                     roomTypeEntityToUpdate.setRoomCapacity(roomTypeEntity.getRoomCapacity());
                     roomTypeEntityToUpdate.setRoomAmenities(roomTypeEntity.getRoomAmenities());
+                    roomTypeEntityToUpdate.setNextRoomType(roomTypeEntity.getNextRoomType());
                     entityManager.persist(roomTypeEntityToUpdate);
                 } else {
                     throw new UpdateRoomTypeException("Room Type Name of roomType record to be updated does not match the existing record");

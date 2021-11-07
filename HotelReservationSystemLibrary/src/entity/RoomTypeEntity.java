@@ -32,27 +32,27 @@ public class RoomTypeEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private Boolean isDisabled;
-    @Column(nullable = false, length = 250)
-    @NotNull
-    @Size(min = 2, max = 250)
-    private String roomDescription;
-
-    @Column(nullable = false)
-    @NotNull
-    @Min(1)
-    private Integer roomSize;
-    @Column(nullable = false)
-    @NotNull
-    @Min(1)
-    private Integer roomBed;
-    @Column(nullable = false)
-    @NotNull
-    @Min(1)
-    private Integer roomCapacity;
-    @Column(nullable = false, length = 128)
-    @NotNull
-    @Size(min = 2, max = 128)
-    private String roomAmenities;
+//    @Column(nullable = false, length = 250)
+//    @NotNull
+//    @Size(min = 2, max = 250)
+//    private String roomDescription;
+//
+//    @Column(nullable = false)
+//    @NotNull
+//    @Min(1)
+//    private Integer roomSize;
+//    @Column(nullable = false)
+//    @NotNull
+//    @Min(1)
+//    private Integer roomBed;
+//    @Column(nullable = false)
+//    @NotNull
+//    @Min(1)
+//    private Integer roomCapacity;
+//    @Column(nullable = false, length = 128)
+//    @NotNull
+//    @Size(min = 2, max = 128)
+//    private String roomAmenities;
 
     @Column(nullable = false, length = 128)
     @NotNull
@@ -70,15 +70,15 @@ public class RoomTypeEntity implements Serializable {
         this.rooms = new ArrayList<>();
     }
 
-    public RoomTypeEntity(String roomTypeName, Boolean isDisabled, String roomDescription, Integer roomSize, Integer roomBed, Integer roomCapacity, String roomAmenities, String nextRoomType) {
+    public RoomTypeEntity(String roomTypeName, String nextRoomType) {
         this();
         this.roomTypeName = roomTypeName;
-        this.isDisabled = isDisabled;
-        this.roomDescription = roomDescription;
-        this.roomSize = roomSize;
-        this.roomBed = roomBed;
-        this.roomCapacity = roomCapacity;
-        this.roomAmenities = roomAmenities;
+        this.isDisabled = false;
+//        this.roomDescription = "";
+//        this.roomSize = 1;
+//        this.roomBed = 2;
+//        this.roomCapacity = 2;
+//        this.roomAmenities = "";
         this.nextRoomType = nextRoomType;
     }
 
@@ -106,45 +106,45 @@ public class RoomTypeEntity implements Serializable {
         this.isDisabled = isDisabled;
     }
 
-    public String getRoomDescription() {
-        return roomDescription;
-    }
-
-    public void setRoomDescription(String roomDescription) {
-        this.roomDescription = roomDescription;
-    }
-
-    public Integer getRoomSize() {
-        return roomSize;
-    }
-
-    public void setRoomSize(Integer roomSize) {
-        this.roomSize = roomSize;
-    }
-
-    public Integer getRoomBed() {
-        return roomBed;
-    }
-
-    public void setRoomBed(Integer roomBed) {
-        this.roomBed = roomBed;
-    }
-
-    public Integer getRoomCapacity() {
-        return roomCapacity;
-    }
-
-    public void setRoomCapacity(Integer roomCapacity) {
-        this.roomCapacity = roomCapacity;
-    }
-
-    public String getRoomAmenities() {
-        return roomAmenities;
-    }
-
-    public void setRoomAmenities(String roomAmenities) {
-        this.roomAmenities = roomAmenities;
-    }
+//    public String getRoomDescription() {
+//        return roomDescription;
+//    }
+//
+//    public void setRoomDescription(String roomDescription) {
+//        this.roomDescription = roomDescription;
+//    }
+//
+//    public Integer getRoomSize() {
+//        return roomSize;
+//    }
+//
+//    public void setRoomSize(Integer roomSize) {
+//        this.roomSize = roomSize;
+//    }
+//
+//    public Integer getRoomBed() {
+//        return roomBed;
+//    }
+//
+//    public void setRoomBed(Integer roomBed) {
+//        this.roomBed = roomBed;
+//    }
+//
+//    public Integer getRoomCapacity() {
+//        return roomCapacity;
+//    }
+//
+//    public void setRoomCapacity(Integer roomCapacity) {
+//        this.roomCapacity = roomCapacity;
+//    }
+//
+//    public String getRoomAmenities() {
+//        return roomAmenities;
+//    }
+//
+//    public void setRoomAmenities(String roomAmenities) {
+//        this.roomAmenities = roomAmenities;
+//    }
 
     public List<RoomRateEntity> getRoomRates() {
         return roomRates;
@@ -185,7 +185,9 @@ public class RoomTypeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RoomTypeEntity{" + "roomTypeId=" + roomTypeId + ", roomTypeName=" + roomTypeName + ", isDisabled=" + isDisabled + ", roomDescription=" + roomDescription + ", roomSize=" + roomSize + ", roomBed=" + roomBed + ", roomCapacity=" + roomCapacity + ", roomAmenities=" + roomAmenities + ", roomRates=" + roomRates + ", rooms=" + rooms + ", nextRoomType=" + nextRoomType + '}';
+        return "RoomTypeEntity{" + "roomTypeId=" + roomTypeId + ", roomTypeName=" + roomTypeName + ", isDisabled=" + isDisabled + ", nextRoomType=" + nextRoomType + ", roomRates=" + roomRates + ", rooms=" + rooms + '}';
     }
+
+   
 
 }

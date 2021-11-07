@@ -11,6 +11,7 @@ import ejb.session.stateless.RoomSessionBeanLocal;
 import ejb.session.stateless.RoomTypeSessionBeanLocal;
 import entity.EmployeeEntity;
 import entity.RoomEntity;
+import entity.RoomTypeEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import util.exception.EmployeeUsernameExistException;
 import util.exception.InputDataValidationException;
 import util.exception.RoomNameExistException;
 import util.exception.RoomNotFoundException;
+import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 
@@ -75,14 +77,6 @@ public class DataInitializationSessionBean {
         }
     }
         
-    
-    
-        
-    
-        
-    
-        
-    
 
     private void initializeData()
     {
@@ -95,7 +89,16 @@ public class DataInitializationSessionBean {
             
             //roomType
             
+            roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Deluxe Room", "Premier Room"));
+            roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Premier Room", "Family Room"));
+            roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Family Room", "Junior Suite"));
+            roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Junior Suite", "Grand Suite"));
+            roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Grand Suite", "None"));
+            
             //roomRate
+            roomRateSessionBean.createNewRoomRate(newRoomRateEntity, Long.MIN_VALUE)
+            
+            
             //roomRateSessionBean.createNewRoomRate( new PublishedRateEntity("Deluxe Room Published", 100 (change to string?), no start and end date  
             
             roomSessionBean.createNewRoom(new RoomEntity(0101, RoomStatusEnum.AVAILABLE),  "Deluxe Room");
@@ -124,7 +127,7 @@ public class DataInitializationSessionBean {
             roomSessionBean.createNewRoom(new RoomEntity(0405, RoomStatusEnum.AVAILABLE),  "Grand Suite");
             roomSessionBean.createNewRoom(new RoomEntity(0505, RoomStatusEnum.AVAILABLE),  "Grand Suite");
         }
-        catch(EmployeeUsernameExistException | UnknownPersistenceException | InputDataValidationException| RoomNameExistException | RoomTypeNotFoundException ex)
+        catch(EmployeeUsernameExistException | UnknownPersistenceException | InputDataValidationException| RoomNameExistException | RoomTypeNotFoundException | RoomTypeNameExistException ex)
         {
             ex.printStackTrace();
         }
