@@ -32,12 +32,14 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
     @EJB
     private ReservationSessionBeanLocal reservationSessionBeanLocal;
 
-    @PersistenceContext(unitName = "HotelReservationRoomSystem-ejbPU")
-    private EntityManager em;
+    
 
     // Added in v4.2 for bean validation
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
+    
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
+    private EntityManager em;
 
     public ReservationRoomSessionBean() {
         validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -131,5 +133,9 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
         }
 
         return msg;
+    }
+
+    public void persist(Object object) {
+        em.persist(object);
     }
 }

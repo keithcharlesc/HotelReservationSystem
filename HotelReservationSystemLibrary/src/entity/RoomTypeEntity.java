@@ -36,10 +36,7 @@ public class RoomTypeEntity implements Serializable {
     @NotNull
     @Size(min = 2, max = 250)
     private String roomDescription;
-    @Column(nullable = false)
-    @NotNull
-    @Min(1)
-    private Integer roomImportance; // 1- least important, if add additional room type need to make sure everything changes
+
     @Column(nullable = false)
     @NotNull
     @Min(1)
@@ -57,6 +54,11 @@ public class RoomTypeEntity implements Serializable {
     @Size(min = 2, max = 128)
     private String roomAmenities;
 
+    @Column(nullable = false, length = 128)
+    @NotNull
+    @Size(min = 1, max = 128)
+    private String nextRoomType;
+
     @OneToMany(mappedBy = "roomType")
     private List<RoomRateEntity> roomRates;
 
@@ -68,16 +70,16 @@ public class RoomTypeEntity implements Serializable {
         this.rooms = new ArrayList<>();
     }
 
-    public RoomTypeEntity(String roomTypeName, String roomDescription, int roomImportance, int roomSize, int roomBed, int roomCapacity, String roomAmenities) {
+    public RoomTypeEntity(String roomTypeName, Boolean isDisabled, String roomDescription, Integer roomSize, Integer roomBed, Integer roomCapacity, String roomAmenities, String nextRoomType) {
         this();
         this.roomTypeName = roomTypeName;
-        this.isDisabled = false;
+        this.isDisabled = isDisabled;
         this.roomDescription = roomDescription;
-        this.roomImportance = roomImportance;
         this.roomSize = roomSize;
         this.roomBed = roomBed;
         this.roomCapacity = roomCapacity;
         this.roomAmenities = roomAmenities;
+        this.nextRoomType = nextRoomType;
     }
 
     public Long getRoomTypeId() {
@@ -110,14 +112,6 @@ public class RoomTypeEntity implements Serializable {
 
     public void setRoomDescription(String roomDescription) {
         this.roomDescription = roomDescription;
-    }
-
-    public Integer getRoomImportance() {
-        return roomImportance;
-    }
-
-    public void setRoomImportance(Integer roomImportance) {
-        this.roomImportance = roomImportance;
     }
 
     public Integer getRoomSize() {
@@ -168,6 +162,14 @@ public class RoomTypeEntity implements Serializable {
         this.rooms = rooms;
     }
 
+    public String getNextRoomType() {
+        return nextRoomType;
+    }
+
+    public void setNextRoomType(String nextRoomType) {
+        this.nextRoomType = nextRoomType;
+    }
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the roomTypeId fields are not set
@@ -183,9 +185,7 @@ public class RoomTypeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RoomTypeEntity{" + "roomTypeId=" + roomTypeId + ", roomTypeName=" + roomTypeName + ", isDisabled=" + isDisabled + ", roomDescription=" + roomDescription + ", roomImportance=" + roomImportance + ", roomSize=" + roomSize + ", roomBed=" + roomBed + ", roomCapacity=" + roomCapacity + ", roomAmenities=" + roomAmenities + ", roomRates=" + roomRates + ", rooms=" + rooms + '}';
+        return "RoomTypeEntity{" + "roomTypeId=" + roomTypeId + ", roomTypeName=" + roomTypeName + ", isDisabled=" + isDisabled + ", roomDescription=" + roomDescription + ", roomSize=" + roomSize + ", roomBed=" + roomBed + ", roomCapacity=" + roomCapacity + ", roomAmenities=" + roomAmenities + ", roomRates=" + roomRates + ", rooms=" + rooms + ", nextRoomType=" + nextRoomType + '}';
     }
-
-    
 
 }

@@ -123,8 +123,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
                 EmployeeEntity employeeEntityToUpdate = retrieveEmployeeByEmployeeId(employeeEntity.getEmployeeId());
 
                 if (employeeEntityToUpdate.getUsername().equals(employeeEntity.getUsername())) {
-                    employeeEntityToUpdate.setFirstName(employeeEntity.getFirstName());
-                    employeeEntityToUpdate.setLastName(employeeEntity.getLastName());
                     employeeEntityToUpdate.setEmployeeAccessRightEnum(employeeEntity.getEmployeeAccessRightEnum());
                     // Username and password are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
                 } else {
