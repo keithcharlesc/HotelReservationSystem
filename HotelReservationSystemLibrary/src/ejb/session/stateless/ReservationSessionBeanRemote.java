@@ -13,10 +13,6 @@ import util.exception.InputDataValidationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.UnknownPersistenceException;
 
-/**
- *
- * @author keithcharleschan
- */
 @Remote
 public interface ReservationSessionBeanRemote {
 

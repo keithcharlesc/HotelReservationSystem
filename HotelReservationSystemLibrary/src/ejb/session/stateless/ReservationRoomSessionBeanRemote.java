@@ -14,10 +14,6 @@ import util.exception.ReservationRoomNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateReservationRoomException;
 
-/**
- *
- * @author keithcharleschan
- */
 @Remote
 public interface ReservationRoomSessionBeanRemote {
 
@@ -28,5 +24,7 @@ public interface ReservationRoomSessionBeanRemote {
     public ReservationRoomEntity retrieveReservationRoomByReservationRoomId(Long reservationRoomId) throws ReservationRoomNotFoundException;
 
     public void updateReservationRoom(ReservationRoomEntity reservationRoomEntity) throws ReservationRoomNotFoundException, UpdateReservationRoomException, InputDataValidationException;
+
+    public void associateReservationRoomWithARoom(Long reservationRoomId, Long roomId);
 
 }

@@ -11,10 +11,6 @@ import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
 
-/**
- *
- * @author keithcharleschan
- */
 @Remote
 public interface GuestSessionBeanRemote {
 

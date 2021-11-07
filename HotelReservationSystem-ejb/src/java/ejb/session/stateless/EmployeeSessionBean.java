@@ -68,7 +68,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
 
     @Override
     public List<EmployeeEntity> retrieveAllEmployees() {
-        Query query = em.createQuery("SELECT s FROM EmployeeEntity s");
+        Query query = em.createQuery("SELECT e FROM EmployeeEntity e");
 
         return query.getResultList();
     }
@@ -86,7 +86,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
 
     @Override
     public EmployeeEntity retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException {
-        Query query = em.createQuery("SELECT s FROM EmployeeEntity s WHERE s.username = :inUsername");
+        Query query = em.createQuery("SELECT e FROM EmployeeEntity e WHERE e.username = :inUsername");
         query.setParameter("inUsername", username);
 
         try {
@@ -151,7 +151,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
 //        }
     }
 
-    // Added in v4.2
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<EmployeeEntity>> constraintViolations) {
         String msg = "Input data validation error!:";
 

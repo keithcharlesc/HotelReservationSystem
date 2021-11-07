@@ -7,10 +7,6 @@ package ejb.session.stateless;
 
 import javax.ejb.Remote;
 
-/**
- *
- * @author xianhui
- */
 @Remote
 public interface NightSessionBeanRemote {
     

@@ -28,4 +28,6 @@ public interface ReservationRoomSessionBeanLocal {
     public ReservationRoomEntity retrieveReservationRoomByReservationRoomId(Long reservationRoomId) throws ReservationRoomNotFoundException;
     
     public void updateReservationRoom(ReservationRoomEntity reservationRoomEntity) throws ReservationRoomNotFoundException, UpdateReservationRoomException, InputDataValidationException;
+
+    public void associateReservationRoomWithARoom(Long reservationRoomId, Long roomId);
 }

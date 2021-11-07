@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.InputDataValidationException;
 import util.exception.NightNotFoundException;
+import util.exception.RoomRateNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 /**
@@ -18,7 +19,7 @@ import util.exception.UnknownPersistenceException;
  */
 @Local
 public interface NightSessionBeanLocal {
-    public NightEntity createNewNight(NightEntity newNightEntity, String roomRateName) throws UnknownPersistenceException, InputDataValidationException;
+    public NightEntity createNewNight(NightEntity newNightEntity, String roomRateName) throws UnknownPersistenceException, InputDataValidationException, RoomRateNotFoundException;
     public List<NightEntity> retrieveAllNights();
     public NightEntity retrieveNightByNightId(Long nightId) throws NightNotFoundException;
 }

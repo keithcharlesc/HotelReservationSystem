@@ -14,10 +14,6 @@ import util.exception.PartnerEmployeeNotFoundException;
 import util.exception.PartnerEmployeeUsernameExistException;
 import util.exception.UnknownPersistenceException;
 
-/**
- *
- * @author xianhui
- */
 @Remote
 public interface PartnerEmployeeSessionBeanRemote {
     public Long createNewPartnerEmployee(PartnerEmployeeEntity newPartnerEmployeeEntity) throws PartnerEmployeeUsernameExistException, UnknownPersistenceException, InputDataValidationException;

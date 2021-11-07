@@ -16,14 +16,9 @@ import util.exception.RoomNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
-/**
- *
- * @author xianhui
- */
 @Remote
 public interface RoomSessionBeanRemote {
     
-
     public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException;
     public List<RoomEntity> retrieveAllRooms();
     public RoomEntity retrieveRoomByRoomId(Long roomId) throws RoomNotFoundException;

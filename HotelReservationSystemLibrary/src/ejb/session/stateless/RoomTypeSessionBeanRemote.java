@@ -15,10 +15,6 @@ import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomTypeException;
 
-/**
- *
- * @author xianhui
- */
 @Remote
 public interface RoomTypeSessionBeanRemote {
     

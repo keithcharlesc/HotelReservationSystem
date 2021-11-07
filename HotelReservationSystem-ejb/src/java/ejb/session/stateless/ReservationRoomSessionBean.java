@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
+import entity.RoomEntity;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -17,6 +18,7 @@ import javax.validation.ValidatorFactory;
 import util.exception.InputDataValidationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.ReservationRoomNotFoundException;
+import util.exception.RoomNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateReservationRoomException;
 
@@ -25,8 +27,11 @@ import util.exception.UpdateReservationRoomException;
 public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLocal, ReservationRoomSessionBeanRemote {
 
     @EJB
+    private RoomSessionBeanLocal roomSessionBeanLocal;
+
+    @EJB
     private ReservationSessionBeanLocal reservationSessionBeanLocal;
-    
+
     @PersistenceContext(unitName = "HotelReservationRoomSystem-ejbPU")
     private EntityManager em;
 
@@ -40,14 +45,11 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
     }
 
     @Override
-    public ReservationRoomEntity createNewReservationRoom(Long reservationId, ReservationRoomEntity newReservationRoomEntity) throws ReservationNotFoundException, UnknownPersistenceException, InputDataValidationException
-    {
-        
+    public ReservationRoomEntity createNewReservationRoom(Long reservationId, ReservationRoomEntity newReservationRoomEntity) throws ReservationNotFoundException, UnknownPersistenceException, InputDataValidationException {
+
         Set<ConstraintViolation<ReservationRoomEntity>> constraintViolations = validator.validate(newReservationRoomEntity);
-        if(constraintViolations.isEmpty() & newReservationRoomEntity != null)
-        {
-            try
-            {
+        if (constraintViolations.isEmpty() & newReservationRoomEntity != null) {
+            try {
                 ReservationEntity reservationEntity = reservationSessionBeanLocal.retrieveReservationByReservationId(reservationId);
                 newReservationRoomEntity.setReservation(reservationEntity);
                 reservationEntity.getReservationRooms().add(newReservationRoomEntity);
@@ -56,14 +58,10 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
                 em.flush();
 
                 return newReservationRoomEntity;
-            }
-            catch(PersistenceException ex)
-            {
+            } catch (PersistenceException ex) {
                 throw new UnknownPersistenceException(ex.getMessage());
             }
-        }
-        else
-        {
+        } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
@@ -74,7 +72,6 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
 
         return query.getResultList();
     }
-    
 
     @Override
     public ReservationRoomEntity retrieveReservationRoomByReservationRoomId(Long reservationRoomId) throws ReservationRoomNotFoundException {
@@ -90,7 +87,6 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
         }
     }
 
-    
     @Override
     public void updateReservationRoom(ReservationRoomEntity reservationRoomEntity) throws ReservationRoomNotFoundException, UpdateReservationRoomException, InputDataValidationException {
         if (reservationRoomEntity != null && reservationRoomEntity.getReservationRoomId() != null) {
@@ -98,7 +94,7 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
 
             if (constraintViolations.isEmpty()) {
                 ReservationRoomEntity reservationRoomEntityToUpdate = retrieveReservationRoomByReservationRoomId(reservationRoomEntity.getReservationRoomId());
-                    reservationRoomEntityToUpdate.setIsAllocated(reservationRoomEntity.getIsAllocated());
+                reservationRoomEntityToUpdate.setIsAllocated(reservationRoomEntity.getIsAllocated());
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
@@ -107,6 +103,25 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
         }
     }
 
+    @Override
+    public void associateReservationRoomWithARoom(Long reservationRoomId, Long roomId) {
+
+        try {
+            ReservationRoomEntity reservationRoom = retrieveReservationRoomByReservationRoomId(reservationRoomId);
+            RoomEntity room = roomSessionBeanLocal.retrieveRoomByRoomId(roomId);
+            if (reservationRoom.getRoom() != null) {
+                reservationRoom.getRoom().getReservationRooms().remove(reservationRoom);
+            }
+            reservationRoom.setRoom(room);
+            room.getReservationRooms().add(reservationRoom);
+
+        } catch (ReservationRoomNotFoundException ex) {
+            System.out.println("Reservation room not found!");
+        } catch (RoomNotFoundException ex) {
+            System.out.println("Room not found!");
+        }
+
+    }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ReservationRoomEntity>> constraintViolations) {
         String msg = "Input data validation error!:";

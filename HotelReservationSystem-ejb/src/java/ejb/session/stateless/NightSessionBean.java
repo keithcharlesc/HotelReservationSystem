@@ -21,6 +21,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.NightNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.RoomRateNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 /**
@@ -30,11 +31,11 @@ import util.exception.UnknownPersistenceException;
 @Stateless
 public class NightSessionBean implements NightSessionBeanRemote, NightSessionBeanLocal {
 
-    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
-    private EntityManager entityManager;
-    
     @EJB
     private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
+
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
+    private EntityManager entityManager;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -45,7 +46,7 @@ public class NightSessionBean implements NightSessionBeanRemote, NightSessionBea
     }
 
     @Override
-    public NightEntity createNewNight(NightEntity newNightEntity, String roomRateName) throws UnknownPersistenceException, InputDataValidationException {
+    public NightEntity createNewNight(NightEntity newNightEntity, String roomRateName) throws UnknownPersistenceException, InputDataValidationException, RoomRateNotFoundException {
         Set<ConstraintViolation<NightEntity>> constraintViolations = validator.validate(newNightEntity);
 
         if (constraintViolations.isEmpty()) {
@@ -60,6 +61,8 @@ public class NightSessionBean implements NightSessionBeanRemote, NightSessionBea
                 return newNightEntity;
             } catch (PersistenceException ex) {
                 throw new UnknownPersistenceException(ex.getMessage());
+            } catch (RoomRateNotFoundException ex) {
+                throw new RoomRateNotFoundException(ex.getMessage());
             }
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
