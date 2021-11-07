@@ -22,11 +22,11 @@ import util.exception.UpdateRoomTypeException;
 @Local
 public interface RoomTypeSessionBeanLocal {
     
-    public RoomTypeEntity createNewRoomType(RoomTypeEntity newRoomTypeEntity) throws RoomTypeNameExistException, UnknownPersistenceException, InputDataValidationException;
+    public RoomTypeEntity createNewRoomType(RoomTypeEntity newRoomTypeEntity) throws RoomTypeNameExistException, UnknownPersistenceException, InputDataValidationException, UpdateRoomTypeException;
     public List<RoomTypeEntity> retrieveAllRoomTypes();
     public RoomTypeEntity retrieveRoomTypeByRoomTypeId(Long roomTypeId) throws RoomTypeNotFoundException;
     public RoomTypeEntity retrieveRoomTypeByRoomTypeName(String name) throws RoomTypeNotFoundException;
     public void updateRoomType(RoomTypeEntity roomTypeEntity) throws RoomTypeNotFoundException, UpdateRoomTypeException, InputDataValidationException;
-    public void deleteRoomType(Long roomTypeId) throws RoomTypeNotFoundException, DeleteRoomTypeException;
+    public void deleteRoomType(Long roomTypeId) throws RoomTypeNotFoundException, DeleteRoomTypeException, UpdateRoomTypeException;
     
 }
