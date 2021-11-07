@@ -26,14 +26,6 @@ public class EmployeeEntity implements Serializable {
     private Long employeeId;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min = 2, max = 32)
-    private String firstName;
-    @Column(nullable = false, length = 32)
-    @NotNull
-    @Size(min = 2, max = 32)
-    private String lastName;
-    @Column(nullable = false, length = 32)
-    @NotNull
     @Size(min = 6, max = 32)
     private String password;
     @Column(nullable = false, unique = true, length = 32)
@@ -48,9 +40,7 @@ public class EmployeeEntity implements Serializable {
     public EmployeeEntity() {
     }
 
-    public EmployeeEntity(String firstName, String lastName, String username, String password, EmployeeAccessRightEnum employeeAccessRightEnum) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public EmployeeEntity(String username, String password, EmployeeAccessRightEnum employeeAccessRightEnum) {
         this.username = username;
         this.password = password;
         this.employeeAccessRightEnum = employeeAccessRightEnum;
@@ -63,23 +53,7 @@ public class EmployeeEntity implements Serializable {
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
+    
     public String getPassword() {
         return password;
     }
@@ -119,7 +93,7 @@ public class EmployeeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "EmployeeEntity{" + "employeeId=" + employeeId + ", firstName=" + firstName + ", lastName=" + lastName + ", password=" + password + ", username=" + username + ", employeeAccessRightEnum=" + employeeAccessRightEnum + '}';
+        return "EmployeeEntity{" + "employeeId=" + employeeId + ", password=" + password + ", username=" + username + ", employeeAccessRightEnum=" + employeeAccessRightEnum + '}';
     }
 
 }

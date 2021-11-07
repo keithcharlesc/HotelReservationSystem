@@ -33,7 +33,7 @@ public class RoomEntity implements Serializable {
     @Column(nullable = false, precision = 4)
     @NotNull
     @Max(10000)
-    private Long number;
+    private Integer number;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
@@ -56,7 +56,7 @@ public class RoomEntity implements Serializable {
         this.reservationRooms = new ArrayList<>();
     }
 
-    public RoomEntity(Long number, RoomStatusEnum roomStatusEnum) {
+    public RoomEntity(Integer number, RoomStatusEnum roomStatusEnum) {
         this();
         this.roomAllocated = false;
         this.isDisabled = false;
@@ -104,11 +104,11 @@ public class RoomEntity implements Serializable {
         this.roomType = roomType;
     }
     
-    public Long getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(Long number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
