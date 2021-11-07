@@ -5,7 +5,6 @@
  */
 package ejb.session.stateless;
 
-import entity.EmployeeEntity;
 import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
@@ -54,12 +53,21 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public RoomTypeEntity createNewRoomType(RoomTypeEntity newRoomTypeEntity) throws RoomTypeNameExistException, UnknownPersistenceException, InputDataValidationException {
+    public RoomTypeEntity createNewRoomType(RoomTypeEntity newRoomTypeEntity) throws RoomTypeNameExistException, UnknownPersistenceException, InputDataValidationException, UpdateRoomTypeException {
         Set<ConstraintViolation<RoomTypeEntity>> constraintViolations = validator.validate(newRoomTypeEntity);
 
         if (constraintViolations.isEmpty()) {
             try {
                 entityManager.persist(newRoomTypeEntity);
+
+                Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
+                query.setParameter("nextRoomType", newRoomTypeEntity.getNextRoomType());
+                if(query.getSingleResult() != null) {
+                    RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
+                    roomType.setNextRoomType(newRoomTypeEntity.getRoomTypeName());
+                } else {
+                    throw new UpdateRoomTypeException("Unable to change nextRoomType of previous room!");
+                }
 
                 if (newRoomTypeEntity.getRooms().size() > 0) {
                     for (RoomEntity room : newRoomTypeEntity.getRooms()) {
@@ -113,8 +121,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public RoomTypeEntity retrieveRoomTypeByRoomTypeName(String name) throws RoomTypeNotFoundException
-    {
+    public RoomTypeEntity retrieveRoomTypeByRoomTypeName(String name) throws RoomTypeNotFoundException {
         Query query = entityManager.createQuery("SELECT p FROM RoomTypeEntity p WHERE p.roomTypeName = :inRoomTypeName");
         query.setParameter("inRoomTypeName", name);
 
@@ -139,11 +146,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                 if (roomTypeEntityToUpdate.getRoomTypeName().equals(roomTypeEntity.getRoomTypeName())) {
                     roomTypeEntityToUpdate.setIsDisabled(roomTypeEntity.getIsDisabled());
                     roomTypeEntityToUpdate.setRoomDescription(roomTypeEntity.getRoomDescription());
-                    roomTypeEntityToUpdate.setRoomImportance(roomTypeEntity.getRoomImportance());
                     roomTypeEntityToUpdate.setRoomSize(roomTypeEntity.getRoomSize());
                     roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
                     roomTypeEntityToUpdate.setRoomCapacity(roomTypeEntity.getRoomCapacity());
                     roomTypeEntityToUpdate.setRoomAmenities(roomTypeEntity.getRoomAmenities());
+                    roomTypeEntityToUpdate.setNextRoomType(roomTypeEntity.getNextRoomType());
                     entityManager.persist(roomTypeEntityToUpdate);
                 } else {
                     throw new UpdateRoomTypeException("Room Type Name of roomType record to be updated does not match the existing record");
@@ -157,11 +164,20 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public void deleteRoomType(Long roomTypeId) throws RoomTypeNotFoundException, DeleteRoomTypeException {
+    public void deleteRoomType(Long roomTypeId) throws RoomTypeNotFoundException, DeleteRoomTypeException, UpdateRoomTypeException {
         RoomTypeEntity roomTypeEntityToRemove = retrieveRoomTypeByRoomTypeId(roomTypeId);
 
         List<RoomRateEntity> roomRateEntities = roomTypeEntityToRemove.getRoomRates();
         List<RoomEntity> rooms = roomTypeEntityToRemove.getRooms();
+        
+        Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
+            query.setParameter("nextRoomType", roomTypeEntityToRemove.getRoomTypeName());
+            if (query.getSingleResult() != null) {
+                RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
+                roomType.setNextRoomType(roomTypeEntityToRemove.getNextRoomType());
+            } else {
+                throw new UpdateRoomTypeException("Unable to change nextRoomType of previous room!");
+            }
 
         if (roomRateEntities.isEmpty() && rooms.isEmpty()) {
             entityManager.remove(roomTypeEntityToRemove);
