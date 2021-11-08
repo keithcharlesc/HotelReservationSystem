@@ -25,7 +25,7 @@ public class MainApp {
     private ExceptionRecordSessionBeanRemote exceptionRecordSessionBean;
     private EmployeeSessionBeanRemote employeeSessionBean;
     private PartnerEmployeeSessionBeanRemote partnerEmployeeSessionBean;
-    private static GuestSessionBeanRemote guestSessionBean;
+    private GuestSessionBeanRemote guestSessionBean;
 
     private EmployeeEntity currentEmployeeEntity;
     
@@ -73,13 +73,6 @@ public class MainApp {
                     try
                     {
                         doLogin();
-                        System.out.println("Login successful!\n");
-                        
-                        systemAdministrationModule = new SystemAdministrationModule(employeeSessionBean, partnerEmployeeSessionBean, currentEmployeeEntity);
-                        hotelOperationModule = new HotelOperationModule(roomTypeSessionBean, roomSessionBean, roomRateSessionBean, exceptionRecordSessionBean, currentEmployeeEntity);
-                        frontOfficeModule = new FrontOfficeModule(roomSessionBean, saleTransactionEntitySessionBeanRemote, checkoutBeanRemote, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory, currentEmployeeEntity);
-
-                        menuMain();
                     }
                     catch(InvalidLoginCredentialException ex) 
                     {
@@ -119,10 +112,27 @@ public class MainApp {
         {
             currentEmployeeEntity = employeeSessionBean.employeeLogin(username, password);
         }
-        else
-        {
+        else {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
+
+        System.out.println("Login successful!\n");
+        
+        if(currentEmployeeEntity.getEmployeeAccessRightEnum().equals("SYSTEM_ADMINISTRATOR")) {
+            systemAdministrationModule = new SystemAdministrationModule(employeeSessionBean, partnerEmployeeSessionBean, currentEmployeeEntity);
+            systemAdministrationModule.systemAdministratorOperations();
+        }
+        else if(currentEmployeeEntity.getEmployeeAccessRightEnum().equals("OPERATION_MANAGER")) {
+            hotelOperationModule = new HotelOperationModule(roomTypeSessionBean, roomSessionBean, roomRateSessionBean, exceptionRecordSessionBean, currentEmployeeEntity);
+            hotelOperationModule.operationManagerOperations();
+        }
+        else if(currentEmployeeEntity.getEmployeeAccessRightEnum().equals("OPERATION_MANAGER")) {
+            hotelOperationModule = new HotelOperationModule(roomTypeSessionBean, roomSessionBean, roomRateSessionBean, exceptionRecordSessionBean, currentEmployeeEntity);
+            hotelOperationModule.salesManagerOperations();
+        } else if(currentEmployeeEntity.getEmployeeAccessRightEnum().equals("OPERATION_MANAGER")) {
+            frontOfficeModule = new FrontOfficeModule(roomSessionBean, guestSessionBean, reservationSessionBean, currentEmployeeEntity);
+            frontOfficeModule.guestRelationOfficerOperations();
+        }
     }
-    
+
 }
