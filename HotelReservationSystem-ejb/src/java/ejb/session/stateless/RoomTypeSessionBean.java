@@ -29,10 +29,6 @@ import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomTypeException;
 
-/**
- *
- * @author xianhui
- */
 @Stateless
 public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeSessionBeanLocal {
 
@@ -55,14 +51,14 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     @Override
     public RoomTypeEntity createNewRoomType(RoomTypeEntity newRoomTypeEntity) throws RoomTypeNameExistException, UnknownPersistenceException, InputDataValidationException, UpdateRoomTypeException {
         Set<ConstraintViolation<RoomTypeEntity>> constraintViolations = validator.validate(newRoomTypeEntity);
-  
+
         if (constraintViolations.isEmpty()) {
             try {
                 entityManager.persist(newRoomTypeEntity);
 
                 Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
                 query.setParameter("nextRoomType", newRoomTypeEntity.getNextRoomType());
-                if(query.getSingleResult() != null) {
+                if (query.getSingleResult() != null) {
                     RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
                     roomType.setNextRoomType(newRoomTypeEntity.getRoomTypeName());
                 } else {
@@ -145,11 +141,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
                 if (roomTypeEntityToUpdate.getRoomTypeName().equals(roomTypeEntity.getRoomTypeName())) {
                     roomTypeEntityToUpdate.setIsDisabled(roomTypeEntity.getIsDisabled());
-                    roomTypeEntityToUpdate.setRoomDescription(roomTypeEntity.getRoomDescription());
-                    roomTypeEntityToUpdate.setRoomSize(roomTypeEntity.getRoomSize());
-                    roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
-                    roomTypeEntityToUpdate.setRoomCapacity(roomTypeEntity.getRoomCapacity());
-                    roomTypeEntityToUpdate.setRoomAmenities(roomTypeEntity.getRoomAmenities());
+//                    roomTypeEntityToUpdate.setRoomDescription(roomTypeEntity.getRoomDescription());
+//                    roomTypeEntityToUpdate.setRoomSize(roomTypeEntity.getRoomSize());
+//                    roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
+//                    roomTypeEntityToUpdate.setRoomCapacity(roomTypeEntity.getRoomCapacity());
+//                    roomTypeEntityToUpdate.setRoomAmenities(roomTypeEntity.getRoomAmenities());
                     roomTypeEntityToUpdate.setNextRoomType(roomTypeEntity.getNextRoomType());
                     entityManager.persist(roomTypeEntityToUpdate);
                 } else {
@@ -169,15 +165,15 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
         List<RoomRateEntity> roomRateEntities = roomTypeEntityToRemove.getRoomRates();
         List<RoomEntity> rooms = roomTypeEntityToRemove.getRooms();
-        
+
         Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
-            query.setParameter("nextRoomType", roomTypeEntityToRemove.getRoomTypeName());
-            if (query.getSingleResult() != null) {
-                RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
-                roomType.setNextRoomType(roomTypeEntityToRemove.getNextRoomType());
-            } else {
-                throw new UpdateRoomTypeException("Unable to change nextRoomType of previous room!");
-            }
+        query.setParameter("nextRoomType", roomTypeEntityToRemove.getRoomTypeName());
+        if (query.getSingleResult() != null) {
+            RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
+            roomType.setNextRoomType(roomTypeEntityToRemove.getNextRoomType());
+        } else {
+            throw new UpdateRoomTypeException("Unable to change nextRoomType of previous room!");
+        }
 
         if (roomRateEntities.isEmpty() && rooms.isEmpty()) {
             entityManager.remove(roomTypeEntityToRemove);

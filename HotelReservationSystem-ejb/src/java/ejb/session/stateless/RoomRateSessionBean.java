@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.PeakRateEntity;
+import entity.PromotionRateEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.util.List;
@@ -54,7 +56,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     }
 
     @Override
-    public Long createNewRoomRate(RoomRateEntity newRoomRateEntity, Long roomTypeId) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException {
+    public void createNewRoomRate(RoomRateEntity newRoomRateEntity, Long roomTypeId) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException {
         Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(newRoomRateEntity);
 
         if (constraintViolations.isEmpty()) {
@@ -64,7 +66,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
                 roomType.getRoomRates().add(newRoomRateEntity);
                 em.persist(newRoomRateEntity);
                 em.flush();
-                return newRoomRateEntity.getRoomRateId();
+//                return newRoomRateEntity.getRoomRateId();
             } catch (PersistenceException ex) {
                 if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                     if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
@@ -122,11 +124,27 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
             if (constraintViolations.isEmpty()) {
                 RoomRateEntity roomRateEntityToUpdate = retrieveRoomRateByRoomRateId(roomRateEntity.getRoomRateId());
-                roomRateEntityToUpdate.setName(roomRateEntity.getName());
-                roomRateEntityToUpdate.setRatePerNight(roomRateEntity.getRatePerNight());
-                roomRateEntityToUpdate.setStartDate(roomRateEntity.getStartDate());
-                roomRateEntityToUpdate.setEndDate(roomRateEntity.getEndDate());
-                roomRateEntityToUpdate.setIsDisabled(roomRateEntity.getIsDisabled());
+                if (roomRateEntity instanceof PeakRateEntity) {
+                    PromotionRateEntity promoRateEntity = (PromotionRateEntity) roomRateEntity;
+                    PromotionRateEntity promoRateEntityToUpdate = (PromotionRateEntity) roomRateEntityToUpdate;
+                    promoRateEntityToUpdate.setName(promoRateEntity.getName());
+                    promoRateEntityToUpdate.setRatePerNight(promoRateEntity.getRatePerNight());
+                    promoRateEntityToUpdate.setStartDate(promoRateEntity.getStartDate());
+                    promoRateEntityToUpdate.setEndDate(promoRateEntity.getEndDate());
+                    promoRateEntityToUpdate.setIsDisabled(promoRateEntity.getIsDisabled());
+                } else if (roomRateEntity instanceof PromotionRateEntity) {
+                    PeakRateEntity peakRateEntity = (PeakRateEntity) roomRateEntity;
+                    PeakRateEntity peakRateEntityToUpdate = (PeakRateEntity) roomRateEntityToUpdate;
+                    peakRateEntityToUpdate.setName(peakRateEntity.getName());
+                    peakRateEntityToUpdate.setRatePerNight(peakRateEntity.getRatePerNight());
+                    peakRateEntityToUpdate.setStartDate(peakRateEntity.getStartDate());
+                    peakRateEntityToUpdate.setEndDate(peakRateEntity.getEndDate());
+                    peakRateEntityToUpdate.setIsDisabled(peakRateEntity.getIsDisabled());
+                } else {
+                    roomRateEntityToUpdate.setName(roomRateEntity.getName());
+                    roomRateEntityToUpdate.setRatePerNight(roomRateEntity.getRatePerNight());
+                    roomRateEntityToUpdate.setIsDisabled(roomRateEntity.getIsDisabled());
+                }
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }

@@ -19,7 +19,7 @@ import util.exception.UpdateRoomRateException;
 @Remote
 public interface RoomRateSessionBeanRemote {
 
-    public Long createNewRoomRate(RoomRateEntity newRoomRateEntity, Long roomTypeId) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException;
+    public void createNewRoomRate(RoomRateEntity newRoomRateEntity, Long roomTypeId) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException;
 
     public List<RoomRateEntity> retrieveAllRoomRates();
 
