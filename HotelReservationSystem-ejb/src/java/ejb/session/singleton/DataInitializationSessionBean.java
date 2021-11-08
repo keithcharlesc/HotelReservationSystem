@@ -96,7 +96,6 @@ public class DataInitializationSessionBean {
             
             //room
             roomSessionBean.createNewRoom(new RoomEntity(0101, RoomStatusEnum.AVAILABLE), "Deluxe Room");
-            
             roomSessionBean.createNewRoom(new RoomEntity(0201, RoomStatusEnum.AVAILABLE), "Deluxe Room");
             roomSessionBean.createNewRoom(new RoomEntity(0301, RoomStatusEnum.AVAILABLE), "Deluxe Room");
             roomSessionBean.createNewRoom(new RoomEntity(0401, RoomStatusEnum.AVAILABLE), "Deluxe Room");
