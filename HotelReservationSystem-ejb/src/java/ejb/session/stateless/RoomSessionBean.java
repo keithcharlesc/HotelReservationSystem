@@ -59,7 +59,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
         if (constraintViolations.isEmpty()) {
             try {
-                entityManager.persist(newRoomEntity);
+                
 
                 RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
                 roomType.getRooms().add(newRoomEntity);
@@ -71,6 +71,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                     }
                 }
 
+                entityManager.persist(newRoomEntity);
                 entityManager.flush();
 
                 return newRoomEntity;
