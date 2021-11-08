@@ -32,7 +32,7 @@ public class ExceptionRecordEntity implements Serializable {
     private Integer typeOfException;
     @Column(nullable=false)
     @NotNull
-    private Boolean resolved;
+    private boolean resolved;
 
     @OneToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(nullable = false)
@@ -88,11 +88,11 @@ public class ExceptionRecordEntity implements Serializable {
         return "ExceptionRecordEntity{" + "exceptionRecordId=" + getExceptionRecordId() + ", typeOfException=" + getTypeOfException() + ", reservationRoom=" + getReservationRoom() + '}';
     }
 
-    public Boolean getResolved() {
+    public boolean getResolved() {
         return resolved;
     }
 
-    public void setResolved(Boolean resolved) {
+    public void setResolved(boolean resolved) {
         this.resolved = resolved;
     }
 

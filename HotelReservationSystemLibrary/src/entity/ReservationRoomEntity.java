@@ -28,7 +28,7 @@ public class ReservationRoomEntity implements Serializable {
 
     @Column(nullable = false)
     @NotNull
-    private Boolean isAllocated;
+    private boolean isAllocated;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
@@ -52,11 +52,11 @@ public class ReservationRoomEntity implements Serializable {
         this.reservationRoomId = reservationRoomId;
     }
 
-    public Boolean getIsAllocated() {
+    public boolean getIsAllocated() {
         return isAllocated;
     }
 
-    public void setIsAllocated(Boolean isAllocated) {
+    public void setIsAllocated(boolean isAllocated) {
         this.isAllocated = isAllocated;
     }
 

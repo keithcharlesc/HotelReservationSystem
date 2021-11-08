@@ -31,7 +31,7 @@ public class RoomTypeEntity implements Serializable {
     private String roomTypeName;
     @Column(nullable = false)
     @NotNull
-    private Boolean isDisabled;
+    private boolean isDisabled;
 //    @Column(nullable = false, length = 250)
 //    @NotNull
 //    @Size(min = 2, max = 250)
@@ -98,11 +98,11 @@ public class RoomTypeEntity implements Serializable {
         this.roomTypeName = roomTypeName;
     }
 
-    public Boolean getIsDisabled() {
+    public boolean getIsDisabled() {
         return isDisabled;
     }
 
-    public void setIsDisabled(Boolean isDisabled) {
+    public void setIsDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
 

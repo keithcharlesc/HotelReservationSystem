@@ -39,7 +39,7 @@ public abstract class RoomRateEntity implements Serializable {
 
     @Column(nullable = false)
     @NotNull
-    protected Boolean isDisabled;
+    protected boolean isDisabled;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(nullable = false)
@@ -90,11 +90,11 @@ public abstract class RoomRateEntity implements Serializable {
 //    public void setEndDate(LocalDateTime endDate) {
 //        this.endDate = endDate;
 //    }
-    public Boolean getIsDisabled() {
+    public boolean getIsDisabled() {
         return isDisabled;
     }
 
-    public void setIsDisabled(Boolean isDisabled) {
+    public void setIsDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
 

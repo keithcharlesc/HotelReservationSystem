@@ -40,10 +40,10 @@ public class RoomEntity implements Serializable {
     private RoomStatusEnum roomStatusEnum;
     @Column(nullable = false)
     @NotNull
-    private Boolean roomAllocated;
+    private boolean roomAllocated;
     @Column(nullable = false)
     @NotNull
-    private Boolean isDisabled;
+    private boolean isDisabled;
 
     @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(nullable = false)
@@ -80,19 +80,19 @@ public class RoomEntity implements Serializable {
         this.roomStatusEnum = roomStatusEnum;
     }
 
-    public Boolean getRoomAllocated() {
+    public boolean getRoomAllocated() {
         return roomAllocated;
     }
 
-    public void setRoomAllocated(Boolean roomAllocated) {
+    public void setRoomAllocated(boolean roomAllocated) {
         this.roomAllocated = roomAllocated;
     }
 
-    public Boolean getIsDisabled() {
+    public boolean getIsDisabled() {
         return isDisabled;
     }
 
-    public void setIsDisabled(Boolean isDisabled) {
+    public void setIsDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
 
