@@ -54,6 +54,44 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
         if (constraintViolations.isEmpty()) {
             try {
+
+                if (newRoomTypeEntity.getRooms().size() > 0) {
+                    for (RoomEntity room : newRoomTypeEntity.getRooms()) {
+                        entityManager.persist(room);
+                    }
+                }
+
+                if (newRoomTypeEntity.getRoomRates().size() > 0) {
+                    for (RoomRateEntity roomRate : newRoomTypeEntity.getRoomRates()) {
+                        entityManager.persist(roomRate);
+                    }
+                }
+                entityManager.persist(newRoomTypeEntity);
+                entityManager.flush();
+
+                return newRoomTypeEntity;
+            } catch (PersistenceException ex) {
+                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                        throw new RoomTypeNameExistException();
+                    } else {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                } else {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+    }
+
+    @Override
+    public RoomTypeEntity insertNewRoomType(RoomTypeEntity newRoomTypeEntity) throws RoomTypeNameExistException, UnknownPersistenceException, InputDataValidationException, UpdateRoomTypeException {
+        Set<ConstraintViolation<RoomTypeEntity>> constraintViolations = validator.validate(newRoomTypeEntity);
+
+        if (constraintViolations.isEmpty()) {
+            try {
                 entityManager.persist(newRoomTypeEntity);
 
                 Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");

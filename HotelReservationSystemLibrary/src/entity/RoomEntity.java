@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumeration.RoomStatusEnum;
 
 @Entity
@@ -30,10 +31,10 @@ public class RoomEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
-    @Column(nullable = false, precision = 4)
+    @Column(nullable = false, length = 4)
     @NotNull
-    @Max(10000)
-    private Integer number;
+    @Size(min = 4, max = 4)
+    private String number;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
@@ -56,7 +57,7 @@ public class RoomEntity implements Serializable {
         this.reservationRooms = new ArrayList<>();
     }
 
-    public RoomEntity(Integer number, RoomStatusEnum roomStatusEnum) {
+    public RoomEntity(String number, RoomStatusEnum roomStatusEnum) {
         this();
         this.roomAllocated = false;
         this.isDisabled = false;
@@ -104,11 +105,11 @@ public class RoomEntity implements Serializable {
         this.roomType = roomType;
     }
     
-    public Integer getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(Integer number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 

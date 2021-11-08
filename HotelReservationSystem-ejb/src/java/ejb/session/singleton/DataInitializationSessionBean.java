@@ -95,31 +95,31 @@ public class DataInitializationSessionBean {
 //            roomRateSessionBean.createNewRoomRate(new RoomRateEntity("Test", new BigDecimal("1")), deluxeRoomEntity);
             
             //room
-            roomSessionBean.createNewRoom(new RoomEntity(0101, RoomStatusEnum.AVAILABLE), "Deluxe Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0201, RoomStatusEnum.AVAILABLE), "Deluxe Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0301, RoomStatusEnum.AVAILABLE), "Deluxe Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0401, RoomStatusEnum.AVAILABLE), "Deluxe Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0501, RoomStatusEnum.AVAILABLE), "Deluxe Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0102, RoomStatusEnum.AVAILABLE), "Premier Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0202, RoomStatusEnum.AVAILABLE), "Premier Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0302, RoomStatusEnum.AVAILABLE), "Premier Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0402, RoomStatusEnum.AVAILABLE), "Premier Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0502, RoomStatusEnum.AVAILABLE), "Premier Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0103, RoomStatusEnum.AVAILABLE), "Family Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0203, RoomStatusEnum.AVAILABLE), "Family Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0303, RoomStatusEnum.AVAILABLE), "Family Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0403, RoomStatusEnum.AVAILABLE), "Family Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0503, RoomStatusEnum.AVAILABLE), "Family Room");
-            roomSessionBean.createNewRoom(new RoomEntity(0104, RoomStatusEnum.AVAILABLE), "Junior Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0204, RoomStatusEnum.AVAILABLE), "Junior Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0304, RoomStatusEnum.AVAILABLE), "Junior Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0404, RoomStatusEnum.AVAILABLE), "Junior Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0504, RoomStatusEnum.AVAILABLE), "Junior Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0105, RoomStatusEnum.AVAILABLE), "Grand Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0205, RoomStatusEnum.AVAILABLE), "Grand Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0305, RoomStatusEnum.AVAILABLE), "Grand Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0405, RoomStatusEnum.AVAILABLE), "Grand Suite");
-            roomSessionBean.createNewRoom(new RoomEntity(0505, RoomStatusEnum.AVAILABLE), "Grand Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0101", RoomStatusEnum.AVAILABLE), "Deluxe Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0201", RoomStatusEnum.AVAILABLE), "Deluxe Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0301", RoomStatusEnum.AVAILABLE), "Deluxe Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0401", RoomStatusEnum.AVAILABLE), "Deluxe Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0501", RoomStatusEnum.AVAILABLE), "Deluxe Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0102", RoomStatusEnum.AVAILABLE), "Premier Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0202", RoomStatusEnum.AVAILABLE), "Premier Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0302", RoomStatusEnum.AVAILABLE), "Premier Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0402", RoomStatusEnum.AVAILABLE), "Premier Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0502", RoomStatusEnum.AVAILABLE), "Premier Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0103", RoomStatusEnum.AVAILABLE), "Family Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0203", RoomStatusEnum.AVAILABLE), "Family Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0303", RoomStatusEnum.AVAILABLE), "Family Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0403", RoomStatusEnum.AVAILABLE), "Family Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0503", RoomStatusEnum.AVAILABLE), "Family Room");
+            roomSessionBean.createNewRoom(new RoomEntity("0104", RoomStatusEnum.AVAILABLE), "Junior Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0204", RoomStatusEnum.AVAILABLE), "Junior Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0304", RoomStatusEnum.AVAILABLE), "Junior Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0404", RoomStatusEnum.AVAILABLE), "Junior Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0504", RoomStatusEnum.AVAILABLE), "Junior Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0105", RoomStatusEnum.AVAILABLE), "Grand Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0205", RoomStatusEnum.AVAILABLE), "Grand Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0305", RoomStatusEnum.AVAILABLE), "Grand Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0405", RoomStatusEnum.AVAILABLE), "Grand Suite");
+            roomSessionBean.createNewRoom(new RoomEntity("0505", RoomStatusEnum.AVAILABLE), "Grand Suite");
             
         } catch (EmployeeUsernameExistException | UnknownPersistenceException | InputDataValidationException
                 | RoomNameExistException | RoomTypeNotFoundException | RoomTypeNameExistException | UpdateRoomTypeException | RoomRateNameExistException ex) {
