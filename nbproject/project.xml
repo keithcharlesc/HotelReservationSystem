@@ -23,6 +23,14 @@
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
+                <foreign-project>HotelReservationManagementClient</foreign-project>
+                <artifact-type>j2ee_ear_archive</artifact-type>
+                <script>build.xml</script>
+                <target>dist-ear</target>
+                <clean-target>clean-ear</clean-target>
+                <id>j2ee-module-car</id>
+            </reference>
+            <reference>
                 <foreign-project>HotelReservationSystem-ejb</foreign-project>
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
