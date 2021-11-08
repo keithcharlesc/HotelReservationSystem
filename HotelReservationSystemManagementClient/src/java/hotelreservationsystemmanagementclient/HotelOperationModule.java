@@ -11,19 +11,28 @@ import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
-
+//need another system timer also 
 public class HotelOperationModule {
     private RoomTypeSessionBeanRemote roomTypeSessionBean;
     private RoomSessionBeanRemote roomSessionBean;
     private RoomRateSessionBeanRemote roomRateSessionBean;
     private ExceptionRecordSessionBeanRemote exceptionRecordSessionBean;
     private EmployeeEntity curremtEmployee;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
 
     public HotelOperationModule() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     public HotelOperationModule(RoomTypeSessionBeanRemote roomTypeSessionBean, RoomSessionBeanRemote roomSessionBean, RoomRateSessionBeanRemote roomRateSessionBean, ExceptionRecordSessionBeanRemote exceptionRecordSessionBean, EmployeeEntity curremtEmployee) {
+        this();
         this.roomTypeSessionBean = roomTypeSessionBean;
         this.roomSessionBean = roomSessionBean;
         this.roomRateSessionBean = roomRateSessionBean;
@@ -31,16 +40,16 @@ public class HotelOperationModule {
         this.curremtEmployee = curremtEmployee;
     }
     
-    public void operationManagerOperations() {
+    public void salesManagerOperations() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
         while(true)
         {
-            System.out.println("*** POS System :: Cashier Operation ***\n");
-            System.out.println("1: Checkout");
-            System.out.println("2: Void/Refund");
-            System.out.println("3: View My Sale Transactions");
+            System.out.println("*** HoRS System :: Sales Manager Operation ***\n");
+            System.out.println("1: Create New Room Rate");
+            System.out.println("2: View Room Rate Details"); //include update and delete
+            System.out.println("3: View All Room Rates");
             System.out.println("4: Back\n");
             response = 0;
             
@@ -52,15 +61,15 @@ public class HotelOperationModule {
 
                 if(response == 1)
                 {
-                    doCheckout();
+                    doCreateNewRoomRate();
                 }
                 else if(response == 2)
                 {
-                    doVoidRefund();
+                    doViewRoomRateDetails();
                 }
                 else if(response == 3)
                 {
-                    doViewMySaleTransactions();
+                    doViewAllRoomRates();
                 }
                 else if(response == 4)
                 {
@@ -79,13 +88,13 @@ public class HotelOperationModule {
         }
     }
     
-    public void salesManagerOperations() {
+    public void operationManagerOperations() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
         while(true)
         {
-            System.out.println("*** POS System :: Operation Manager Operation ***\n");
+            System.out.println("*** HoRS System :: Operation Manager Operation ***\n");
             System.out.println("1: Create New Room Type"); 
             System.out.println("2: View Room Type Details"); //include update and delete
             System.out.println("3: View All Room Types");
@@ -113,9 +122,29 @@ public class HotelOperationModule {
                 }
                 else if(response == 3)
                 {
-                    doViewMySaleTransactions();
+                    doViewAllRoomTypes();
                 }
                 else if(response == 4)
+                {
+                    doCreateNewRoom();
+                }
+                else if(response == 5)
+                {
+                    doUpdateRoom();
+                }
+                else if(response == 6)
+                {
+                    doDeleteRoom();
+                }
+                else if(response == 7)
+                {
+                    doViewAllRooms();
+                }
+                else if(response == 8)
+                {
+                    doViewRoomAllocationExceptionReport();
+                }
+                else if(response == 9)
                 {
                     break;
                 }
@@ -125,7 +154,7 @@ public class HotelOperationModule {
                 }
             }
             
-            if(response == 4)
+            if(response == 9)
             {
                 break;
             }

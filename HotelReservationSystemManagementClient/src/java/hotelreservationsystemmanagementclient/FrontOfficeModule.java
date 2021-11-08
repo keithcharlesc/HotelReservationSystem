@@ -29,7 +29,7 @@ public class FrontOfficeModule {
         
         while(true)
         {
-            System.out.println("*** POS System :: Guest Relation Officer Operation ***\n");
+            System.out.println("*** HoRS System :: Guest Relation Officer Operation ***\n");
             System.out.println("1: Walk-In Search Room"); //includes walk-in reserve room
             System.out.println("2: Check-in Guest");
             System.out.println("3: Check-out Guest");
