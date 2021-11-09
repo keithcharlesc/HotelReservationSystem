@@ -44,15 +44,15 @@ public class FrontOfficeModule {
 
                 if(response == 1)
                 {
-                    doWalkInSearchRoom();
+                    //doWalkInSearchRoom();
                 }
                 else if(response == 2)
                 {
-                    doCheckInGuest();
+                    //doCheckInGuest();
                 }
                 else if(response == 3)
                 {
-                    doCheckOutGuest();
+                    //doCheckOutGuest();
                 }
                 else if(response == 4)
                 {

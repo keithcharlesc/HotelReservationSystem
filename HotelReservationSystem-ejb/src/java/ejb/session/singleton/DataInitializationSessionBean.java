@@ -82,16 +82,16 @@ public class DataInitializationSessionBean {
             RoomTypeEntity grandSuiteEntity = roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Grand Suite", "None"));
 
             //roomRate
-            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Deluxe Room Published", new BigDecimal("100")), deluxeRoomEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Deluxe Room Normal", new BigDecimal("50")), deluxeRoomEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Premier Room Published", new BigDecimal("200")), premierRoomEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Premier Room Normal", new BigDecimal("100")), premierRoomEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Family Room Published", new BigDecimal("300")), familyRoomEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Family Room Normal", new BigDecimal("150")), familyRoomEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Junior Suite Published", new BigDecimal("400")), juniorSuiteEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Junior Suite Normal", new BigDecimal("200")), juniorSuiteEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Grand Suite Published", new BigDecimal("500")), grandSuiteEntity.getRoomTypeId());
-            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Grand Suite Normal", new BigDecimal("250")), grandSuiteEntity.getRoomTypeId());
+            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Deluxe Room Published", new BigDecimal("100")), deluxeRoomEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Deluxe Room Normal", new BigDecimal("50")), deluxeRoomEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Premier Room Published", new BigDecimal("200")), premierRoomEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Premier Room Normal", new BigDecimal("100")), premierRoomEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Family Room Published", new BigDecimal("300")), familyRoomEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Family Room Normal", new BigDecimal("150")), familyRoomEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Junior Suite Published", new BigDecimal("400")), juniorSuiteEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Junior Suite Normal", new BigDecimal("200")), juniorSuiteEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Grand Suite Published", new BigDecimal("500")), grandSuiteEntity.getRoomTypeName());
+            roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Grand Suite Normal", new BigDecimal("250")), grandSuiteEntity.getRoomTypeName());
 //            roomRateSessionBean.createNewRoomRate(new RoomRateEntity("Test", new BigDecimal("1")), deluxeRoomEntity);
             
             //room

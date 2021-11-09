@@ -55,11 +55,11 @@ public class SystemAdministrationModule {
                 }
                 else if(response == 3)
                 {
-                    doCreateNewPartner();
+                    //doCreateNewPartner();
                 }
                 else if(response == 4)
                 {
-                    doViewAllPartners();
+                    //doViewAllPartners();
                 }
                 else if(response == 5)
                 {

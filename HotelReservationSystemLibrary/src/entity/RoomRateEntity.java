@@ -137,7 +137,7 @@ public abstract class RoomRateEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RoomRateEntity{" + "roomRateId=" + roomRateId + ", name=" + name + ", ratePerNight=" + ratePerNight + ", isDisabled=" + isDisabled + ", roomType=" + roomType + ", nights=" + nights + '}';
+        return "RoomRate{" + "roomRateId=" + roomRateId + ", name=" + name + ", ratePerNight=" + ratePerNight + ", isDisabled=" + isDisabled + ", roomType=" + roomType + ", nights=" + nights + '}';
     }
 
 }

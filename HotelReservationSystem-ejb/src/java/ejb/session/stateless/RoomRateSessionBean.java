@@ -56,12 +56,12 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     }
 
     @Override
-    public void createNewRoomRate(RoomRateEntity newRoomRateEntity, Long roomTypeId) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException {
+    public void createNewRoomRate(RoomRateEntity newRoomRateEntity, String roomTypeName) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException {
         Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(newRoomRateEntity);
 
         if (constraintViolations.isEmpty()) {
             try {
-                RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeId(roomTypeId);
+                RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
                 newRoomRateEntity.setRoomType(roomType);
                 roomType.getRoomRates().add(newRoomRateEntity);
                 em.persist(newRoomRateEntity);

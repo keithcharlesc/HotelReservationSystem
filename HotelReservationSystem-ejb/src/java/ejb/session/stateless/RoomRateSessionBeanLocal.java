@@ -23,7 +23,7 @@ import util.exception.UpdateRoomRateException;
 @Local
 public interface RoomRateSessionBeanLocal {
 
-    public void createNewRoomRate(RoomRateEntity newRoomRateEntity, Long roomTypeId) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException;
+    public void createNewRoomRate(RoomRateEntity newRoomRateEntity, String roomTypeName) throws RoomRateNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException;
 
     public List<RoomRateEntity> retrieveAllRoomRates();
 
