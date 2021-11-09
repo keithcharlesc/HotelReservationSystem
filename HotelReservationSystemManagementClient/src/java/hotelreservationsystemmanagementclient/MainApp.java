@@ -138,11 +138,11 @@ public class MainApp {
 //                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
 //                    }
                 } else if (response == 3) {
-//                    try {
-//                        frontOfficeModule.menuFrontOffice();
-//                    } catch (InvalidAccessRightException ex) {
-//                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
-//                    }
+                    try {
+                        frontOfficeModule.menuFrontOffice();
+                    } catch (InvalidAccessRightException ex) {
+                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
                 } else if (response == 4) {
                     break;
                 } else {
@@ -150,7 +150,7 @@ public class MainApp {
                 }
             }
 
-            if (response == 3) {
+            if (response == 5) {
                 break;
             }
         }

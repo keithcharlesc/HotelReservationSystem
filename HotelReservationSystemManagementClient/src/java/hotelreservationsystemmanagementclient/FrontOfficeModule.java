@@ -8,6 +8,8 @@ import java.util.Scanner;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.EmployeeAccessRightEnum;
+import util.exception.InvalidAccessRightException;
 
 public class FrontOfficeModule {
 
@@ -31,7 +33,13 @@ public class FrontOfficeModule {
         this.currentEmployee = currentEmployee;
     }
 
-    public void guestRelationOfficerOperations() {
+    public void menuFrontOffice() throws InvalidAccessRightException {
+        
+        if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.GUEST_RELATION_OFFICER) {
+            throw new InvalidAccessRightException("You don't have GUEST RELATION OFFICER rights to access the system administration module.");
+        }
+
+        
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -66,4 +74,17 @@ public class FrontOfficeModule {
             }
         }
     }
+    
+    public void doWalkInSearchRoom() {
+        System.out.println("");
+    }
+    
+    public void doCheckInGuest() {
+        
+    }
+    
+    public void doCheckOutGuest() {
+        
+    }
+    
 }

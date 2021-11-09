@@ -21,7 +21,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-//        MainApp mainApp = newMainApp(guestSessionBeanRemote);
+//        MainApp mainApp = new MainApp(guestSessionBeanRemote);
 //        mainApp.runApp();
 //        
         
