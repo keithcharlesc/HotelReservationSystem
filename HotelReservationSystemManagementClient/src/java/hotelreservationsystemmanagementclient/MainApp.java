@@ -48,6 +48,7 @@ public class MainApp {
         this.employeeSessionBean = employeeSessionBean;
         this.partnerEmployeeSessionBean = partnerEmployeeSessionBean;
         this.guestSessionBean = guestSessionBean;
+        this.currentEmployeeEntity = null;
     }
 
     public void runApp() {
@@ -126,17 +127,17 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    try{
-                    systemAdministrationModule.menuSystemAdministration();
+                    try {
+                        systemAdministrationModule.menuSystemAdministration();
                     } catch (InvalidAccessRightException ex) {
                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
                     }
                 } else if (response == 2) {
-//                    try {
-//                        hotelOperationModule.menuHotelOperation();
-//                    } catch (InvalidAccessRightException ex) {
-//                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
-//                    }
+                    try {
+                        hotelOperationModule.menuHotelOperation();
+                    } catch (InvalidAccessRightException ex) {
+                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
                 } else if (response == 3) {
                     try {
                         frontOfficeModule.menuFrontOffice();
@@ -150,9 +151,10 @@ public class MainApp {
                 }
             }
 
-            if (response == 5) {
+            if (response == 4) {
                 break;
             }
         }
     }
+
 }
