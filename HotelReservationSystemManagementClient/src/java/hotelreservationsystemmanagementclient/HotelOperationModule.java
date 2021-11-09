@@ -268,42 +268,6 @@ public class HotelOperationModule {
                 } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {
                     System.out.println("Error: " + ex.getMessage());
                 }
-                else if(response == 2)
-                {
-//                    doViewRoomTypeDetails();
-                }
-                else if(response == 3)
-                {
-//                    doViewAllRoomTypes();
-                }
-                else if(response == 4)
-                {
-//                    doCreateNewRoom();
-                }
-                else if(response == 5)
-                {
-//                    doUpdateRoom();
-                }
-                else if(response == 6)
-                {
-//                    doDeleteRoom();
-                }
-                else if(response == 7)
-                {
-//                    doViewAllRooms();
-                }
-                else if(response == 8)
-                {
-//                    doViewRoomAllocationExceptionReport();
-                }
-                else if(response == 9)
-                {
-                    break;
-                }
-                else
-                {
-                    System.out.println("Invalid option, please try again!\n");                
-                }
             }
         }
         System.out.print("Press any key to continue...> ");
