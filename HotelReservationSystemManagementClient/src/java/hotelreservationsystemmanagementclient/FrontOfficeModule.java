@@ -5,69 +5,86 @@ import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
-
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import util.enumeration.EmployeeAccessRightEnum;
+import util.exception.InvalidAccessRightException;
 
 public class FrontOfficeModule {
+
     private RoomSessionBeanRemote roomSessionBean;
     private GuestSessionBeanRemote guestSessionBean;
     private ReservationSessionBeanRemote reservationSessionBean;
     private EmployeeEntity currentEmployee;
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
 
     public FrontOfficeModule() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     public FrontOfficeModule(RoomSessionBeanRemote roomSessionBean, GuestSessionBeanRemote guestSessionBean, ReservationSessionBeanRemote reservationSessionBean, EmployeeEntity currentEmployee) {
+        this();
         this.roomSessionBean = roomSessionBean;
         this.guestSessionBean = guestSessionBean;
         this.reservationSessionBean = reservationSessionBean;
         this.currentEmployee = currentEmployee;
     }
-    
-    public void guestRelationOfficerOperations() {
+
+    public void menuFrontOffice() throws InvalidAccessRightException {
+        
+        if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.GUEST_RELATION_OFFICER) {
+            throw new InvalidAccessRightException("You don't have GUEST RELATION OFFICER rights to access the system administration module.");
+        }
+
+        
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
-        
-        while(true)
-        {
+
+        while (true) {
             System.out.println("*** HoRS System :: Guest Relation Officer Operation ***\n");
             System.out.println("1: Walk-In Search Room"); //includes walk-in reserve room
             System.out.println("2: Check-in Guest");
             System.out.println("3: Check-out Guest");
             System.out.println("4: Logout\n");
             response = 0;
-            
-            while(response < 1 || response > 3)
-            {
+
+            while (response < 1 || response > 3) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
 
-                if(response == 1)
-                {
-                    //doWalkInSearchRoom();
-                }
-                else if(response == 2)
-                {
-                    //doCheckInGuest();
-                }
-                else if(response == 3)
-                {
-                    //doCheckOutGuest();
-                }
-                else if(response == 4)
-                {
+                if (response == 1) {
+//                    doWalkInSearchRoom();
+                } else if (response == 2) {
+//                    doCheckInGuest();
+                } else if (response == 3) {
+//                    doCheckOutGuest();
+                } else if (response == 4) {
                     break;
-                }
-                else
-                {
-                    System.out.println("Invalid option, please try again!\n");                
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
                 }
             }
-            
-            if(response == 4)
-            {
+
+            if (response == 4) {
                 break;
             }
         }
     }
+    
+    public void doWalkInSearchRoom() {
+        System.out.println("");
+    }
+    
+    public void doCheckInGuest() {
+        
+    }
+    
+    public void doCheckOutGuest() {
+        
+    }
+    
 }

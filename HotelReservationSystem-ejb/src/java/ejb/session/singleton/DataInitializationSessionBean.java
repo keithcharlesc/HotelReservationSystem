@@ -60,7 +60,7 @@ public class DataInitializationSessionBean {
         try {
             employeeSessionBean.retrieveEmployeeByUsername("sysadmin");
             roomTypeSessionBean.retrieveRoomTypeByRoomTypeName("Deluxe Room");
-            roomSessionBean.retrieveRoomByRoomNumber(0101);
+            roomSessionBean.retrieveRoomByRoomNumber("0101");
             //roomRateSessionBean.retrieveRoomRateByRoomRateName("Deluxe Room Published");
         } catch (RoomNotFoundException | EmployeeNotFoundException | RoomTypeNotFoundException ex) {
             initializeData();

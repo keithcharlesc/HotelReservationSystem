@@ -114,7 +114,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     @Override
-    public RoomEntity retrieveRoomByRoomNumber(Integer number) throws RoomNotFoundException {
+    public RoomEntity retrieveRoomByRoomNumber(String number) throws RoomNotFoundException {
         Query query = entityManager.createQuery("SELECT p FROM RoomEntity p WHERE p.number = :inRoomNumber");
         query.setParameter("inRoomNumber", number);
 
