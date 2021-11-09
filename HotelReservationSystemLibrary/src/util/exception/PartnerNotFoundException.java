@@ -9,12 +9,12 @@ package util.exception;
  *
  * @author xianhui
  */
-public class PartnerEmployeeNotFoundException extends Exception{
+public class PartnerNotFoundException extends Exception{
 
-    public PartnerEmployeeNotFoundException() {
+    public PartnerNotFoundException() {
     }
 
-    public PartnerEmployeeNotFoundException(String string) {
+    public PartnerNotFoundException(String string) {
         super(string);
     }
     

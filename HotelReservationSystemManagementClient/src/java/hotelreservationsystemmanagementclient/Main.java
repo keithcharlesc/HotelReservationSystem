@@ -15,18 +15,6 @@ import ejb.session.stateless.RoomTypeSessionBeanRemote;
 public class Main {
 
     @EJB
-    private static GuestSessionBeanRemote guestSessionBean;
-    @EJB
-    private static PartnerEmployeeSessionBeanRemote partnerEmployeeSessionBean;
-    @EJB
-    private static EmployeeSessionBeanRemote employeeSessionBean;
-    @EJB
-    private static ExceptionRecordSessionBeanRemote exceptionRecordSessionBean;
-    @EJB
-    private static NightSessionBeanRemote nightSessionBean;
-    @EJB
-    private static ReservationRoomSessionBeanRemote reservationRoomSessionBean;
-    @EJB
     private static ReservationSessionBeanRemote reservationSessionBean;
     @EJB
     private static RoomRateSessionBeanRemote roomRateSessionBean;
@@ -34,11 +22,23 @@ public class Main {
     private static RoomSessionBeanRemote roomSessionBean;
     @EJB
     private static RoomTypeSessionBeanRemote roomTypeSessionBean;
-    
+    @EJB
+    private static ReservationRoomSessionBeanRemote reservationRoomSessionBean;
+    @EJB
+    private static NightSessionBeanRemote nightSessionBean;
+    @EJB
+    private static ExceptionRecordSessionBeanRemote exceptionRecordSessionBean;
+    @EJB
+    private static EmployeeSessionBeanRemote employeeSessionBean;
+    @EJB
+    private static PartnerEmployeeSessionBeanRemote partnerEmployeeSessionBean;
+    @EJB
+    private static GuestSessionBeanRemote guestSessionBean;
 
-    
     public static void main(String[] args) {
-        // TODO code application logic here
+        MainApp mainApp = new MainApp(reservationSessionBean, roomRateSessionBean, roomSessionBean, roomTypeSessionBean, reservationRoomSessionBean, nightSessionBean, exceptionRecordSessionBean, employeeSessionBean, partnerEmployeeSessionBean, guestSessionBean);
+        mainApp.runApp();
+
     }
-    
+
 }

@@ -61,15 +61,15 @@ public class HotelOperationModule {
 
                 if(response == 1)
                 {
-                    doCreateNewRoomRate();
+//                    doCreateNewRoomRate();
                 }
                 else if(response == 2)
                 {
-                    doViewRoomRateDetails();
+//                    doViewRoomRateDetails();
                 }
                 else if(response == 3)
                 {
-                    doViewAllRoomRates();
+//                    doViewAllRoomRates();
                 }
                 else if(response == 4)
                 {
@@ -114,35 +114,35 @@ public class HotelOperationModule {
 
                 if(response == 1)
                 {
-                    doCreateNewRoomType();
+//                    doCreateNewRoomType();
                 }
                 else if(response == 2)
                 {
-                    doViewRoomTypeDetails();
+//                    doViewRoomTypeDetails();
                 }
                 else if(response == 3)
                 {
-                    doViewAllRoomTypes();
+//                    doViewAllRoomTypes();
                 }
                 else if(response == 4)
                 {
-                    doCreateNewRoom();
+//                    doCreateNewRoom();
                 }
                 else if(response == 5)
                 {
-                    doUpdateRoom();
+//                    doUpdateRoom();
                 }
                 else if(response == 6)
                 {
-                    doDeleteRoom();
+//                    doDeleteRoom();
                 }
                 else if(response == 7)
                 {
-                    doViewAllRooms();
+//                    doViewAllRooms();
                 }
                 else if(response == 8)
                 {
-                    doViewRoomAllocationExceptionReport();
+//                    doViewRoomAllocationExceptionReport();
                 }
                 else if(response == 9)
                 {

@@ -10,8 +10,8 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.PartnerEmployeeNotFoundException;
-import util.exception.PartnerEmployeeUsernameExistException;
+import util.exception.PartnerNotFoundException;
+import util.exception.PartnerUsernameExistException;
 import util.exception.UnknownPersistenceException;
 
 /**
@@ -20,9 +20,9 @@ import util.exception.UnknownPersistenceException;
  */
 @Local
 public interface PartnerEmployeeSessionBeanLocal {
-    public Long createNewPartnerEmployee(PartnerEmployeeEntity newPartnerEmployeeEntity) throws PartnerEmployeeUsernameExistException, UnknownPersistenceException, InputDataValidationException;
+    public Long createNewPartnerEmployee(PartnerEmployeeEntity newPartnerEmployeeEntity) throws PartnerUsernameExistException, UnknownPersistenceException, InputDataValidationException;
     public List<PartnerEmployeeEntity> retrieveAllPartnerEmployees();
-    public PartnerEmployeeEntity retrievePartnerEmployeeByPartnerEmployeeId(Long partnerEmployeeId) throws PartnerEmployeeNotFoundException;
-    public PartnerEmployeeEntity retrievePartnerEmployeeByUsername(String username) throws PartnerEmployeeNotFoundException;
+    public PartnerEmployeeEntity retrievePartnerEmployeeByPartnerEmployeeId(Long partnerEmployeeId) throws PartnerNotFoundException;
+    public PartnerEmployeeEntity retrievePartnerEmployeeByUsername(String username) throws PartnerNotFoundException;
     public PartnerEmployeeEntity partnerEmployeeLogin(String username, String password) throws InvalidLoginCredentialException;
 }

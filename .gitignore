@@ -11,3 +11,7 @@
 /HotelReservationSystem-ejb/build/
 /HotelReservationSystem-ejb/dist/
 /HotelReservationManagementClient/nbproject/private/
+/HotelReservationSystemManagementClient/nbproject/private/
+/HotelReservationSystemReservationClient/nbproject/private/
+/HotelReservationSystemManagementClient/dist/
+/HotelReservationSystemManagementClient/build/
