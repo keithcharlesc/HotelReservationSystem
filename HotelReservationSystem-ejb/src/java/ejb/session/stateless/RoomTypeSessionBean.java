@@ -92,32 +92,31 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
         if (constraintViolations.isEmpty()) {
             try {
-                entityManager.persist(newRoomTypeEntity);
-
+                //checks whether a room type has next room type the same as that next room type
                 Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
                 query.setParameter("nextRoomType", newRoomTypeEntity.getNextRoomType());
-                if (query.getSingleResult() != null) {
+
+//                //checks whether the next room type exists as a Room Type itself
+//                Query queryTwo = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.roomTypeName = :roomType");
+//                queryTwo.setParameter("roomType", newRoomTypeEntity.getNextRoomType());
+//                RoomTypeEntity roomTypeExists = (RoomTypeEntity) queryTwo.getSingleResult();
+                if (!query.getResultList().isEmpty()) {
                     RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
+//                    System.out.println("Executed One");
                     roomType.setNextRoomType(newRoomTypeEntity.getRoomTypeName());
+                    createNewRoomType(newRoomTypeEntity);
+                    entityManager.persist(newRoomTypeEntity);
+                    entityManager.flush();
+                    return newRoomTypeEntity;
                 } else {
-                    throw new UpdateRoomTypeException("Unable to change nextRoomType of previous room!");
+//                    System.out.println("Executed Two");
+                    createNewRoomType(newRoomTypeEntity);
+                    entityManager.persist(newRoomTypeEntity);
+                    entityManager.flush();
+                    return newRoomTypeEntity;
                 }
-
-                if (newRoomTypeEntity.getRooms().size() > 0) {
-                    for (RoomEntity room : newRoomTypeEntity.getRooms()) {
-                        entityManager.persist(room);
-                    }
-                }
-
-                if (newRoomTypeEntity.getRoomRates().size() > 0) {
-                    for (RoomRateEntity roomRate : newRoomTypeEntity.getRoomRates()) {
-                        entityManager.persist(roomRate);
-                    }
-                }
-
-                entityManager.flush();
-
-                return newRoomTypeEntity;
+            } catch (NoResultException ex) {
+                throw new UnknownPersistenceException("FAILED");
             } catch (PersistenceException ex) {
                 if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                     if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
@@ -136,7 +135,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
     @Override
     public List<RoomTypeEntity> retrieveAllRoomTypes() {
-        Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r ORDER BY r.roomTypeName");
+        Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r ORDER BY r.roomTypeId");
 
         return query.getResultList();
     }
@@ -206,12 +205,10 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
         Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
         query.setParameter("nextRoomType", roomTypeEntityToRemove.getRoomTypeName());
-        if (query.getSingleResult() != null) {
-            RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
+        if (!query.getResultList().isEmpty()) {
+            RoomTypeEntity roomType = (RoomTypeEntity)query.getSingleResult();
             roomType.setNextRoomType(roomTypeEntityToRemove.getNextRoomType());
-        } else {
-            throw new UpdateRoomTypeException("Unable to change nextRoomType of previous room!");
-        }
+        } 
 
         if (roomRateEntities.isEmpty() && rooms.isEmpty()) {
             entityManager.remove(roomTypeEntityToRemove);

@@ -38,7 +38,6 @@ public class Main {
     public static void main(String[] args) {
         MainApp mainApp = new MainApp(reservationSessionBean, roomRateSessionBean, roomSessionBean, roomTypeSessionBean, reservationRoomSessionBean, nightSessionBean, exceptionRecordSessionBean, employeeSessionBean, partnerEmployeeSessionBean, guestSessionBean);
         mainApp.runApp();
-
     }
 
 }

@@ -11,7 +11,7 @@ import javax.ejb.Local;
 import util.exception.DeleteRoomException;
 import util.exception.InputDataValidationException;
 import util.exception.RoomTypeNotFoundException;
-import util.exception.RoomNameExistException;
+import util.exception.RoomNumberExistException;
 import util.exception.RoomNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
@@ -23,10 +23,10 @@ import util.exception.UpdateRoomException;
 @Local
 public interface RoomSessionBeanLocal {
     
-    public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException;
+    public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException;
     public List<RoomEntity> retrieveAllRooms();
     public RoomEntity retrieveRoomByRoomId(Long roomId) throws RoomNotFoundException;
     public RoomEntity retrieveRoomByRoomNumber(String number) throws RoomNotFoundException;
-    public void updateRoom(RoomEntity roomEntity) throws RoomNotFoundException, UpdateRoomException, InputDataValidationException;
+    public RoomEntity updateRoom(RoomEntity roomEntity) throws RoomNotFoundException, UpdateRoomException, InputDataValidationException;
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
 }

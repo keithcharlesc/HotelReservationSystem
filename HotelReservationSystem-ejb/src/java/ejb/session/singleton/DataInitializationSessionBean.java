@@ -26,7 +26,7 @@ import util.enumeration.RoomStatusEnum;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
 import util.exception.InputDataValidationException;
-import util.exception.RoomNameExistException;
+import util.exception.RoomNumberExistException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNameExistException;
 import util.exception.RoomTypeNameExistException;
@@ -122,7 +122,7 @@ public class DataInitializationSessionBean {
             roomSessionBean.createNewRoom(new RoomEntity("0505", RoomStatusEnum.AVAILABLE), "Grand Suite");
             
         } catch (EmployeeUsernameExistException | UnknownPersistenceException | InputDataValidationException
-                | RoomNameExistException | RoomTypeNotFoundException | RoomTypeNameExistException | UpdateRoomTypeException | RoomRateNameExistException ex) {
+                | RoomNumberExistException | RoomTypeNotFoundException | RoomTypeNameExistException | UpdateRoomTypeException | RoomRateNameExistException ex) {
             ex.printStackTrace();
         }
     }
