@@ -443,64 +443,8 @@ public class HotelOperationModule {
         }
     }
 
-    /*----------------------------------------Room Rate----------------------------------------*/
-
-
-    private void showInputDataValidationErrorsForRoomRateEntity(Set<ConstraintViolation<RoomRateEntity>> constraintViolations) {
-        System.out.println("\nInput data validation error!:");
-
-        for (ConstraintViolation constraintViolation : constraintViolations) {
-            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
-        }
-
-    // SALES MANAGER OPERATIONS (END) <==============================================
-
-    //SYSTEM (START) ===============================================================> 
-    //SYSTEM (END) <=================================================================
-}
-
     // OPERATION MANAGER OPERATIONS (END) <================================================ 
     //SALES MANAGER OPERATIONS (START) ===================================================>  
-    public void salesManagerOperations() throws InvalidAccessRightException {
-
-        if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SALES_MANAGER) {
-            throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER rights to access the system administration module.");
-        }
-
-        Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
-
-        while (true) {
-            System.out.println("*** HoRS System :: Hotel Operation :: Sales Manager ***\n");
-            System.out.println("1: Create New Room Rate");
-            System.out.println("2: View Room Rate Details"); //include update and delete
-            System.out.println("3: View All Room Rates");
-            System.out.println("4: Back\n");
-            response = 0;
-
-            while (response < 1 || response > 3) {
-                System.out.print("> ");
-
-                response = scanner.nextInt();
-
-                if (response == 1) {
-                    doCreateNewRoomRate();
-                } else if (response == 2) {
-                    doViewRoomRateDetails();
-                } else if (response == 3) {
-                    doViewAllRoomRates();
-                } else if (response == 4) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
-                }
-            }
-
-            if (response == 4) {
-                break;
-            }
-        }
-    }
 
     /*----------------------------------------Room Rate----------------------------------------*/
     public void doCreateNewRoomRate() {
@@ -600,7 +544,6 @@ public class HotelOperationModule {
             }
         }
     }
-
 
     public void doViewRoomRateDetails() {
         try {
@@ -762,13 +705,22 @@ public class HotelOperationModule {
             System.out.println("Product NOT deleted!\n");
         }
     }
+    
+     private void showInputDataValidationErrorsForRoomRateEntity(Set<ConstraintViolation<RoomRateEntity>> constraintViolations) {
+        System.out.println("\nInput data validation error!:");
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+    }
 
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
         return java.sql.Timestamp.valueOf(dateToConvert);
     }
 }
-    // SALES MANAGER OPERATIONS (END) <==============================================
+// SALES MANAGER OPERATIONS (END) <==============================================
 
-    //SYSTEM (START) ===============================================================> 
-    //SYSTEM (END) <=================================================================
-}
+//SYSTEM (START) ===============================================================> 
+//SYSTEM (END) <=================================================================
+
