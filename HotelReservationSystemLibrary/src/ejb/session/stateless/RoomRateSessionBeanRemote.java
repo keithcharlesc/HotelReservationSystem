@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.PeakRateEntity;
+import entity.PromotionRateEntity;
 import entity.RoomRateEntity;
 import java.util.List;
 import javax.ejb.Remote;
@@ -30,5 +32,9 @@ public interface RoomRateSessionBeanRemote {
     public void updateRoomRate(RoomRateEntity roomRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException;
 
     public void deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException, DeleteRoomRateException;
+    
+    public void updatePeakRate(PeakRateEntity peakRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException;
+    
+    public void updatePromotionRate(PromotionRateEntity promoRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException;
 
 }

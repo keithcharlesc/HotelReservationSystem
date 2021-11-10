@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.Future;
@@ -20,11 +21,11 @@ public class PeakRateEntity extends RoomRateEntity implements Serializable {
 
     @Column(nullable = false)
     @NotNull
-    private LocalDateTime startDate;
+    private Date startDate;
     @Column(nullable = false)
     @Future
     @NotNull
-    private LocalDateTime endDate;
+    private Date endDate;
 
     public PeakRateEntity() {
         super();
@@ -36,25 +37,25 @@ public class PeakRateEntity extends RoomRateEntity implements Serializable {
         this.ratePerNight = ratePerNight;
     }
 
-    public PeakRateEntity(String name, BigDecimal ratePerNight, LocalDateTime startDate, LocalDateTime endDate) {
+    public PeakRateEntity(String name, BigDecimal ratePerNight, Date startDate, Date endDate) {
         this(name, ratePerNight);
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public LocalDateTime getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

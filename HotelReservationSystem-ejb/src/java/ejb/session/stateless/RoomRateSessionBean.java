@@ -65,6 +65,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
                 newRoomRateEntity.setRoomType(roomType);
                 roomType.getRoomRates().add(newRoomRateEntity);
                 em.persist(newRoomRateEntity);
+                System.out.println("Successfully Created!");
                 em.flush();
 //                return newRoomRateEntity.getRoomRateId();
             } catch (PersistenceException ex) {
@@ -87,7 +88,8 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
     @Override
     public List<RoomRateEntity> retrieveAllRoomRates() {
-        Query query = em.createQuery("SELECT rr FROM RoomRateEntity rr");
+        Query query = em.createQuery("SELECT rr FROM RoomRateEntity rr WHERE rr.isDisabled = :disabled");
+        query.setParameter("disabled", false);
 
         return query.getResultList();
     }
@@ -107,8 +109,9 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
     @Override
     public RoomRateEntity retrieveRoomRateByRoomRateName(String name) throws RoomRateNotFoundException {
-        Query query = em.createQuery("SELECT rr FROM RoomRateEntity rr WHERE rr.name = :inName");
+        Query query = em.createQuery("SELECT rr FROM RoomRateEntity rr WHERE rr.name = :inName AND rr.isDisabled = :disabled");
         query.setParameter("inName", name);
+        query.setParameter("disabled", false);
 
         try {
             return (RoomRateEntity) query.getSingleResult();
@@ -117,34 +120,95 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         }
     }
 
+//    @Override
+//    public void updateRoomRate(RoomRateEntity roomRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException {
+//        if (roomRateEntity != null && roomRateEntity.getRoomRateId() != null) {
+//            Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRateEntity);
+//
+//            if (constraintViolations.isEmpty()) {
+//                RoomRateEntity roomRateEntityToUpdate = retrieveRoomRateByRoomRateId(roomRateEntity.getRoomRateId());
+//                if (roomRateEntity instanceof PromotionRateEntity) {
+//                    PromotionRateEntity promoRateEntity = (PromotionRateEntity) roomRateEntity;
+//                    PromotionRateEntity promoRateEntityToUpdate = (PromotionRateEntity) roomRateEntityToUpdate;
+//                    promoRateEntityToUpdate.setName(promoRateEntity.getName());
+//                    promoRateEntityToUpdate.setRatePerNight(promoRateEntity.getRatePerNight());
+//                    promoRateEntityToUpdate.setStartDate(promoRateEntity.getStartDate());
+//                    promoRateEntityToUpdate.setEndDate(promoRateEntity.getEndDate());
+//                    promoRateEntityToUpdate.setIsDisabled(promoRateEntity.getIsDisabled());
+//                } else if (roomRateEntity instanceof PeakRateEntity) {
+//                    PeakRateEntity peakRateEntity = (PeakRateEntity) roomRateEntity;
+//                    PeakRateEntity peakRateEntityToUpdate = (PeakRateEntity) roomRateEntityToUpdate;
+//                    peakRateEntityToUpdate.setName(peakRateEntity.getName());
+//                    peakRateEntityToUpdate.setRatePerNight(peakRateEntity.getRatePerNight());
+//                    peakRateEntityToUpdate.setStartDate(peakRateEntity.getStartDate());
+//                    peakRateEntityToUpdate.setEndDate(peakRateEntity.getEndDate());
+//                    peakRateEntityToUpdate.setIsDisabled(peakRateEntity.getIsDisabled());
+//                } else {
+//                    roomRateEntityToUpdate.setName(roomRateEntity.getName());
+//                    roomRateEntityToUpdate.setRatePerNight(roomRateEntity.getRatePerNight());
+//                    roomRateEntityToUpdate.setIsDisabled(roomRateEntity.getIsDisabled());
+//                }
+//            } else {
+//                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+//            }
+//        } else {
+//            throw new RoomRateNotFoundException("RoomRate ID not provided for roomRate to be updated");
+//        }
+//    }
+    
+    @Override
+    public void updatePromotionRate(PromotionRateEntity promoRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException {
+        if (promoRateEntity != null && promoRateEntity.getRoomRateId() != null) {
+            Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(promoRateEntity);
+
+            if (constraintViolations.isEmpty()) {
+                PromotionRateEntity promoRateEntityToUpdate = (PromotionRateEntity) retrieveRoomRateByRoomRateId(promoRateEntity.getRoomRateId());
+
+                promoRateEntityToUpdate.setName(promoRateEntity.getName());
+                promoRateEntityToUpdate.setRatePerNight(promoRateEntity.getRatePerNight());
+                promoRateEntityToUpdate.setStartDate(promoRateEntity.getStartDate());
+                promoRateEntityToUpdate.setEndDate(promoRateEntity.getEndDate());
+                promoRateEntityToUpdate.setIsDisabled(promoRateEntity.getIsDisabled());
+            } else {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        } else {
+            throw new RoomRateNotFoundException("RoomRate ID not provided for roomRate to be updated");
+        }
+    }
+    
+    @Override
+    public void updatePeakRate(PeakRateEntity peakRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException {
+        if (peakRateEntity != null && peakRateEntity.getRoomRateId() != null) {
+            Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(peakRateEntity);
+
+            if (constraintViolations.isEmpty()) {
+
+                PeakRateEntity peakRateEntityToUpdate = (PeakRateEntity) retrieveRoomRateByRoomRateId(peakRateEntity.getRoomRateId());
+                peakRateEntityToUpdate.setName(peakRateEntity.getName());
+                peakRateEntityToUpdate.setRatePerNight(peakRateEntity.getRatePerNight());
+                peakRateEntityToUpdate.setStartDate(peakRateEntity.getStartDate());
+                peakRateEntityToUpdate.setEndDate(peakRateEntity.getEndDate());
+                peakRateEntityToUpdate.setIsDisabled(peakRateEntity.getIsDisabled());
+            } else {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        } else {
+            throw new RoomRateNotFoundException("RoomRate ID not provided for roomRate to be updated");
+        }
+    }
+    
     @Override
     public void updateRoomRate(RoomRateEntity roomRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException {
         if (roomRateEntity != null && roomRateEntity.getRoomRateId() != null) {
             Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRateEntity);
 
             if (constraintViolations.isEmpty()) {
+
                 RoomRateEntity roomRateEntityToUpdate = retrieveRoomRateByRoomRateId(roomRateEntity.getRoomRateId());
-                if (roomRateEntity instanceof PeakRateEntity) {
-                    PromotionRateEntity promoRateEntity = (PromotionRateEntity) roomRateEntity;
-                    PromotionRateEntity promoRateEntityToUpdate = (PromotionRateEntity) roomRateEntityToUpdate;
-                    promoRateEntityToUpdate.setName(promoRateEntity.getName());
-                    promoRateEntityToUpdate.setRatePerNight(promoRateEntity.getRatePerNight());
-                    promoRateEntityToUpdate.setStartDate(promoRateEntity.getStartDate());
-                    promoRateEntityToUpdate.setEndDate(promoRateEntity.getEndDate());
-                    promoRateEntityToUpdate.setIsDisabled(promoRateEntity.getIsDisabled());
-                } else if (roomRateEntity instanceof PromotionRateEntity) {
-                    PeakRateEntity peakRateEntity = (PeakRateEntity) roomRateEntity;
-                    PeakRateEntity peakRateEntityToUpdate = (PeakRateEntity) roomRateEntityToUpdate;
-                    peakRateEntityToUpdate.setName(peakRateEntity.getName());
-                    peakRateEntityToUpdate.setRatePerNight(peakRateEntity.getRatePerNight());
-                    peakRateEntityToUpdate.setStartDate(peakRateEntity.getStartDate());
-                    peakRateEntityToUpdate.setEndDate(peakRateEntity.getEndDate());
-                    peakRateEntityToUpdate.setIsDisabled(peakRateEntity.getIsDisabled());
-                } else {
-                    roomRateEntityToUpdate.setName(roomRateEntity.getName());
-                    roomRateEntityToUpdate.setRatePerNight(roomRateEntity.getRatePerNight());
-                    roomRateEntityToUpdate.setIsDisabled(roomRateEntity.getIsDisabled());
-                }
+                roomRateEntityToUpdate.setName(roomRateEntity.getName());
+                roomRateEntityToUpdate.setRatePerNight(roomRateEntity.getRatePerNight());
+                roomRateEntityToUpdate.setIsDisabled(roomRateEntity.getIsDisabled());
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
@@ -158,7 +222,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
         try {
             RoomRateEntity roomRateEntity = retrieveRoomRateByRoomRateId(roomRateId);
-            roomRateEntity.setIsDisabled(false);
+            roomRateEntity.setIsDisabled(true);
 
         } catch (RoomRateNotFoundException ex) {
             throw new RoomRateNotFoundException("RoomRate ID" + roomRateId + " is not found!");

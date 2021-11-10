@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package hotelreservationsystemmanagementclient;
 
 import ejb.session.stateless.ExceptionRecordSessionBeanRemote;
@@ -17,17 +12,22 @@ import entity.PublishedRateEntity;
 import entity.RoomRateEntity;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.EmployeeAccessRightEnum;
-import util.exception.DeleteRoomRateException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidAccessRightException;
 import util.exception.RoomRateNameExistException;
@@ -103,11 +103,11 @@ public class HotelOperationModule {
     }
 
     public void salesManagerOperations() throws InvalidAccessRightException {
-        
+
         if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SALES_MANAGER) {
             throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER rights to access the system administration module.");
         }
-        
+
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -227,85 +227,92 @@ public class HotelOperationModule {
         Double rate = scanner.nextDouble();
         BigDecimal ratePerNight = BigDecimal.valueOf(rate);
 
-        while (true) {
-            System.out.print("Select Type of Room Rate (1: Normal 2: Published 3: Promotion 4: Peak > ");
-            Integer roomRateType = scanner.nextInt();
+        System.out.print("Select Type of Room Rate (1: Normal 2: Published 3: Promotion 4: Peak) > ");
+        Integer roomRateType = scanner.nextInt();
+        scanner.nextLine();
 
-            RoomRateEntity roomRate;
+        RoomRateEntity roomRate;
+        String start;
+        String end;
 
-            if (roomRateType >= 1 && roomRateType <= 4) {
-                try {
-                    if (roomRateType == 1) {
-                        NormalRateEntity normalRate = new NormalRateEntity();
-                        normalRate.setName(name);
-                        normalRate.setRatePerNight(ratePerNight);
-                        roomRate = normalRate;
-                        Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
+        if (roomRateType >= 1 && roomRateType <= 4) {
+            try {
+                if (roomRateType == 1) {
+                    NormalRateEntity normalRate = new NormalRateEntity();
+                    normalRate.setName(name);
+                    normalRate.setRatePerNight(ratePerNight);
+                    roomRate = normalRate;
+                    Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
 
-                        if (constraintViolations.isEmpty()) {
-                            roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
-                            break;
-                        }
-                    } else if (roomRateType == 2) {
-                        PublishedRateEntity publishedRate = new PublishedRateEntity();
-                        publishedRate.setName(name);
-                        publishedRate.setRatePerNight(ratePerNight);
-                        roomRate = publishedRate;
-                        Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
-
-                        if (constraintViolations.isEmpty()) {
-                            roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
-                            break;
-                        }
-                    } else if (roomRateType == 3) {
-                        PromotionRateEntity promotionRate = new PromotionRateEntity();
-                        System.out.print("Enter Start Date of Validitory Period [yyyy-MM-dd HH:mm] > ");
-                        String startDate = scanner.nextLine();
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                        LocalDateTime startDateTime = LocalDateTime.parse(startDate, formatter);
-                        System.out.print("Enter End Date of Validitory Period [yyyy-MM-dd HH:mm]> ");
-                        String endDate = scanner.nextLine();
-                        LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter);
-                        promotionRate.setName(name);
-                        promotionRate.setRatePerNight(ratePerNight);
-                        promotionRate.setStartDate(startDateTime);
-                        promotionRate.setEndDate(endDateTime);
-                        roomRate = promotionRate;
-                        Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
-
-                        if (constraintViolations.isEmpty()) {
-                            roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
-                            break;
-                        }
-                    } else if (roomRateType == 4) {
-                        PeakRateEntity peakRate = new PeakRateEntity();
-                        System.out.print("Enter Start Date of Validity Period [yyyy-MM-dd HH:mm] > ");
-                        String startDate = scanner.nextLine();
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                        LocalDateTime startDateTime = LocalDateTime.parse(startDate, formatter);
-                        System.out.print("Enter End Date of Validity Period [yyyy-MM-dd HH:mm]> ");
-                        String endDate = scanner.nextLine();
-                        LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter);
-                        peakRate.setName(name);
-                        peakRate.setRatePerNight(ratePerNight);
-                        peakRate.setStartDate(startDateTime);
-                        peakRate.setEndDate(endDateTime);
-                        roomRate = peakRate;
-                        Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
-
-                        if (constraintViolations.isEmpty()) {
-                            roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
-                            break;
-                        }
+                    if (constraintViolations.isEmpty()) {
+                        roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
                     }
-                } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {
-                    System.out.println("Error: " + ex.getMessage());
+                } else if (roomRateType == 2) {
+                    PublishedRateEntity publishedRate = new PublishedRateEntity();
+                    publishedRate.setName(name);
+                    publishedRate.setRatePerNight(ratePerNight);
+                    roomRate = publishedRate;
+                    Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
+
+                    if (constraintViolations.isEmpty()) {
+                        roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
+                    }
+                } else if (roomRateType == 3) {
+                    PromotionRateEntity promotionRate = new PromotionRateEntity();
+                    System.out.print("Enter Start Date of Validitory Period [yyyy-MM-dd] > ");
+                    start = scanner.nextLine();
+                    LocalDate startDate = LocalDate.parse(start);
+                    LocalDateTime startDateTime = startDate.atStartOfDay();
+                    Date validityStartDate = convertToDateViaSqlTimestamp(startDateTime);
+//                        Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse(start);
+////                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+////                        LocalDateTime startDateTime = LocalDateTime.parse(startDate, formatter);
+                    System.out.print("Enter End Date of Validitory Period [yyyy-MM-dd]> ");
+                    end = scanner.nextLine();
+                    LocalDate endDate = LocalDate.parse(end);
+                    LocalDateTime endDateTime = endDate.atStartOfDay();
+                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+//                        Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(end);
+//                        //LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter);                        promotionRate.setName(name);
+                    promotionRate.setName(name);
+                    promotionRate.setRatePerNight(ratePerNight);
+                    promotionRate.setStartDate(validityStartDate);
+                    promotionRate.setEndDate(validityEndDate);
+                    roomRate = promotionRate;
+                    Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
+
+                    if (constraintViolations.isEmpty()) {
+                        roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
+                    }
+                } else if (roomRateType == 4) {
+                    PeakRateEntity peakRate = new PeakRateEntity();
+                    System.out.print("Enter Start Date of Validity Period [yyyy-MM-dd] > ");
+                    start = scanner.nextLine().trim();
+                    LocalDate startDate = LocalDate.parse(start);
+                    LocalDateTime startDateTime = startDate.atStartOfDay();
+                    Date validityStartDate = convertToDateViaSqlTimestamp(startDateTime);
+                    System.out.print("Enter End Date of Validity Period [yyyy-MM-dd]> ");
+                    end = scanner.nextLine();
+                    LocalDate endDate = LocalDate.parse(end);
+                    LocalDateTime endDateTime = endDate.atStartOfDay();
+                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+                    peakRate.setName(name);
+                    peakRate.setRatePerNight(ratePerNight);
+                    peakRate.setStartDate(validityStartDate);
+                    peakRate.setEndDate(validityEndDate);
+                    roomRate = peakRate;
+                    Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
+
+                    if (constraintViolations.isEmpty()) {
+                        roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
+                    }
                 }
+            } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {
+                System.out.println("Error: " + ex.getMessage());
             }
         }
-        System.out.print("Press any key to continue...> ");
-        scanner.nextLine();
     }
+
 
     public void doViewRoomRateDetails() {
         try {
@@ -317,18 +324,35 @@ public class HotelOperationModule {
             RoomRateEntity roomRate = roomRateSessionBean.retrieveRoomRateByRoomRateName(roomRateName);
             if (roomRate instanceof PeakRateEntity) {
                 PeakRateEntity peakRate = (PeakRateEntity) roomRate;
-                System.out.printf("%19s%20s%20s%20s%31s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%19s%20s%20s%20s%31s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), peakRate.getStartDate().toString(), peakRate.getEndDate().toString());
+                System.out.printf("%20s%30s%20s%30s%30s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
+                System.out.printf("%20s%30s%20s%30s%30s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), peakRate.getStartDate().toString(), peakRate.getEndDate().toString());
             } else if (roomRate instanceof PromotionRateEntity) {
                 PromotionRateEntity promotionRate = (PromotionRateEntity) roomRate;
-                System.out.printf("%19s%20s%20s%20s%31s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%19s%20s%20s%20s%31s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), promotionRate.getStartDate().toString(), promotionRate.getEndDate().toString());
+                System.out.printf("%20s%30s%20s%30s%30s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
+                System.out.printf("%20s%30s%20s%30s%30s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), promotionRate.getStartDate().toString(), promotionRate.getEndDate().toString());
             } else {
-                System.out.printf("%19s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night");
-                System.out.printf("%19s%20s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
+                System.out.printf("%20s%30s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night");
+                System.out.printf("%20s%30s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
             }
-            System.out.print("Press any key to continue...> ");
-            scanner.nextLine();
+
+            RoomRateEntity roomRateToBeUpdated = roomRateSessionBean.retrieveRoomRateByRoomRateId(roomRate.getRoomRateId());
+
+            System.out.println("1: Update Room Rate");
+            System.out.println("2: Delete Room Rate");
+            System.out.println("3: Back\n");
+            System.out.print("> ");
+            int response = scanner.nextInt();
+
+            if (response == 1) {
+                doUpdateRoomRate(roomRateToBeUpdated);
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
+            } else if (response == 2) {
+                doDeleteRoomRate(roomRateToBeUpdated);
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
+            }
+
         } catch (RoomRateNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
@@ -338,95 +362,89 @@ public class HotelOperationModule {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** HoRS System :: View All Room Rate Details ***\n");
         List<RoomRateEntity> roomRates = roomRateSessionBean.retrieveAllRoomRates();
+        System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
         for (RoomRateEntity roomRate : roomRates) {
             if (roomRate instanceof PeakRateEntity) {
                 PeakRateEntity peakRate = (PeakRateEntity) roomRate;
-                System.out.printf("%19s%20s%20s%20s%31s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%19s%20s%20s%20s%31s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), peakRate.getStartDate().toString(), peakRate.getEndDate().toString());
+                //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
+                System.out.printf("%20s%30s%20s%30s%30s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), peakRate.getStartDate().toString(), peakRate.getEndDate().toString());
             } else if (roomRate instanceof PromotionRateEntity) {
                 PromotionRateEntity promotionRate = (PromotionRateEntity) roomRate;
-                System.out.printf("%19s%20s%20s%20s%31s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%19s%20s%20s%20s%31s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), promotionRate.getStartDate().toString(), promotionRate.getEndDate().toString());
+                //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
+                System.out.printf("%20s%30s%20s%30s%30s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), promotionRate.getStartDate().toString(), promotionRate.getEndDate().toString());
             } else {
-                System.out.printf("%19s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night");
-                System.out.printf("%19s%20s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
+                //System.out.printf("%12s%30s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night");
+                System.out.printf("%20s%30s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
             }
-        }
-
-        System.out.println("1: Update Product");
-        System.out.println("2: Delete Product");
-        System.out.println("3: Back\n");
-        System.out.print("> ");
-        int response = sc.nextInt();
-
-        if (response == 1) {
-            doUpdateRoomRate();
-        } else if (response == 2) {
-            doDeleteRoomRate();
         }
     }
 
-    private void doUpdateRoomRate() {
-        try {
-            Scanner scanner = new Scanner(System.in);
-            String input;
-
-            System.out.println("*** HoRS System :: View ALl Room Rate Details :: Update Room Rate ***\n");
-            System.out.print("Enter Name of Room Rate> ");
-            String roomRateName = scanner.nextLine().trim();
-            RoomRateEntity roomRate = roomRateSessionBean.retrieveRoomRateByRoomRateName(roomRateName);
-
-            System.out.print("Enter Rate Per Night (-1 if no change)> ");
-            Double rate = scanner.nextDouble();
-            if (rate > 0) {
-                BigDecimal changedRate = BigDecimal.valueOf(rate);
-                roomRate.setRatePerNight(changedRate);
+    private void doUpdateRoomRate(RoomRateEntity roomRate) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Rate Per Night (-1 if no change)> ");
+        Double rate = scanner.nextDouble();
+        scanner.nextLine();
+        if (rate > 0) {
+            BigDecimal changedRate = BigDecimal.valueOf(rate);
+            roomRate.setRatePerNight(changedRate);
+        }
+        if (roomRate instanceof PromotionRateEntity) {
+            System.out.print("Enter Start Date of Validity Period [yyyy-MM-dd] (blank if no change)> ");
+            String start = scanner.nextLine().trim();
+            if (start.length() > 0) {
+                LocalDate startDate = LocalDate.parse(start);
+                LocalDateTime startDateTime = startDate.atStartOfDay();
+                Date validityStartDate = convertToDateViaSqlTimestamp(startDateTime);
+                ((PromotionRateEntity) roomRate).setStartDate(validityStartDate);
             }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            if (roomRate instanceof PromotionRateEntity) {
-                System.out.print("Enter Start Date of Validity Period [yyyy-MM-dd HH:mm] (blank if no change)> ");
-                String startDate = scanner.nextLine();
-                if (startDate.length() > 0) {
-                    LocalDateTime startDateTime = LocalDateTime.parse(startDate, formatter);
-                    ((PromotionRateEntity) roomRate).setStartDate(startDateTime);
-                }
-                System.out.print("Enter End Date of Validity Period [yyyy-MM-dd HH:mm] (blank if no change)> ");
-                String endDate = scanner.nextLine();
-                if (endDate.length() > 0) {
-                    LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter);
-                    ((PromotionRateEntity) roomRate).setStartDate(endDateTime);
-                }
-            } else if (roomRate instanceof PeakRateEntity) {
-                System.out.print("Enter Start Date of Validity Period [yyyy-MM-dd HH:mm] (blank if no change)> ");
-                String startDate = scanner.nextLine();
-                if (startDate.length() > 0) {
-                    LocalDateTime startDateTime = LocalDateTime.parse(startDate, formatter);
-                    ((PeakRateEntity) roomRate).setStartDate(startDateTime);
-                }
-                System.out.print("Enter End Date of Validity Period [yyyy-MM-dd HH:mm] (blank if no change)> ");
-                String endDate = scanner.nextLine();
-                if (endDate.length() > 0) {
-                    LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter);
-                    ((PeakRateEntity) roomRate).setStartDate(endDateTime);
-                }
+            System.out.print("Enter End Date of Validity Period [yyyy-MM-dd] (blank if no change)> ");
+            String end = scanner.nextLine().trim();
+            if (end.length() > 0) {
+                LocalDate endDate = LocalDate.parse(end);
+                LocalDateTime endDateTime = endDate.atStartOfDay();
+                Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+                ((PromotionRateEntity) roomRate).setEndDate(validityEndDate);
             }
+        } else if (roomRate instanceof PeakRateEntity) {
+            System.out.print("Enter Start Date of Validity Period [yyyy-MM-dd] (blank if no change)> ");
+            String start = scanner.nextLine();
+            if (start.length() > 0) {
+                LocalDate startDate = LocalDate.parse(start);
+                LocalDateTime startDateTime = startDate.atStartOfDay();
+                Date validityStartDate = convertToDateViaSqlTimestamp(startDateTime);
+                ((PeakRateEntity) roomRate).setStartDate(validityStartDate);
+            }
+            System.out.print("Enter End Date of Validity Period [yyyy-MM-dd] (blank if no change)> ");
+            String end = scanner.nextLine();
+            if (end.length() > 0) {
+                LocalDate endDate = LocalDate.parse(end);
+                LocalDateTime endDateTime = endDate.atStartOfDay();
+                Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+                ((PeakRateEntity) roomRate).setEndDate(validityEndDate);
+            }
+        }
 
-            Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
+        Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
 
-            if (constraintViolations.isEmpty()) {
-                try {
+        if (constraintViolations.isEmpty()) {
+            try {
+                if (roomRate instanceof PromotionRateEntity) {
+                    roomRateSessionBean.updatePromotionRate((PromotionRateEntity) roomRate);
+                } else if (roomRate instanceof PeakRateEntity) {
+                    roomRateSessionBean.updatePeakRate((PeakRateEntity) roomRate);
+                } else {
                     roomRateSessionBean.updateRoomRate(roomRate);
-                    System.out.println("RoomRate updated successfully!\n");
-                } catch (InputDataValidationException ex) {
-                    System.out.println(ex.getMessage() + "\n");
-                } catch (UpdateRoomRateException ex) {
-                    System.out.println(ex.getMessage() + "\n");
                 }
-            } else {
-                showInputDataValidationErrorsForRoomRateEntity(constraintViolations);
+                System.out.println("RoomRate updated successfully!\n");
+            } catch (RoomRateNotFoundException ex) {
+                System.out.println("Error when updating Room Rate: " + ex.getMessage());
+            } catch (UpdateRoomRateException ex) {
+                System.out.println("Error when updating Room Rate: " + ex.getMessage());
+            } catch (InputDataValidationException ex) {
+                System.out.println("Error when updating Room Rate: " + ex.getMessage());
             }
-        } catch (RoomRateNotFoundException ex) {
-            System.out.println("Error: " + ex.getMessage());
+        } else {
+            showInputDataValidationErrorsForRoomRateEntity(constraintViolations);
         }
     }
 
@@ -440,34 +458,35 @@ public class HotelOperationModule {
         System.out.println("\nPlease try again......\n");
     }
 
-    // Updated in v4.1
-    private void doDeleteRoomRate() {
-        try {
-            Scanner scanner = new Scanner(System.in);
-            String input;
+//wrong check session bean 
+    private void doDeleteRoomRate(RoomRateEntity roomRate) {
+        Scanner scanner = new Scanner(System.in);
+        String input;
 
-            System.out.println("*** HoRS System :: View ALl Room Rate Details :: Delete Room Rate ***\n");
-            System.out.print("Enter Name of Room Rate> ");
-            String roomRateName = scanner.nextLine().trim();
-            RoomRateEntity roomRate = roomRateSessionBean.retrieveRoomRateByRoomRateName(roomRateName);
+        System.out.println("*** HoRS System :: View Room Rate Details :: Delete Room Rate ***\n");
+        System.out.printf("Confirm Delete Room Rate %s (ID: %s) (Enter 'Y' to Delete)> ", roomRate.getName(), roomRate.getRoomRateId());
+        input = scanner.nextLine().trim();
 
-            System.out.printf("Confirm Delete Room Rate %s (Room Rate ID: %d) (Enter 'Y' to Delete)> ", roomRate.getName(), roomRate.getRoomRateId());
-            input = scanner.nextLine().trim();
-
-            if (input.equals("Y")) {
-                try {
-                    roomRateSessionBean.deleteRoomRate(roomRate.getRoomRateId());
-                    System.out.println("Room Rate successfully deleted!");
-                } catch (RoomRateNotFoundException ex) {
-                    System.out.println("Error: " + ex.getMessage());
-                } catch (DeleteRoomRateException ex) {
-                    System.out.println("Error: " + ex.getMessage());
+        if (input.equals("Y")) {
+            try {
+                roomRate.setIsDisabled(true);
+                if (roomRate instanceof PromotionRateEntity) {
+                    roomRateSessionBean.updatePromotionRate((PromotionRateEntity) roomRate);
+                } else if (roomRate instanceof PeakRateEntity) {
+                    roomRateSessionBean.updatePeakRate((PeakRateEntity) roomRate);
+                } else {
+                    roomRateSessionBean.updateRoomRate(roomRate);
                 }
-            } else {
-                System.out.println("Room Rate NOT deleted!\n");
+                System.out.println("Room rate deleted successfully!\n");
+            } catch (UpdateRoomRateException | RoomRateNotFoundException | InputDataValidationException ex) {
+                System.out.println("An error has occurred while deleting product: " + ex.getMessage() + "\n");;
             }
-        } catch (RoomRateNotFoundException ex) {
-            System.out.println("Error: " + ex.getMessage());
+        } else {
+            System.out.println("Product NOT deleted!\n");
         }
+    }
+
+    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
+        return java.sql.Timestamp.valueOf(dateToConvert);
     }
 }
