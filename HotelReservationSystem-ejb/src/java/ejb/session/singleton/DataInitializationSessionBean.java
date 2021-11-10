@@ -73,7 +73,7 @@ public class DataInitializationSessionBean {
         }
     }
     
-    @Schedule(hour = "*", minute = "*", second = "*/1", info = "roomAllocationTimer")
+    @Schedule(hour = "5", minute = "*", second = "*/1", info = "roomAllocationTimer")
     public void roomAllocationTimer() {
         System.out.println("Timer!");
         try {

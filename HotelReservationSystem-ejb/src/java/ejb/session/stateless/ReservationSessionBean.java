@@ -4,6 +4,9 @@ import entity.GuestEntity;
 import entity.NightEntity;
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -26,8 +29,11 @@ import util.exception.UnknownPersistenceException;
 public class ReservationSessionBean implements ReservationSessionBeanLocal, ReservationSessionBeanRemote {
 
     @EJB
+    private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
+
+    @EJB
     private GuestSessionBeanLocal guestSessionBeanLocal;
-    
+
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
@@ -43,45 +49,32 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
     // Updated in v4.1
     // Updated in v4.2 with bean validation
     @Override
-    public ReservationEntity createNewReservation(Long guestId, ReservationEntity newReservationEntity) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException
-    {
-        
+    public ReservationEntity createNewReservation(Long guestId, ReservationEntity newReservationEntity) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException {
+
         Set<ConstraintViolation<ReservationEntity>> constraintViolations = validator.validate(newReservationEntity);
-        if(constraintViolations.isEmpty() & newReservationEntity != null)
-        {
-            try
-            {
+        if (constraintViolations.isEmpty() & newReservationEntity != null) {
+            try {
                 GuestEntity guestEntity = guestSessionBeanLocal.retrieveGuestByGuestId(guestId);
                 newReservationEntity.setGuest(guestEntity);
                 guestEntity.getReservations().add(newReservationEntity);
 
                 em.persist(newReservationEntity);
 
-                for(NightEntity nightEntity:newReservationEntity.getNights())
-                {
-                  
-                    em.persist(nightEntity);
-                }
-                
-                for(ReservationRoomEntity reservationRoomEntity:newReservationEntity.getReservationRooms())
-                {
+//                for (NightEntity nightEntity : newReservationEntity.getNights()) {
+//                    em.persist(nightEntity);
+//                }
+
+                for (ReservationRoomEntity reservationRoomEntity : newReservationEntity.getReservationRooms()) {
                     em.persist(reservationRoomEntity);
                 }
-                
-                em.persist(newReservationEntity.getRoomType());
-                
-
+//                em.persist(newReservationEntity.getRoomType());
                 em.flush();
 
                 return newReservationEntity;
-            }
-            catch(PersistenceException ex)
-            {
+            } catch (PersistenceException ex) {
                 throw new UnknownPersistenceException(ex.getMessage());
             }
-        }
-        else
-        {
+        } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
@@ -108,7 +101,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
         }
     }
 
-    
 //    @Override
 //    public void updateReservation(ReservationEntity reservationEntity) throws ReservationNotFoundException, UpdateReservationException, InputDataValidationException {
 //        if (reservationEntity != null && reservationEntity.getReservationId() != null) {
@@ -131,8 +123,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
 //            throw new ReservationNotFoundException("Reservation ID not provided for reservation to be updated");
 //        }
 //    }
-
-
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ReservationEntity>> constraintViolations) {
         String msg = "Input data validation error!:";
 
@@ -142,4 +132,5 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
 
         return msg;
     }
+
 }
