@@ -223,7 +223,42 @@ public class HotelOperationModule {
     }
 
     public void doUpdateRoomType(RoomTypeEntity roomType) {
-        
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter RoomType Name (blank if no change)> ");
+        String name = scanner.next().trim();
+        if (name.length() > 0) {
+            roomType.setRoomTypeName(name);
+        }
+        System.out.print("Enter Room Description of RoomType (blank if no change)> ");
+        String description = scanner.next().trim();
+        if (description.length() > 0) {
+            roomType.setRoomDescription(description);
+        }
+        System.out.print("Enter Room Size of RoomType (-1 if no change)> ");
+        int size = scanner.nextInt();
+        if (size>0) {
+            roomType.setRoomSize(size);
+        }
+        System.out.print("Enter No. of Room Bed of RoomType (-1 if no change)> ");
+        int bed = scanner.nextInt();
+        if (bed>0) {
+            roomType.setRoomBed(bed);
+        }
+        System.out.print("Enter Room Capacity of RoomType (-1 if no change)> ");
+        int capacity = scanner.nextInt();
+        if (capacity>0) {
+            roomType.setRoomCapacity(capacity);
+        }
+        System.out.print("Enter Room Amenities of RoomType (blank if no change)> ");
+        String amenities = scanner.next().trim();
+        if (amenities.length() > 0) {
+            roomType.setRoomAmenities(amenities);
+        }
+        System.out.print("Enter Next Room Type of RoomType (blank if no change)> ");
+        String nextRoomType = scanner.next().trim();
+        if (nextRoomType.length() > 0) {
+            roomType.setNextRoomType(nextRoomType);
+        }
     }
 
     public void doDeleteRoomType(RoomTypeEntity roomType) {

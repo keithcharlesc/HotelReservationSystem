@@ -177,18 +177,28 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
             if (constraintViolations.isEmpty()) {
                 RoomTypeEntity roomTypeEntityToUpdate = retrieveRoomTypeByRoomTypeId(roomTypeEntity.getRoomTypeId());
 
-                if (roomTypeEntityToUpdate.getRoomTypeName().equals(roomTypeEntity.getRoomTypeName())) {
-                    roomTypeEntityToUpdate.setIsDisabled(roomTypeEntity.getIsDisabled());
-//                    roomTypeEntityToUpdate.setRoomDescription(roomTypeEntity.getRoomDescription());
-//                    roomTypeEntityToUpdate.setRoomSize(roomTypeEntity.getRoomSize());
-//                    roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
-//                    roomTypeEntityToUpdate.setRoomCapacity(roomTypeEntity.getRoomCapacity());
-//                    roomTypeEntityToUpdate.setRoomAmenities(roomTypeEntity.getRoomAmenities());
-                    roomTypeEntityToUpdate.setNextRoomType(roomTypeEntity.getNextRoomType());
-                    entityManager.persist(roomTypeEntityToUpdate);
-                } else {
-                    throw new UpdateRoomTypeException("Room Type Name of roomType record to be updated does not match the existing record");
+                Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
+                query.setParameter("nextRoomType", roomTypeEntityToUpdate.getRoomTypeName());
+                RoomTypeEntity roomBefore = (RoomTypeEntity) query.getSingleResult();
+                roomBefore.setRoomTypeName(roomTypeEntity.getRoomTypeName());
+                roomTypeEntityToUpdate.setRoomTypeName(roomTypeEntity.getRoomTypeName());
+
+                //if (roomTypeEntityToUpdate.getRoomTypeName().equals(roomTypeEntity.getRoomTypeName())) {
+                //roomTypeEntityToUpdate.setIsDisabled(roomTypeEntity.getIsDisabled());
+                roomTypeEntityToUpdate.setRoomDescription(roomTypeEntity.getRoomDescription());
+                roomTypeEntityToUpdate.setRoomSize(roomTypeEntity.getRoomSize());
+                roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
+                roomTypeEntityToUpdate.setRoomCapacity(roomTypeEntity.getRoomCapacity());
+                roomTypeEntityToUpdate.setRoomAmenities(roomTypeEntity.getRoomAmenities());
+                Query query2 = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
+                query2.setParameter("nextRoomType", roomTypeEntity.getNextRoomType());
+                if (!query2.getResultList().isEmpty()) {
+                    RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
+                    roomType.setNextRoomType(roomTypeEntity.getRoomTypeName());
                 }
+                roomTypeEntityToUpdate.setNextRoomType(roomTypeEntity.getNextRoomType());
+                entityManager.persist(roomTypeEntityToUpdate);
+
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }

@@ -40,8 +40,7 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
         validator = validatorFactory.getValidator();
     }
 
-    // Updated in v4.1
-    // Updated in v4.2 with bean validation
+    
     @Override
     public Long createNewGuest(GuestEntity newGuestEntity) throws GuestEmailExistException, UnknownPersistenceException, InputDataValidationException {
         Set<ConstraintViolation<GuestEntity>> constraintViolations = validator.validate(newGuestEntity);
@@ -81,6 +80,9 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
 
         if (guestEntity != null) {
             guestEntity.getReservations().size();
+            for(ReservationEntity reservation: guestEntity.getReservations()) {
+                reservation.getRoomType();
+            }
             return guestEntity;
         } else {
             throw new GuestNotFoundException("Guest ID " + guestId + " does not exist!");

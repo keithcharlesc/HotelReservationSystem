@@ -25,8 +25,8 @@ public class CustomerEntity extends GuestEntity implements Serializable {
         super();
     }
 
-    public CustomerEntity(String password) {
-        this();
+    public CustomerEntity(String name, String email, String phoneNumber, String password) {
+        super(name, email, phoneNumber);
         this.password = password;
     }
 
