@@ -46,26 +46,19 @@ public class ExceptionRecordSessionBean implements ExceptionRecordSessionBeanRem
     }
 
     @Override
-    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, Long reservationRoomId) throws UnknownPersistenceException, InputDataValidationException, ReservationRoomNotFoundException {
-        Set<ConstraintViolation<ExceptionRecordEntity>> constraintViolations = validator.validate(newExceptionRecordEntity);
+    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, Long reservationRoomId) throws ReservationRoomNotFoundException {
 
-        if (constraintViolations.isEmpty()) {
-            try {
-                entityManager.persist(newExceptionRecordEntity);
+        try {
+            entityManager.persist(newExceptionRecordEntity);
 
-                ReservationRoomEntity reservationRoom = reservationRoomSessionBeanLocal.retrieveReservationRoomByReservationRoomId(reservationRoomId);
-                reservationRoom.setExceptionRecord(newExceptionRecordEntity);
-                newExceptionRecordEntity.setReservationRoom(reservationRoom);
-                entityManager.flush();
+            ReservationRoomEntity reservationRoom = reservationRoomSessionBeanLocal.retrieveReservationRoomByReservationRoomId(reservationRoomId);
+            reservationRoom.setExceptionRecord(newExceptionRecordEntity);
+            newExceptionRecordEntity.setReservationRoom(reservationRoom);
+            entityManager.flush();
 
-                return newExceptionRecordEntity;
-            } catch (PersistenceException ex) {
-                throw new UnknownPersistenceException(ex.getMessage());
-            } catch (ReservationRoomNotFoundException ex) {
-                throw new ReservationRoomNotFoundException("Reservation room not found!");
-            }
-        } else {
-            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            return newExceptionRecordEntity;
+        } catch (ReservationRoomNotFoundException ex) {
+            throw new ReservationRoomNotFoundException("Reservation room not found!");
         }
     }
 

@@ -6,6 +6,7 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.ReservationRoomSessionBeanLocal;
 import ejb.session.stateless.RoomRateSessionBeanLocal;
 import ejb.session.stateless.RoomSessionBeanLocal;
 import ejb.session.stateless.RoomTypeSessionBeanLocal;
@@ -20,12 +21,14 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
+import javax.ejb.Schedule;
 import javax.ejb.Startup;
 import util.enumeration.EmployeeAccessRightEnum;
 import util.enumeration.RoomStatusEnum;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
 import util.exception.InputDataValidationException;
+import util.exception.ReservationRoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNameExistException;
@@ -39,6 +42,9 @@ import util.exception.UpdateRoomTypeException;
 @Startup
 
 public class DataInitializationSessionBean {
+
+    @EJB
+    private ReservationRoomSessionBeanLocal reservationRoomSessionBean;
 
     @EJB
     private RoomSessionBeanLocal roomSessionBean;
@@ -64,6 +70,18 @@ public class DataInitializationSessionBean {
             //roomRateSessionBean.retrieveRoomRateByRoomRateName("Deluxe Room Published");
         } catch (RoomNotFoundException | EmployeeNotFoundException | RoomTypeNotFoundException ex) {
             initializeData();
+        }
+    }
+    
+    @Schedule(hour = "*", minute = "*", second = "*/1", info = "roomAllocationTimer")
+    public void roomAllocationTimer() {
+        System.out.println("Timer!");
+        try {
+            reservationRoomSessionBean.allocateRooms();
+            reservationRoomSessionBean.allocateRoomExceptionType1();
+            reservationRoomSessionBean.allocateRoomExceptionType2();
+        } catch (ReservationRoomNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
     }
 

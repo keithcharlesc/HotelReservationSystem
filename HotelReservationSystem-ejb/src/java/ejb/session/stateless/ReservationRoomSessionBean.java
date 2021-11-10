@@ -1,5 +1,6 @@
 package ejb.session.stateless;
 
+import entity.ExceptionRecordEntity;
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
 import entity.RoomEntity;
@@ -27,10 +28,15 @@ import util.exception.UpdateReservationRoomException;
 public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLocal, ReservationRoomSessionBeanRemote {
 
     @EJB
+    private ExceptionRecordSessionBeanLocal exceptionRecordSessionBean;
+
+    @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
 
     @EJB
     private ReservationSessionBeanLocal reservationSessionBeanLocal;
+    
+    
 
     
 
@@ -73,6 +79,54 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
         Query query = em.createQuery("SELECT rr FROM ReservationRoomEntity rr");
 
         return query.getResultList();
+    }
+    
+    @Override 
+    public List<ReservationRoomEntity> retrieveUnallocatedRooms() {
+        Query query = em.createQuery("SELECT rr FROM ReservationRoomEntity rr WHERE rr.isAllocated = false ORDER BY rr.reservation.roomType");
+        return query.getResultList();
+    }
+    
+    @Override
+    public void allocateRooms() {
+        List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms();
+        List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms();
+        int i = 0;
+        for (ReservationRoomEntity reservationRoom : unallocated) {
+            if (reservationRoom.getReservation().getRoomType().equals(availableRooms.get(i).getRoomType())) {
+                reservationRoom.setRoom(availableRooms.get(i));
+                availableRooms.get(i).getReservationRooms().add(reservationRoom);
+                reservationRoom.setIsAllocated(true);
+                availableRooms.get(i).setRoomAllocated(true);
+            }
+            i++;
+        }
+    }
+    
+    @Override
+    public void allocateRoomExceptionType1() throws ReservationRoomNotFoundException {
+        List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms();
+        List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms();
+        int i = 0;
+        for (ReservationRoomEntity reservationRoom : unallocated) {
+            String nextRoomType = reservationRoom.getReservation().getRoomType().getNextRoomType();
+            if (availableRooms.get(i).getRoomType().equals(nextRoomType)) {
+                reservationRoom.setRoom(availableRooms.get(i));
+                availableRooms.get(i).getReservationRooms().add(reservationRoom);
+                reservationRoom.setIsAllocated(true);
+                availableRooms.get(i).setRoomAllocated(true);
+                exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(1), reservationRoom.getReservationRoomId());
+            }
+            i++;
+        }
+    }
+    
+    @Override
+    public void allocateRoomExceptionType2() throws ReservationRoomNotFoundException {
+        List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms();
+        for (ReservationRoomEntity reservationRoom: unallocated) {
+            exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(2), reservationRoom.getReservationRoomId());
+        }
     }
 
     @Override

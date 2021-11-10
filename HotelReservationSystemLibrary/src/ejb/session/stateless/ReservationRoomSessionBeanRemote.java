@@ -26,5 +26,13 @@ public interface ReservationRoomSessionBeanRemote {
     public void updateReservationRoom(ReservationRoomEntity reservationRoomEntity) throws ReservationRoomNotFoundException, UpdateReservationRoomException, InputDataValidationException;
 
     public void associateReservationRoomWithARoom(Long reservationRoomId, Long roomId);
+    
+    public List<ReservationRoomEntity> retrieveUnallocatedRooms();
+    
+    public void allocateRooms();
+    
+    public void allocateRoomExceptionType1() throws ReservationRoomNotFoundException;
+    
+    public void allocateRoomExceptionType2() throws ReservationRoomNotFoundException;
 
 }
