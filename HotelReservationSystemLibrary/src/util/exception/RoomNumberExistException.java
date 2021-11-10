@@ -9,12 +9,12 @@ package util.exception;
  *
  * @author xianhui
  */
-public class RoomNameExistException extends Exception {
+public class RoomNumberExistException extends Exception {
 
-    public RoomNameExistException() {
+    public RoomNumberExistException() {
     }
 
-    public RoomNameExistException(String string) {
+    public RoomNumberExistException(String string) {
         super(string);
     }
     

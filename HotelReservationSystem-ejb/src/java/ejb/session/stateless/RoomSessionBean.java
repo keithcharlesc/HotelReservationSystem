@@ -24,7 +24,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.DeleteRoomException;
 import util.exception.InputDataValidationException;
-import util.exception.RoomNameExistException;
+import util.exception.RoomNumberExistException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -54,31 +54,28 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     @Override
-    public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNameExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException {
+    public RoomEntity createNewRoom(RoomEntity newRoomEntity, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, InputDataValidationException, RoomTypeNotFoundException {
         Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(newRoomEntity);
 
         if (constraintViolations.isEmpty()) {
             try {
-                
 
                 RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
                 roomType.getRooms().add(newRoomEntity);
                 newRoomEntity.setRoomType(roomType);
 
-                if (newRoomEntity.getReservationRooms().size() > 0) {
-                    for (ReservationRoomEntity reservationRoom : newRoomEntity.getReservationRooms()) {
-                        entityManager.persist(reservationRoom);
-                    }
-                }
-
+//                if (newRoomEntity.getReservationRooms().size() > 0) {
+//                    for (ReservationRoomEntity reservationRoom : newRoomEntity.getReservationRooms()) {
+//                        entityManager.persist(reservationRoom);
+//                    }
+//                }
                 entityManager.persist(newRoomEntity);
                 entityManager.flush();
-
                 return newRoomEntity;
             } catch (PersistenceException ex) {
                 if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                     if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                        throw new RoomNameExistException();
+                        throw new RoomNumberExistException();
                     } else {
                         throw new UnknownPersistenceException(ex.getMessage());
                     }
@@ -86,7 +83,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
             } catch (RoomTypeNotFoundException ex) {
-                throw new RoomTypeNotFoundException("Room type "  + roomTypeName + " not found!");
+                throw new RoomTypeNotFoundException("Room type " + roomTypeName + " not found!");
             }
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
@@ -129,7 +126,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     @Override
-    public void updateRoom(RoomEntity roomEntity) throws RoomNotFoundException, UpdateRoomException, InputDataValidationException {
+    public RoomEntity updateRoom(RoomEntity roomEntity) throws RoomNotFoundException, UpdateRoomException, InputDataValidationException {
         if (roomEntity != null && roomEntity.getRoomId() != null) {
             Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(roomEntity);
 
@@ -141,6 +138,8 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                     roomEntityToUpdate.setRoomStatusEnum(roomEntity.getRoomStatusEnum());
                     roomEntityToUpdate.setRoomAllocated(roomEntity.getRoomAllocated());
                     entityManager.persist(roomEntityToUpdate);
+                    entityManager.flush();
+                    return roomEntityToUpdate;
                 } else {
                     throw new UpdateRoomException("Room Type Name of room record to be updated does not match the existing record");
                 }
@@ -151,7 +150,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             throw new RoomNotFoundException("Room ID not provided for room to be updated");
         }
     }
-    
+
     //check this 
     @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {

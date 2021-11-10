@@ -96,9 +96,9 @@ public class MainApp {
         String password = "";
 
         System.out.println("*** HoRS System :: Login ***\n");
-        System.out.print("Enter username> ");
+        System.out.print("Enter username > ");
         username = scanner.nextLine().trim();
-        System.out.print("Enter password> ");
+        System.out.print("Enter password > ");
         password = scanner.nextLine().trim();
 
         if (username.length() > 0 && password.length() > 0) {
@@ -115,9 +115,9 @@ public class MainApp {
         while (true) {
             System.out.println("*** Hotel Reservation (HoR) System ***\n");
             System.out.println("You are login as " + currentEmployeeEntity.getUsername() + " with " + currentEmployeeEntity.getEmployeeAccessRightEnum().toString() + " rights\n");
-            System.out.println("1: System Administration");
-            System.out.println("2: Hotel Operation");
-            System.out.println("3: Front Office");
+            System.out.println("1: System Administration (System Administrator)");
+            System.out.println("2: Hotel Operation (Operation Manager, Sales Manager)"); //check this again might be all employees can use the system allocation
+            System.out.println("3: Front Office (Guest Relation Officer)");
             System.out.println("4: Logout\n");
             response = 0;
 

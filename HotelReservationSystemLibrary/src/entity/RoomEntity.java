@@ -46,7 +46,7 @@ public class RoomEntity implements Serializable {
     @NotNull
     private boolean isDisabled;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(nullable = false)
     private RoomTypeEntity roomType;
 
@@ -55,12 +55,12 @@ public class RoomEntity implements Serializable {
 
     public RoomEntity() {
         this.reservationRooms = new ArrayList<>();
+        this.roomAllocated = false;
+        this.isDisabled = false;
     }
 
     public RoomEntity(String number, RoomStatusEnum roomStatusEnum) {
         this();
-        this.roomAllocated = false;
-        this.isDisabled = false;
         this.number = number;
         this.roomStatusEnum = roomStatusEnum;
     }
@@ -104,7 +104,7 @@ public class RoomEntity implements Serializable {
     public void setRoomType(RoomTypeEntity roomType) {
         this.roomType = roomType;
     }
-    
+
     public String getNumber() {
         return number;
     }
@@ -138,5 +138,5 @@ public class RoomEntity implements Serializable {
     public String toString() {
         return "RoomEntity{" + "roomId=" + getRoomId() + ", roomStatusEnum=" + getRoomStatusEnum() + ", roomAllocated=" + getRoomAllocated() + ", isDisabled=" + getIsDisabled() + ", roomType=" + getRoomType() + ", reservationRooms=" + getReservationRooms() + '}';
     }
-    
+
 }
