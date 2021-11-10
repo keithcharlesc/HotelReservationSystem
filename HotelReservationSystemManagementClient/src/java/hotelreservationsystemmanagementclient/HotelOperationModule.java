@@ -1,6 +1,7 @@
 package hotelreservationsystemmanagementclient;
 
 import ejb.session.stateless.ExceptionRecordSessionBeanRemote;
+import ejb.session.stateless.ReservationRoomSessionBeanRemote;
 import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
@@ -21,6 +22,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.ejb.Schedule;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -31,6 +35,7 @@ import util.exception.DeleteRoomException;
 import util.exception.DeleteRoomTypeException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidAccessRightException;
+import util.exception.ReservationRoomNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomRateNameExistException;
@@ -50,6 +55,7 @@ public class HotelOperationModule {
     private RoomRateSessionBeanRemote roomRateSessionBean;
     private ExceptionRecordSessionBeanRemote exceptionRecordSessionBean;
     private EmployeeEntity currentEmployee;
+    private ReservationRoomSessionBeanRemote reservationRoomSessionBean;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -59,8 +65,9 @@ public class HotelOperationModule {
         validator = validatorFactory.getValidator();
     }
 
-    public HotelOperationModule(RoomTypeSessionBeanRemote roomTypeSessionBean, RoomSessionBeanRemote roomSessionBean, RoomRateSessionBeanRemote roomRateSessionBean, ExceptionRecordSessionBeanRemote exceptionRecordSessionBean, EmployeeEntity curremtEmployee) {
+    public HotelOperationModule(RoomTypeSessionBeanRemote roomTypeSessionBean, RoomSessionBeanRemote roomSessionBean, RoomRateSessionBeanRemote roomRateSessionBean, ExceptionRecordSessionBeanRemote exceptionRecordSessionBean, ReservationRoomSessionBeanRemote reservationRoomSessionBean, EmployeeEntity curremtEmployee) {
         this();
+        this.reservationRoomSessionBean = reservationRoomSessionBean;
         this.roomTypeSessionBean = roomTypeSessionBean;
         this.roomSessionBean = roomSessionBean;
         this.roomRateSessionBean = roomRateSessionBean;
@@ -505,7 +512,7 @@ public class HotelOperationModule {
                     LocalDateTime endDateTime = endDate.atStartOfDay();
                     Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
 //                        Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(end);
-//                        //LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter);                        promotionRate.setName(name);
+//                        LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter); 
                     promotionRate.setName(name);
                     promotionRate.setRatePerNight(ratePerNight);
                     promotionRate.setStartDate(validityStartDate);
@@ -537,6 +544,7 @@ public class HotelOperationModule {
 
                     if (constraintViolations.isEmpty()) {
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
+                        System.out.println("RoomRate created successfully!\n");
                     }
                 }
             } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {
@@ -715,12 +723,21 @@ public class HotelOperationModule {
 
     }
 
+
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
         return java.sql.Timestamp.valueOf(dateToConvert);
     }
+    // SALES MANAGER OPERATIONS (END) <==============================================
+
+    //SYSTEM (START) ===============================================================> 
+    public void roomAllocation() {
+        try {
+            reservationRoomSessionBean.allocateRooms();
+            reservationRoomSessionBean.allocateRoomExceptionType1();
+            reservationRoomSessionBean.allocateRoomExceptionType2();
+        } catch (ReservationRoomNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+    }
+    //SYSTEM (END) <=================================================================
 }
-// SALES MANAGER OPERATIONS (END) <==============================================
-
-//SYSTEM (START) ===============================================================> 
-//SYSTEM (END) <=================================================================
-

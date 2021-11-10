@@ -19,7 +19,7 @@ import util.exception.UnknownPersistenceException;
  */
 @Local
 public interface ExceptionRecordSessionBeanLocal {
-    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, Long reservationRoomId) throws UnknownPersistenceException, InputDataValidationException, ReservationRoomNotFoundException;
+    public ExceptionRecordEntity createNewExceptionRecord(ExceptionRecordEntity newExceptionRecordEntity, Long reservationRoomId) throws ReservationRoomNotFoundException;
     public List<ExceptionRecordEntity> retrieveAllExceptionRecords();
     public List<ExceptionRecordEntity> retrieveUnresolvedExceptionRecords();
     public ExceptionRecordEntity retrieveExceptionRecordByExceptionRecordId(Long exceptionRecordId) throws ExceptionRecordNotFoundException;

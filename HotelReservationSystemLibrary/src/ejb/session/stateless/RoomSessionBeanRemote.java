@@ -25,4 +25,5 @@ public interface RoomSessionBeanRemote {
     public RoomEntity retrieveRoomByRoomNumber(String number) throws RoomNotFoundException;
     public RoomEntity updateRoom(RoomEntity roomEntity) throws RoomNotFoundException, UpdateRoomException, InputDataValidationException;
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
+    public List<RoomEntity> retreiveAvailableRooms();
 }

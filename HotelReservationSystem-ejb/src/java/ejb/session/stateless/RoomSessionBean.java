@@ -22,6 +22,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.RoomStatusEnum;
 import util.exception.DeleteRoomException;
 import util.exception.InputDataValidationException;
 import util.exception.RoomNumberExistException;
@@ -123,6 +124,15 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new RoomNotFoundException("Room Type Name " + number + " does not exist!");
         }
+    }
+    
+    @Override 
+    public List<RoomEntity> retreiveAvailableRooms() {
+        Query query = entityManager.createQuery("SELECT r FROM RoomEntity r WHERE r.roomAllocated = false AND r.isDisabled = false AND r.roomStatusEnum = :status ORDER BY r.roomType");
+//        query.setParameter("allocated", false);
+//        query.setParameter("disabled", false);
+        query.setParameter("status", RoomStatusEnum.AVAILABLE);
+        return query.getResultList();
     }
 
     @Override
