@@ -51,11 +51,12 @@ public class NightSessionBean implements NightSessionBeanRemote, NightSessionBea
 
         if (constraintViolations.isEmpty()) {
             try {
-                entityManager.persist(newNightEntity);
 
                 RoomRateEntity roomRate = roomRateSessionBeanLocal.retrieveRoomRateByRoomRateName(roomRateName);
-                roomRate.getNights().add(newNightEntity);
                 newNightEntity.setRoomRate(roomRate);
+                roomRate.getNights().add(newNightEntity);
+
+                entityManager.persist(newNightEntity);
                 entityManager.flush();
 
                 return newNightEntity;

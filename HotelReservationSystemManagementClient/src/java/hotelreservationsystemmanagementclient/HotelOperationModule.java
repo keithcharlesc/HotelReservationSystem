@@ -318,7 +318,7 @@ public class HotelOperationModule {
         Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(room);
         if (constraintViolations.isEmpty()) {
             try {
-                System.out.println("Reached");
+//                System.out.println("Reached");
                 RoomEntity roomCreated = roomSessionBean.createNewRoom(room, roomType);
                 System.out.println("Room Successfully Created : Room No. " + roomCreated.getNumber() + " , Room Type: " + roomType + " , ID : " + roomCreated.getRoomId());
             } catch (InputDataValidationException | RoomNumberExistException | UnknownPersistenceException | RoomTypeNotFoundException ex) {
