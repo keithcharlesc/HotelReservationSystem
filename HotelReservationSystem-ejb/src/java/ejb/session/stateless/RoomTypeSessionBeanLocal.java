@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.RoomTypeEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomTypeException;
@@ -35,5 +36,9 @@ public interface RoomTypeSessionBeanLocal {
     public void updateRoomType(RoomTypeEntity roomTypeEntity) throws RoomTypeNotFoundException, UpdateRoomTypeException, InputDataValidationException;
 
     public void deleteRoomType(Long roomTypeId) throws RoomTypeNotFoundException, DeleteRoomTypeException, UpdateRoomTypeException;
+
+    public Integer retrieveTotalQuantityOfRoomsBasedOnRoomType(String roomTypeInput);
+
+    public Integer retrieveQuantityOfRoomsReserved(Date checkInDateInput, Date checkOutDateInput, String roomTypeInput);
 
 }

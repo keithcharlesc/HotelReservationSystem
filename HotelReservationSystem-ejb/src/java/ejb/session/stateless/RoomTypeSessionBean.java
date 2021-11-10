@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -206,9 +207,9 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
         query.setParameter("nextRoomType", roomTypeEntityToRemove.getRoomTypeName());
         if (!query.getResultList().isEmpty()) {
-            RoomTypeEntity roomType = (RoomTypeEntity)query.getSingleResult();
+            RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
             roomType.setNextRoomType(roomTypeEntityToRemove.getNextRoomType());
-        } 
+        }
 
         if (roomRateEntities.isEmpty() && rooms.isEmpty()) {
             entityManager.remove(roomTypeEntityToRemove);
@@ -221,6 +222,37 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
             }
             roomTypeEntityToRemove.setIsDisabled(true);
         }
+    }
+
+//    @Override
+//    public List<RoomTypeEntity> retrieveAllRoomTypesThatHasAvailableRooms() {
+////        Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r ORDER BY r.roomTypeId");
+//        Query query = entityManager.createQuery("SELECT COUNT(r) FROM Room r, IN (r.roomType) rt");
+//        return query.getResultList();
+//        
+//        RoomTypeEntity newRoomTypeEntity
+//        
+//         Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
+//                query.setParameter("nextRoomType", newRoomTypeEntity.getNextRoomType());
+//        
+//    }
+    
+    @Override
+    public Integer retrieveTotalQuantityOfRoomsBasedOnRoomType(String roomTypeInput) { //RETURNS TOTAL QUANTITY OF ROOMS - ROOM TYPE
+        Query query = entityManager.createQuery("SELECT r FROM RoomEntity r JOIN r.roomType rt WHERE rt.roomTypeName = :roomType");
+        query.setParameter("roomType", roomTypeInput);
+        return query.getResultList().size();
+    }
+
+    //Checks against check-in date and check-out date of the new reservation 
+    //For those reservations made previously, how many rooms have been reserved alr 
+    @Override
+    public Integer retrieveQuantityOfRoomsReserved(Date checkInDateInput, Date checkOutDateInput, String roomTypeInput) {
+        Query query = entityManager.createQuery("SELECT rre FROM ReservationRoomEntity rre WHERE rre.isAllocated = TRUE AND rre.room.roomType.roomTypeName = :roomType AND rre.reservation.startDate >= :checkInDate AND rre.reservation.startDate < :checkOutDate");
+        query.setParameter("checkInDate", checkInDateInput);
+        query.setParameter("checkOutDate", checkOutDateInput);
+        query.setParameter("roomType", roomTypeInput);
+        return query.getResultList().size();
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<RoomTypeEntity>> constraintViolations) {

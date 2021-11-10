@@ -6,7 +6,7 @@
 package entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -24,19 +26,19 @@ public class NightEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nightId;
-    
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(nullable = false)
     private RoomRateEntity roomRate;
-    
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @NotNull
-    private LocalDateTime date;
+    private Date date;
 
     public NightEntity() {
     }
 
-    public NightEntity(RoomRateEntity roomRate, LocalDateTime date) {
+    public NightEntity(RoomRateEntity roomRate, Date date) {
         this.roomRate = roomRate;
         this.date = date;
     }
@@ -57,11 +59,11 @@ public class NightEntity implements Serializable {
         this.roomRate = roomRate;
     }
 
-    public LocalDateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

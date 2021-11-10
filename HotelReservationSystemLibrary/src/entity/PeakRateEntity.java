@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
@@ -18,10 +20,11 @@ import javax.validation.constraints.NotNull;
 public class PeakRateEntity extends RoomRateEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @NotNull
     private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @Future
     @NotNull

@@ -7,8 +7,8 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +21,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Min;
@@ -44,13 +46,15 @@ public class ReservationEntity implements Serializable {
     @NotNull
     @Digits(integer = 11, fraction = 2)
     private BigDecimal reservationFee;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @NotNull
-    private LocalDateTime startDate;
+    private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @Future
     @NotNull
-    private LocalDateTime endDate;
+    private Date endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -77,7 +81,7 @@ public class ReservationEntity implements Serializable {
         this.reservationRooms = new ArrayList<>();
     }
 
-    public ReservationEntity(Integer numberOfRooms, BigDecimal reservationFee, LocalDateTime startDate, LocalDateTime endDate, ReservationTypeEnum reservationType) {
+    public ReservationEntity(Integer numberOfRooms, BigDecimal reservationFee, Date startDate, Date endDate, ReservationTypeEnum reservationType) {
         this();
         this.numberOfRooms = numberOfRooms;
         this.reservationFee = reservationFee;
@@ -110,19 +114,19 @@ public class ReservationEntity implements Serializable {
         this.reservationFee = reservationFee;
     }
 
-    public LocalDateTime getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
