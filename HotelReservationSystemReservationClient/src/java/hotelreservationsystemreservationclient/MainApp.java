@@ -77,10 +77,10 @@ public class MainApp {
                 System.out.println("1: Login");
                 System.out.println("2: Register as Guest");
                 System.out.println("3: Search Hotel Room");
-                System.out.println("3: Exit\n");
+                System.out.println("4: Exit\n");
                 response = 0;
 
-                while (response < 1 || response > 3) {
+                while (response < 1 || response > 4) {
                     System.out.print("> ");
 
                     response = scanner.nextInt();
@@ -110,7 +110,7 @@ public class MainApp {
                     }
                 }
 
-                if (response == 2) {
+                if (response == 4) {
                     break;
                 }
             }
@@ -201,6 +201,7 @@ public class MainApp {
                 } else if (response == 3) {
                     viewAllReservations();
                 } else if (response == 4) {
+                    currentCustomerEntity = null;
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");

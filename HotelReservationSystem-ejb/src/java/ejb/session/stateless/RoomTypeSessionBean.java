@@ -176,11 +176,32 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
             if (constraintViolations.isEmpty()) {
                 RoomTypeEntity roomTypeEntityToUpdate = retrieveRoomTypeByRoomTypeId(roomTypeEntity.getRoomTypeId());
-
-                Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
-                query.setParameter("nextRoomType", roomTypeEntityToUpdate.getRoomTypeName());
-                RoomTypeEntity roomBefore = (RoomTypeEntity) query.getSingleResult();
-                roomBefore.setRoomTypeName(roomTypeEntity.getRoomTypeName());
+                String initialRoomName = roomTypeEntityToUpdate.getRoomTypeName();
+                String initialNextRoomType = roomTypeEntity.getNextRoomType();
+                
+                //update next room type - the one before original place 
+                Query query1 = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :roomType");
+                query1.setParameter("roomType", initialRoomName);
+                if (!query1.getResultList().isEmpty()) {
+                    RoomTypeEntity roomType = (RoomTypeEntity) query1.getSingleResult();
+                    roomType.setNextRoomType(roomTypeEntityToUpdate.getNextRoomType());
+                }
+                
+                Query query2 = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
+                query2.setParameter("nextRoomType", roomTypeEntity.getNextRoomType());
+                if (!query2.getResultList().isEmpty()) {
+                    RoomTypeEntity roomType = (RoomTypeEntity) query2.getSingleResult();
+                    System.out.println(roomType.getRoomTypeName());
+                    roomType.setNextRoomType(roomTypeEntity.getRoomTypeName());
+                }
+                roomTypeEntityToUpdate.setNextRoomType(roomTypeEntity.getNextRoomType());
+//                
+//                Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
+//                query.setParameter("nextRoomType", initialRoomName);
+//                if (!query1.getResultList().isEmpty()) {
+//                    RoomTypeEntity roomBefore = (RoomTypeEntity) query.getSingleResult();
+//                    roomBefore.setRoomTypeName(roomTypeEntity.getRoomTypeName());
+//                }
                 roomTypeEntityToUpdate.setRoomTypeName(roomTypeEntity.getRoomTypeName());
 
                 //if (roomTypeEntityToUpdate.getRoomTypeName().equals(roomTypeEntity.getRoomTypeName())) {
@@ -190,13 +211,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                 roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
                 roomTypeEntityToUpdate.setRoomCapacity(roomTypeEntity.getRoomCapacity());
                 roomTypeEntityToUpdate.setRoomAmenities(roomTypeEntity.getRoomAmenities());
-                Query query2 = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
-                query2.setParameter("nextRoomType", roomTypeEntity.getNextRoomType());
-                if (!query2.getResultList().isEmpty()) {
-                    RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
-                    roomType.setNextRoomType(roomTypeEntity.getRoomTypeName());
-                }
-                roomTypeEntityToUpdate.setNextRoomType(roomTypeEntity.getNextRoomType());
+                
                 entityManager.persist(roomTypeEntityToUpdate);
 
             } else {
