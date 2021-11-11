@@ -69,16 +69,16 @@ public class RoomTypeEntity implements Serializable {
         this.roomRates = new ArrayList<>();
         this.rooms = new ArrayList<>();
         this.isDisabled = false;
-    }
-
-    public RoomTypeEntity(String roomTypeName, String nextRoomType) {
-        this();
-        this.roomTypeName = roomTypeName;
         this.roomDescription = "Big";
         this.roomSize = 1;
         this.roomBed = 2;
         this.roomCapacity = 2;
         this.roomAmenities = "With Pool";
+    }
+
+    public RoomTypeEntity(String roomTypeName, String nextRoomType) {
+        this();
+        this.roomTypeName = roomTypeName;
         this.nextRoomType = nextRoomType;
     }
 
