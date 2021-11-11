@@ -157,7 +157,8 @@ public class HotelOperationModule {
                 } else if (response == 7) {
                     doViewAllRooms();
                 } else if (response == 8) {
-                    doViewRoomAllocationExceptionReport();
+                    //doViewRoomAllocationExceptionReport();
+                   roomAllocation();
                 } else if (response == 9) {
                     break;
                 } else {
