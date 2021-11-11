@@ -253,6 +253,7 @@ public class HotelOperationModule {
         }
         System.out.print("Enter Room Capacity of RoomType (-1 if no change)> ");
         int capacity = scanner.nextInt();
+        scanner.nextLine();
         if (capacity>0) {
             roomType.setRoomCapacity(capacity);
         }
@@ -560,7 +561,7 @@ public class HotelOperationModule {
                     end = scanner.nextLine();
                     LocalDate endDate = LocalDate.parse(end);
                     LocalDateTime endDateTime = endDate.atStartOfDay();
-                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime.plusHours(23).plusMinutes(59));
 //                        Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(end);
 //                        LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter); 
                     promotionRate.setName(name);
@@ -584,7 +585,7 @@ public class HotelOperationModule {
                     end = scanner.nextLine();
                     LocalDate endDate = LocalDate.parse(end);
                     LocalDateTime endDateTime = endDate.atStartOfDay();
-                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime.plusHours(23).plusMinutes(59));
                     peakRate.setName(name);
                     peakRate.setRatePerNight(ratePerNight);
                     peakRate.setStartDate(validityStartDate);
@@ -760,7 +761,7 @@ public class HotelOperationModule {
                 System.out.println("An error has occurred while deleting product: " + ex.getMessage() + "\n");;
             }
         } else {
-            System.out.println("Product NOT deleted!\n");
+            System.out.println("No reservation made!\n");
         }
     }
     

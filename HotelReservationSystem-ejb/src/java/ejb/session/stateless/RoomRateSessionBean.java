@@ -5,10 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.NormalRateEntity;
 import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -243,6 +245,47 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         }
 
         return msg;
+    }
+    
+    @Override
+    public PromotionRateEntity retrievePromotionRateByRoomTypeAndValidityPeriod(Long roomTypeId, Date date) throws RoomRateNotFoundException {
+        Query query = em.createQuery("SELECT pr FROM PromotionRateEntity pr WHERE pr.isDisabled = FALSE AND pr.roomType.roomTypeId = :id AND :Indate >= pr.startDate AND :Indate <= pr.endDate ");
+        query.setParameter("id", roomTypeId);
+        query.setParameter("Indate", date);
+
+        try {
+            return (PromotionRateEntity)query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+//            return null;
+            throw new RoomRateNotFoundException("No promotion rate found!");
+        }
+    }
+    
+    @Override
+    public PeakRateEntity retrievePeakRateByRoomTypeAndValidityPeriod(Long roomTypeId, Date date) throws RoomRateNotFoundException {
+        Query query = em.createQuery("SELECT pr FROM PeakRateEntity pr WHERE pr.isDisabled = FALSE AND pr.roomType.roomTypeId = :id AND :Indate >= pr.startDate AND :Indate <= pr.endDate ");
+        query.setParameter("id", roomTypeId);
+        query.setParameter("Indate", date);
+
+        try {
+            return (PeakRateEntity)query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+//            return null;
+            throw new RoomRateNotFoundException("No peak rate found exist!");
+        }
+    }
+    
+    @Override
+    public NormalRateEntity retrieveNormalRateByRoomType(Long roomTypeId) throws RoomRateNotFoundException {
+        Query query = em.createQuery("SELECT nr FROM NormalRateEntity nr WHERE nr.isDisabled = FALSE AND nr.roomType.roomTypeId = :id");
+        query.setParameter("id", roomTypeId);
+
+        try {
+            return (NormalRateEntity)query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+//            return null;
+            throw new RoomRateNotFoundException("No normal rate found exist!");
+        }
     }
 
 }

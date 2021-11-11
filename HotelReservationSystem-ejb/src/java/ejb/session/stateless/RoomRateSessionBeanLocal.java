@@ -5,7 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.NormalRateEntity;
+import entity.PeakRateEntity;
+import entity.PromotionRateEntity;
 import entity.RoomRateEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomRateException;
@@ -34,5 +38,11 @@ public interface RoomRateSessionBeanLocal {
     public void updateRoomRate(RoomRateEntity roomRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException;
 
     public void deleteRoomRate(Long roomRateId) throws RoomRateNotFoundException, DeleteRoomRateException;
+
+    public PromotionRateEntity retrievePromotionRateByRoomTypeAndValidityPeriod(Long roomTypeId, Date date) throws RoomRateNotFoundException;
+
+    public PeakRateEntity retrievePeakRateByRoomTypeAndValidityPeriod(Long roomTypeId, Date date) throws RoomRateNotFoundException;
+
+    public NormalRateEntity retrieveNormalRateByRoomType(Long roomTypeId) throws RoomRateNotFoundException;
     
 }
