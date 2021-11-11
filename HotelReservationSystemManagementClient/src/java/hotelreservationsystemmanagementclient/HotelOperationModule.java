@@ -213,7 +213,7 @@ public class HotelOperationModule {
             response = scanner.nextInt();
 //            scanner.nextLine();
             if (response == 1) {
-//                doUpdateRoomType(roomType);
+                doUpdateRoomType(roomType);
             } else if (response == 2) {
                 doDeleteRoomType(roomType);
             }
@@ -246,6 +246,7 @@ public class HotelOperationModule {
         }
         System.out.print("Enter Room Capacity of RoomType (-1 if no change)> ");
         int capacity = scanner.nextInt();
+        scanner.nextLine();
         if (capacity>0) {
             roomType.setRoomCapacity(capacity);
         }
@@ -545,7 +546,7 @@ public class HotelOperationModule {
                     end = scanner.nextLine();
                     LocalDate endDate = LocalDate.parse(end);
                     LocalDateTime endDateTime = endDate.atStartOfDay();
-                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime.plusHours(23).plusMinutes(59));
 //                        Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(end);
 //                        LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter); 
                     promotionRate.setName(name);
@@ -569,7 +570,7 @@ public class HotelOperationModule {
                     end = scanner.nextLine();
                     LocalDate endDate = LocalDate.parse(end);
                     LocalDateTime endDateTime = endDate.atStartOfDay();
-                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime);
+                    Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime.plusHours(23).plusMinutes(59));
                     peakRate.setName(name);
                     peakRate.setRatePerNight(ratePerNight);
                     peakRate.setStartDate(validityStartDate);
