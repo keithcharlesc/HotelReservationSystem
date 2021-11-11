@@ -33,6 +33,6 @@ public class HotelReservationSystemWebService {
     
     @WebMethod(operationName = "createNewPartnerEmployee")
     public Long createNewPartnerEmployee(@WebParam(name = "name") String txt) {
-        return 2L;
+        return 1L;
     }
 }
