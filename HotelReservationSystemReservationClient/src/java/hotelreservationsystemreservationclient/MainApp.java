@@ -31,8 +31,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import util.enumeration.ReservationTypeEnum;
 import util.exception.GuestEmailExistException;
@@ -187,29 +188,29 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    //searchHotelRoom();
-                    int nextResponse = 0;
-                    while (true) {
-                        System.out.println("*** Hotel Reservation (HoR) System ***\n");
-                        System.out.println("1: Reserve Hotel Room");
-                        System.out.println("2: Back");
-                        while (nextResponse < 1 || nextResponse > 2) {
-                            System.out.print("> ");
-
-                            response = scanner.nextInt();
-
-                            if (nextResponse == 1) {
-                                //reserveHotelRoom();
-                            } else if (nextResponse == 2) {
-                                break;
-                            } else {
-                                System.out.println("Invalid option, please try again!\n");
-                            }
-                        }
-                        if (nextResponse == 2) {
-                            break;
-                        }
-                    }
+                    doGuestSearchHotelRoom();
+//                    int nextResponse = 0;
+//                    while (true) {
+//                        System.out.println("*** Hotel Reservation (HoR) System ***\n");
+//                        System.out.println("1: Reserve Hotel Room");
+//                        System.out.println("2: Back");
+//                        while (nextResponse < 1 || nextResponse > 2) {
+//                            System.out.print("> ");
+//
+//                            response = scanner.nextInt();
+//
+//                            if (nextResponse == 1) {
+//                                //reserveHotelRoom();
+//                            } else if (nextResponse == 2) {
+//                                break;
+//                            } else {
+//                                System.out.println("Invalid option, please try again!\n");
+//                            }
+//                        }
+//                        if (nextResponse == 2) {
+//                            break;
+//                        }
+//                    }
                 } else if (response == 2) {
                     viewReservationDetails();
                 } else if (response == 3) {
@@ -272,13 +273,10 @@ public class MainApp {
                 RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
 
                 List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
-                HashMap<Date, RoomRateEntity> map = new HashMap<Date, RoomRateEntity>();
+                LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
                 for (Date date : dateRange) {
                     RoomRateEntity rate = null;
 
-
-                    
-                    
                     //for each date,
                     //find the available rates (where the validity period contains the date) >= date<=
                     //check for normal
@@ -320,14 +318,19 @@ public class MainApp {
                     //-take the rate that is lower
                 }
 
-                                    //PRINT RATE AMOUNTS for WHATS AVAIL
-                
+                //PRINT RATE AMOUNTS for WHATS AVAIL
                 BigDecimal reservationAmount = new BigDecimal(0);
+
+//                for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
+//                    Date key = entry.getKey();
+//                    RoomRateEntity value = entry.getValue();
+//                    System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
+//                }
 
                 for (RoomRateEntity roomRate : map.values()) {
                     reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
                 }
-                reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfNights));
+                reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
 
 //                List<RoomRateEntity> roomRates = roomTypeEntity.getRoomRates(); //jpql to get room rate = published rate
 //                RoomRateEntity publishedRate = new PublishedRateEntity();
