@@ -125,7 +125,7 @@ public class FrontOfficeModule {
         try {
             Long numberOfNights = (numberOfNights(checkInDate, checkOutDate)) + 1;
             //need to acccount for 12pm 2pm for check in and checkout to set it to
-            System.out.println("Number of rooms > ");
+            System.out.print("Number of rooms > ");
             Integer numberOfRooms = scanner.nextInt();
             scanner.nextLine();
             //call list of room types that have available rooms
@@ -265,7 +265,7 @@ public class FrontOfficeModule {
         start.setTime(startDate);
         Calendar end = Calendar.getInstance();
         end.setTime(endDate);
-        end.add(Calendar.DAY_OF_YEAR, 1); //Add 1 day to endDate to make sure endDate is included into the final list
+//        end.add(Calendar.DAY_OF_YEAR, 1); //Add 1 day to endDate to make sure endDate is included into the final list
         while (start.before(end)) {
             result.add(start.getTime());
             start.add(Calendar.DAY_OF_YEAR, 1);
