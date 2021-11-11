@@ -15,6 +15,8 @@ import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -128,6 +131,7 @@ public class FrontOfficeModule {
             System.out.print("Number of rooms > ");
             Integer numberOfRooms = scanner.nextInt();
             scanner.nextLine();
+            System.out.println();
             //call list of room types that have available rooms
 //            System.out.println(roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType("Deluxe Room")); //total quantity of rooms per room type
             List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
@@ -144,20 +148,31 @@ public class FrontOfficeModule {
                 if (remainingAvailableRooms >= numberOfRooms) {
                     //if there is sufficient rooms available
                     //display the room type
-                    System.out.println("(" + i + ") " + roomType.getRoomTypeName());
+                    System.out.println("- " + roomType.getRoomTypeName());
                 }
             }
+            System.out.println();
             System.out.print("Indicate Room Type Option> ");
             String roomTypeOption = scanner.nextLine().trim();
+            System.out.println();
             try {
                 RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
                 List<RoomRateEntity> roomRates = roomTypeEntity.getRoomRates(); //jpql to get room rate = published rate
                 RoomRateEntity publishedRate = new PublishedRateEntity();
                 for (RoomRateEntity roomRate : roomRates) {
                     if (roomRate.getClass().getSimpleName().equals("PublishedRateEntity")) {
-                        publishedRate = (PublishedRateEntity) roomRate;
+                        publishedRate = (PublishedRateEntity)roomRate;
                     }
                 }
+                
+                List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
+                System.out.printf("%30s%30s%30s\n", "Date", "Room Rate", "Rate Per Night");
+                for (Date date:dateRange) {
+                    String df = DateFormat.getDateInstance().format(date);
+                    System.out.printf("%30s%30s%30s\n", df, publishedRate.getName(), NumberFormat.getCurrencyInstance().format(publishedRate.getRatePerNight()));
+                }
+                System.out.println();
+                
                 BigDecimal reservationAmount = publishedRate.getRatePerNight().multiply(new BigDecimal(numberOfNights)).multiply(new BigDecimal(numberOfRooms)); //convert number of nights to make it big decimal
                 System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
                 System.out.print("Would you like to make a reservation? (Enter 'Y' to confirm) > ");
@@ -165,16 +180,8 @@ public class FrontOfficeModule {
 
                 if (input.equals("Y")) {
                     doWalkInReserveRoom(reservationAmount, numberOfRooms, checkInDate, checkOutDate, publishedRate, roomTypeEntity);
-//                    try {
-//                        ReservationEntity newReservation = new ReservationEntity(numberOfRooms, reservationAmount, checkInDate, checkOutDate, ReservationTypeEnum.WALK_IN);
-//                        ReservationEntity createdReservation = reservationSessionBean.createNewReservation(numberOfNights, newReservation)
-//                        
-//                        System.out.println("Room rate deleted successfully!\n");
-//                    } catch (ex) {
-//                        System.out.println("An error has occurred: " + ex.getMessage() + "\n");;
-//                    }
                 } else {
-                    System.out.println("Product NOT deleted!\n");
+                    System.out.println("Reservation not made!\n");
                 }
 
             } catch (RoomTypeNotFoundException ex) {

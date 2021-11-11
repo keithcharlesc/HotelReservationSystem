@@ -760,7 +760,7 @@ public class HotelOperationModule {
                 System.out.println("An error has occurred while deleting product: " + ex.getMessage() + "\n");;
             }
         } else {
-            System.out.println("Product NOT deleted!\n");
+            System.out.println("No reservation made!\n");
         }
     }
     
