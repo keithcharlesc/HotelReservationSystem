@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.ReservationRoomEntity;
 import entity.RoomEntity;
 import entity.RoomTypeEntity;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -127,12 +128,18 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
     
     @Override 
-    public List<RoomEntity> retreiveAvailableRooms() {
-        Query query = entityManager.createQuery("SELECT r FROM RoomEntity r WHERE r.roomAllocated = false AND r.isDisabled = false AND r.roomStatusEnum = :status ORDER BY r.roomType");
-//        query.setParameter("allocated", false);
-//        query.setParameter("disabled", false);
-        query.setParameter("status", RoomStatusEnum.AVAILABLE);
-        return query.getResultList();
+    public List<RoomEntity> retreiveAvailableRooms(Date allocateDate, RoomTypeEntity roomType) {
+        Query query1 = entityManager.createQuery("SELECT r FROM RoomEntity r, IN (r.reservationRooms) rr WHERE rr.reservation.endDate <= :allocateDate AND r.roomAllocated = true AND r.roomType = :roomType");
+        query1.setParameter("allocateDate", allocateDate);
+        query1.setParameter("roomType", roomType);
+        List<RoomEntity> rooms = query1.getResultList();
+        for(RoomEntity room: rooms) {
+            room.setRoomAllocated(false);
+        }
+        Query query2 = entityManager.createQuery("SELECT r FROM RoomEntity r WHERE r.roomAllocated = false AND r.isDisabled = false AND r.roomStatusEnum = :status AND r.roomType = :roomType");
+        query2.setParameter("roomType", roomType);
+        query2.setParameter("status", RoomStatusEnum.AVAILABLE);
+        return query2.getResultList();
     }
 
     @Override

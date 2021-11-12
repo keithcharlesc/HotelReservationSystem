@@ -85,6 +85,18 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
 
         return query.getResultList();
     }
+    
+    @Override
+    public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate = :currentDate AND rr.isAllocated=false");
+        query.setParameter("currentDate", currentDate);
+        List<ReservationEntity> reservations = query.getResultList();
+        for(ReservationEntity reservation: reservations) {
+            reservation.getReservationRooms().size();
+        }
+
+        return reservations;
+    }
 
     @Override
     public ReservationEntity retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException {

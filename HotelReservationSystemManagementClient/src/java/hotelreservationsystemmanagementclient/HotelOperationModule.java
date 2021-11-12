@@ -102,7 +102,7 @@ public class HotelOperationModule {
                 } else if (response == 2) {
                     salesManagerOperations();
                 } else if (response == 3) {
-//                  system();
+                  system();
                 } else if (response == 4) {
                     break;
                 } else {
@@ -790,12 +790,48 @@ public class HotelOperationModule {
 
     //SYSTEM (START) ===============================================================> 
     public void roomAllocation() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("*** HoRS System :: Room Allocation ***\n");
+        System.out.print("Enter Date of Allocation [yyyy-MM-dd]> ");
+        String allocation = scanner.nextLine().trim();
+        LocalDate allocateDate = LocalDate.parse(allocation);
+        LocalDateTime allocationDateTime = allocateDate.atStartOfDay();
+        Date allocationStartDate = convertToDateViaSqlTimestamp(allocationDateTime);
         try {
-            reservationRoomSessionBean.allocateRooms();
-            reservationRoomSessionBean.allocateRoomExceptionType1();
-            reservationRoomSessionBean.allocateRoomExceptionType2();
+            reservationRoomSessionBean.allocateRooms(allocationStartDate);
+            reservationRoomSessionBean.allocateRoomExceptionType1(allocationStartDate);
+            reservationRoomSessionBean.allocateRoomExceptionType2(allocationStartDate);
         } catch (ReservationRoomNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
+        } catch (RoomTypeNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+    }
+    
+    public void system() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        while (true) {
+            System.out.println("*** HoRS System :: Hotel Operation :: System ***\n");
+            System.out.println("1: Room Allocation");
+            System.out.println("2: Back"); 
+            response = 0;
+
+            while (response < 1 || response > 2) {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+
+                if (response == 1) {
+                    roomAllocation();
+                } else if (response == 2) {
+                    break;
+                }
+            }
+            if(response==2) {
+                break;
+            }
         }
     }
     //SYSTEM (END) <=================================================================

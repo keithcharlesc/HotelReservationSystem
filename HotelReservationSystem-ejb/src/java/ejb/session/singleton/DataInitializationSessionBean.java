@@ -14,9 +14,11 @@ import entity.EmployeeEntity;
 import entity.NormalRateEntity;
 import entity.PublishedRateEntity;
 import entity.RoomEntity;
-import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -78,10 +80,12 @@ public class DataInitializationSessionBean {
     public void roomAllocationTimer() {
         System.out.println("Timer!");
         try {
-            reservationRoomSessionBean.allocateRooms();
-            reservationRoomSessionBean.allocateRoomExceptionType1();
-            reservationRoomSessionBean.allocateRoomExceptionType2();
+            reservationRoomSessionBean.allocateRooms(new Date());
+            reservationRoomSessionBean.allocateRoomExceptionType1(new Date());
+            reservationRoomSessionBean.allocateRoomExceptionType2(new Date());
         } catch (ReservationRoomNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        } catch (RoomTypeNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
     }

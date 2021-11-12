@@ -6,11 +6,13 @@
 package ejb.session.stateless;
 
 import entity.ReservationRoomEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.InputDataValidationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.ReservationRoomNotFoundException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateReservationRoomException;
 
@@ -27,12 +29,12 @@ public interface ReservationRoomSessionBeanRemote {
 
     public void associateReservationRoomWithARoom(Long reservationRoomId, Long roomId);
     
-    public List<ReservationRoomEntity> retrieveUnallocatedRooms();
+    public List<ReservationRoomEntity> retrieveUnallocatedRooms(Date allocateDate);
     
-    public void allocateRooms();
+    public void allocateRooms(Date allocateDate);
     
-    public void allocateRoomExceptionType1() throws ReservationRoomNotFoundException;
+    public void allocateRoomExceptionType1(Date allocateDate) throws ReservationRoomNotFoundException, RoomTypeNotFoundException; 
     
-    public void allocateRoomExceptionType2() throws ReservationRoomNotFoundException;
+    public void allocateRoomExceptionType2(Date allocateDate) throws ReservationRoomNotFoundException;
 
 }

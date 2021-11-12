@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.RoomEntity;
+import entity.RoomTypeEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.DeleteRoomException;
@@ -25,5 +27,5 @@ public interface RoomSessionBeanRemote {
     public RoomEntity retrieveRoomByRoomNumber(String number) throws RoomNotFoundException;
     public RoomEntity updateRoom(RoomEntity roomEntity) throws RoomNotFoundException, UpdateRoomException, InputDataValidationException;
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
-    public List<RoomEntity> retreiveAvailableRooms();
+    public List<RoomEntity> retreiveAvailableRooms(Date allocateDate, RoomTypeEntity roomType);
 }
