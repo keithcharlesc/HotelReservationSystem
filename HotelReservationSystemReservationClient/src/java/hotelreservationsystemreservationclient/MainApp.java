@@ -508,7 +508,7 @@ public class MainApp {
         Scanner scanner = new Scanner(System.in);
         String start = "";
         String end = "";
-        System.out.println("*** HoRS Reservation Client :: Search Hotel Room ***\n");
+        System.out.println("*** HoRS System :: Reservation Client :: Hotel Search Room ***\n");
         System.out.print("Enter Check-In Date [yyyy-MM-dd] > ");
         start = scanner.nextLine().trim();
         LocalDate startDate = LocalDate.parse(start);
@@ -520,124 +520,96 @@ public class MainApp {
         LocalDateTime endDateTime = endDate.atStartOfDay();
         Date checkOutDate = convertToDateViaSqlTimestamp(endDateTime.withHour(12)); //checkoudate
         System.out.println();
-        try {
-            Long numberOfNights = (numberOfNights(checkInDate, checkOutDate)) + 1;
-            System.out.print("Number of rooms > ");
-            Integer numberOfRooms = scanner.nextInt();
-            scanner.nextLine();
-            System.out.println();
-            //call list of room types that have available rooms
-//            System.out.println(roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType("Deluxe Room")); //total quantity of rooms per room type
-            List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
-            System.out.println("Available Room Types: ");
-            for (RoomTypeEntity roomType : listOfRoomTypes) {
-                int i = 1;
 
+        System.out.print("Number of rooms > ");
+        Integer numberOfRooms = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println();
+        //call list of room types that have available rooms
+//            System.out.println(roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType("Deluxe Room")); //total quantity of rooms per room type
+        List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
+        System.out.println("Available Room Types: ");
+        System.out.println();
+        System.out.printf("%30s%20s%25s\n", "Room Type Name", "Rooms Available", "Reservation Amount");
+        for (RoomTypeEntity roomType : listOfRoomTypes) {
+            if (roomType.getIsDisabled() == false) {
                 Integer totalNoOfRoomsForRoomType = roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType(roomType.getRoomTypeName());
 //                System.out.println("*Total Number of Rooms For " + roomType.getRoomTypeName() + ", is " + totalNoOfRoomsForRoomType);
-                Integer reservedRoomsForRoomTypeForDateRange = roomTypeSessionBean.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, end);
+                Integer reservedRoomsForRoomTypeForDateRange = roomTypeSessionBean.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, roomType.getRoomTypeName());
 //                System.out.println("Reserved Rooms For " + roomType.getRoomTypeName() + ", is " + reservedRoomsForRoomTypeForDateRange);
                 Integer remainingAvailableRooms = totalNoOfRoomsForRoomType - reservedRoomsForRoomTypeForDateRange;
 //                System.out.println("Remaining Avail Rooms For " + roomType.getRoomTypeName() + ", is " + remainingAvailableRooms);
                 if (remainingAvailableRooms >= numberOfRooms) {
                     //if there is sufficient rooms available
                     //display the room type
-                    System.out.println("- " + roomType.getRoomTypeName());
-                }
-            }
-            System.out.println();
-            System.out.print("Indicate Room Type Option> ");
-            String roomTypeOption = scanner.nextLine().trim();
-            try {
-                RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
 
-                List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
-                LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
-                for (Date date : dateRange) {
-                    RoomRateEntity rate = null;
-
-                    //for each date,
-                    //find the available rates (where the validity period contains the date) >= date<=
-                    //check for normal
-                    //check for peak
-                    //check for promotion
-                    //if promotion
-                    PeakRateEntity peakRate;
                     try {
-                        peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
-                    } catch (RoomRateNotFoundException ex) {
-                        peakRate = null;
-                    }
+                        RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomType.getRoomTypeName());
+                        List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
+                        LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
+                        for (Date date : dateRange) {
+                            RoomRateEntity rate = null;
+                            //for each date,
+                            //find the available rates (where the validity period contains the date) >= date<=
+                            //check for normal
+                            //check for peak
+                            //check for promotion
+                            //if promotion
+                            PeakRateEntity peakRate;
+                            try {
+                                peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+                            } catch (RoomRateNotFoundException ex) {
+                                peakRate = null;
+                            }
 
-                    PromotionRateEntity promotionRate;
-                    try {
-                        promotionRate = roomRateSessionBean.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
-                    } catch (RoomRateNotFoundException ex) {
-                        promotionRate = null;
-                    }
+                            PromotionRateEntity promotionRate;
+                            try {
+                                promotionRate = roomRateSessionBean.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+                            } catch (RoomRateNotFoundException ex) {
+                                promotionRate = null;
+                            }
 
-                    if (peakRate == null & promotionRate == null) {
-                        try {
-                            rate = roomRateSessionBean.retrieveNormalRateByRoomType(roomTypeEntity.getRoomTypeId());
-                        } catch (RoomRateNotFoundException ex) {
-                            System.out.println("Error: " + ex.getMessage());
+                            if (peakRate == null & promotionRate == null) {
+                                try {
+                                    rate = roomRateSessionBean.retrieveNormalRateByRoomType(roomTypeEntity.getRoomTypeId());
+                                } catch (RoomRateNotFoundException ex) {
+                                    System.out.println("Error: " + ex.getMessage());
+                                }
+                            } else if (peakRate == null && promotionRate != null) {
+                                rate = promotionRate;
+                            } else if (peakRate != null && promotionRate == null) {
+                                rate = peakRate;
+                            } else if (peakRate != null && promotionRate != null) {
+                                rate = promotionRate;
+                            }
+
+                            map.put(date, rate);
+                            //if peak or promotion exists (one only)
+                            //- takes precedence over normal rate
+                            // if both peak and promotion exists
+                            //-take the rate that is lower
                         }
-                    } else if (peakRate == null && promotionRate != null) {
-                        rate = promotionRate;
-                    } else if (peakRate != null && promotionRate == null) {
-                        rate = peakRate;
-                    } else if (peakRate != null && promotionRate != null) {
-                        rate = promotionRate;
+
+                        //PRINT RATE AMOUNTS for WHATS AVAIL
+                        BigDecimal reservationAmount = new BigDecimal(0);
+
+                        for (RoomRateEntity roomRate : map.values()) {
+                            reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
+                        }
+                        reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
+                        System.out.printf("%30s%20s%25s\n", roomType.getRoomTypeName(), remainingAvailableRooms, NumberFormat.getCurrencyInstance().format(reservationAmount));
+//                System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
+
+                    } catch (RoomTypeNotFoundException ex) {
+                        System.out.println("Error: " + ex.getMessage());
                     }
-
-                    map.put(date, rate);
-                    //if peak or promotion exists (one only)
-                    //- takes precedence over normal rate
-                    // if both peak and promotion exists
-                    //-take the rate that is lower
                 }
-
-                //PRINT RATE AMOUNTS for WHATS AVAIL
-                BigDecimal reservationAmount = new BigDecimal(0);
-
-                System.out.println();
-                System.out.println("Retrieving room rates for each night...");
-                System.out.println();
-                System.out.printf("%30s%30s%30s\n", "Date", "Room Rate", "Rate Per Night");
-                for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
-                    Date key = entry.getKey();
-                    RoomRateEntity value = entry.getValue();
-//                    System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
-                    String df = DateFormat.getDateInstance().format(key);
-                    System.out.printf("%30s%30s%30s\n", df, value.getName(), NumberFormat.getCurrencyInstance().format(value.getRatePerNight()));
-                }
-
-                System.out.println();
-
-                for (RoomRateEntity roomRate : map.values()) {
-                    reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
-                }
-                reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
-
-//                List<RoomRateEntity> roomRates = roomTypeEntity.getRoomRates(); //jpql to get room rate = published rate
-//                RoomRateEntity publishedRate = new PublishedRateEntity();
-//                for (RoomRateEntity roomRate : roomRates) {
-//                    if (roomRate.getClass().getSimpleName().equals("PublishedRateEntity")) {
-//                        publishedRate = (PublishedRateEntity) roomRate;
-//                    }
-//                }
-//                BigDecimal reservationAmount = publishedRate.getRatePerNight().multiply(new BigDecimal(numberOfNights)).multiply(new BigDecimal(numberOfRooms)); //convert number of nights to make it big decimal
-                System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
-                System.out.println();
-                System.out.print("Press any key to continue...> ");
-                scanner.nextLine();
-            } catch (RoomTypeNotFoundException ex) {
-                System.out.println("Error: " + ex.getMessage());
             }
-//
-        } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
         }
+
+        System.out.println();
+        System.out.print("Press any key to continue...> ");
+        scanner.nextLine();
 
     }
 
