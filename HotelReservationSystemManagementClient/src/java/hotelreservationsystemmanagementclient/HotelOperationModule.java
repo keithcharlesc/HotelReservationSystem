@@ -260,7 +260,7 @@ public class HotelOperationModule {
         System.out.print("Enter Room Amenities of RoomType (blank if no change)> ");
         String amenities = "";
         amenities = scanner.nextLine().trim();
-        scanner.nextLine();
+        //scanner.nextLine();
         if (amenities.length() > 0) {
             roomType.setRoomAmenities(amenities);
         }
@@ -272,9 +272,12 @@ public class HotelOperationModule {
         }
         try {
             roomTypeSessionBean.updateRoomType(roomType);
+            System.out.println("Room Type updated!");
+            System.out.print("Press any key to continue...> ");
+            scanner.nextLine();
         } catch (RoomTypeNotFoundException | UpdateRoomTypeException | InputDataValidationException ex) {
             System.out.println("Error: " + ex.getMessage());
-        } 
+        }
     }
 
     public void doDeleteRoomType(RoomTypeEntity roomType) {
@@ -285,6 +288,8 @@ public class HotelOperationModule {
             try {
                 roomTypeSessionBean.deleteRoomType(roomType.getRoomTypeId());
                 System.out.println("Room Type successfully deleted!");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (RoomTypeNotFoundException ex) {
                 System.out.println("Error: " + ex.getMessage());
             } catch (DeleteRoomTypeException ex) {
@@ -596,6 +601,8 @@ public class HotelOperationModule {
                     if (constraintViolations.isEmpty()) {
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
                         System.out.println("RoomRate created successfully!\n");
+                        System.out.print("Press any key to continue...> ");
+                        scanner.nextLine();
                     }
                 }
             } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {

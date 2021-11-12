@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.PartnerEmployeeEntity;
+import entity.ReservationEntity;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -14,13 +15,11 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import util.exception.DeletePartnerEmployeeException;
 import util.exception.PartnerNotFoundException;
 import util.exception.PartnerUsernameExistException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
-import util.exception.UpdatePartnerEmployeeException;
 
 /**
  *
@@ -113,6 +112,17 @@ public class PartnerEmployeeSessionBean implements PartnerEmployeeSessionBeanRem
         } catch (PartnerNotFoundException ex) {
             throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
         }
+    }
+    
+    @Override
+    public PartnerEmployeeEntity retrieveAllPartnerReservations(String username) throws PartnerNotFoundException {
+        PartnerEmployeeEntity partnerEmployee = retrievePartnerEmployeeByUsername(username);
+        for(ReservationEntity reservation: partnerEmployee.getReservations()) {
+            reservation.getGuest();
+            reservation.getRoomType();
+            reservation.getReservationRooms().size();
+        }
+        return partnerEmployee;
     }
 
     
