@@ -1,11 +1,8 @@
 package ejb.session.stateless;
 
 import entity.GuestEntity;
-import entity.NightEntity;
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -88,8 +86,8 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
     
     @Override
     public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate = :currentDate AND rr.isAllocated=false");
-        query.setParameter("currentDate", currentDate);
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate = :currentDate AND rr.isAllocated=FALSE");
+        query.setParameter("currentDate", currentDate, TemporalType.DATE);
         List<ReservationEntity> reservations = query.getResultList();
         for(ReservationEntity reservation: reservations) {
             reservation.getReservationRooms().size();

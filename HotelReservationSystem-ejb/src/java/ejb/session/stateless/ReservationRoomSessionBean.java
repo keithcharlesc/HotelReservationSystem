@@ -97,6 +97,7 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
     @Override
     public void allocateRooms(Date allocateDate) {
         List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
+        System.out.println(currentDayReservation.get(0));
         //List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);
         //List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate);
         for (ReservationEntity reservation : currentDayReservation) {
@@ -104,11 +105,14 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
             int i = 0;
             List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate, roomType);
             if(availableRooms.size() >= reservation.getNumberOfRooms()) {
+                System.out.println("YES");
                 for(ReservationRoomEntity reservationRoom: reservation.getReservationRooms()) {
+                    System.out.println(i);
                     reservationRoom.setRoom(availableRooms.get(i));
                     availableRooms.get(i).getReservationRooms().add(reservationRoom);
                     reservationRoom.setIsAllocated(true);
                     availableRooms.get(i).setRoomAllocated(true);
+                    i++;
                 }
             }
         }

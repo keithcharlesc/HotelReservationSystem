@@ -19,6 +19,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -129,8 +130,8 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     
     @Override 
     public List<RoomEntity> retreiveAvailableRooms(Date allocateDate, RoomTypeEntity roomType) {
-        Query query1 = entityManager.createQuery("SELECT r FROM RoomEntity r, IN (r.reservationRooms) rr WHERE rr.reservation.endDate <= :allocateDate AND r.roomAllocated = true AND r.roomType = :roomType");
-        query1.setParameter("allocateDate", allocateDate);
+        Query query1 = entityManager.createQuery("SELECT r FROM RoomEntity r, IN (r.reservationRooms) rr WHERE rr.reservation.endDate < :allocateDate AND r.roomAllocated = true AND r.roomType = :roomType");
+        query1.setParameter("allocateDate", allocateDate, TemporalType.DATE);
         query1.setParameter("roomType", roomType);
         List<RoomEntity> rooms = query1.getResultList();
         for(RoomEntity room: rooms) {
