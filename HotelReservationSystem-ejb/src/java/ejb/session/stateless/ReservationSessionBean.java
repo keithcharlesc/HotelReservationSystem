@@ -86,8 +86,11 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
     
     @Override
     public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate = :currentDate AND rr.isAllocated=FALSE");
-        query.setParameter("currentDate", currentDate, TemporalType.DATE);
+        long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate > :currentDate AND r.startDate < :nextDay AND rr.isAllocated=false");
+        //query.setParameter("currentDate", currentDate, TemporalType.DATE);
+        query.setParameter("currentDate", currentDate);
+        query.setParameter("nextDay", currentDate.getTime() + MILLIS_IN_A_DAY );
         List<ReservationEntity> reservations = query.getResultList();
         for(ReservationEntity reservation: reservations) {
             reservation.getReservationRooms().size();
