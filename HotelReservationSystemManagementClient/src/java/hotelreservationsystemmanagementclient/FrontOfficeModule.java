@@ -1,16 +1,19 @@
 package hotelreservationsystemmanagementclient;
 
+import ejb.session.stateless.ExceptionRecordSessionBeanRemote;
 import ejb.session.stateless.GuestSessionBeanRemote;
 import ejb.session.stateless.NightSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.EmployeeEntity;
+import entity.ExceptionRecordEntity;
 import entity.GuestEntity;
 import entity.NightEntity;
 import entity.PublishedRateEntity;
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
+import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.io.IOException;
@@ -24,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,13 +35,16 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.EmployeeAccessRightEnum;
 import util.enumeration.ReservationTypeEnum;
+import util.exception.ExceptionRecordNotFoundException;
 import util.exception.GuestEmailExistException;
 import util.exception.GuestNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidAccessRightException;
+import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateRoomException;
 
 public class FrontOfficeModule {
 
@@ -48,6 +53,7 @@ public class FrontOfficeModule {
     private GuestSessionBeanRemote guestSessionBean;
     private ReservationSessionBeanRemote reservationSessionBean;
     private NightSessionBeanRemote nightSessionBean;
+    private ExceptionRecordSessionBeanRemote exceptionRecordSessionBean;
     private EmployeeEntity currentEmployee;
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -57,8 +63,9 @@ public class FrontOfficeModule {
         validator = validatorFactory.getValidator();
     }
 
-    public FrontOfficeModule(RoomSessionBeanRemote roomSessionBean, RoomTypeSessionBeanRemote roomTypeSessionBean, GuestSessionBeanRemote guestSessionBean, ReservationSessionBeanRemote reservationSessionBean, NightSessionBeanRemote nightSessionBean, EmployeeEntity currentEmployee) {
+    public FrontOfficeModule(RoomSessionBeanRemote roomSessionBean, RoomTypeSessionBeanRemote roomTypeSessionBean, GuestSessionBeanRemote guestSessionBean, ReservationSessionBeanRemote reservationSessionBean, NightSessionBeanRemote nightSessionBean, ExceptionRecordSessionBeanRemote exceptionRecordSessionBean, EmployeeEntity currentEmployee) {
         this();
+        this.exceptionRecordSessionBean = exceptionRecordSessionBean;
         this.roomSessionBean = roomSessionBean;
         this.roomTypeSessionBean = roomTypeSessionBean;
         this.guestSessionBean = guestSessionBean;
@@ -242,6 +249,8 @@ public class FrontOfficeModule {
             try {
                 ReservationEntity createdReservation = reservationSessionBean.createNewReservation(guest.getGuestId(), newReservation);
                 System.out.println("Reservation created successfully!\n");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (GuestNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
                 System.out.println("An error has occurred: " + ex.getMessage() + "\n");;
             }
@@ -255,18 +264,92 @@ public class FrontOfficeModule {
     public void doCheckInGuest() {
         try {
             Scanner scanner = new Scanner(System.in);
+            System.out.println("*** HoRS System :: Check-In Guest ***\n");
             System.out.print("Guest Email > ");
             String guestEmail = scanner.nextLine().trim();
-            guestSessionBean.retreiveGuestReservations(guestEmail);
-            //display reservation but also need to resolve exception -> to change the set 
-            
+            GuestEntity guest = guestSessionBean.retreiveGuestReservations(guestEmail);
+            System.out.printf("%30s%30s%20s%20s%20s%20s\n", "Check In Date", "Check Out Date", "Room Type", "Room Number", "Exception Record ID", "Type of Exception Record");
+            for(ReservationEntity reservation: guest.getReservations()) {
+                for(ReservationRoomEntity reservationRoom: reservation.getReservationRooms()) {
+                    if(reservationRoom.getExceptionRecord() != null) {
+                        System.out.printf("%30s%30s%20s%20s%20s%20s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getRoomType(), reservationRoom.getRoom().getNumber(), reservationRoom.getExceptionRecord().getExceptionRecordId(), reservationRoom.getExceptionRecord().getTypeOfException());
+                    } else {
+                        System.out.printf("%30s%30s%20s%20s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservation.getRoomType(), reservationRoom.getRoom().getNumber() );
+                    }
+                }
+            }
+            System.out.println();
+            while (true) {
+                System.out.println("*** HoRS System :: Check-In Guest ***\n");
+                System.out.println("1: Resolve Exception Record");
+                System.out.println("2: Back");
+                int response = 0;
+
+                while (response < 1 || response > 2) {
+                    System.out.print("> ");
+
+                    response = scanner.nextInt();
+
+                    if (response == 1) {
+                        doResolveExceptionRecord();
+                    } else if (response == 2) {
+                        break;
+                    } else {
+                        System.out.println("Invalid Option!");
+                    }
+                }
+                if (response == 2) {
+                    break;
+                }
+            }
+
         } catch (GuestNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
     }
+    
+    public void doResolveExceptionRecord() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** HoRS System :: Resolve Exception ***\n");
+        System.out.print("Enter Exception ID>");
+        Long id = sc.nextLong();
+        System.out.print("Resolve Exception? (Enter 'Y' to confirm) > ");
+        String input = sc.next().trim();
+        if (input.equals("Y")) {
+            try {
+                ExceptionRecordEntity exception = exceptionRecordSessionBean.retrieveExceptionRecordByExceptionRecordId(id);
+                exception.setResolved(true);
+                exceptionRecordSessionBean.updateExceptionRecord(exception);
+                System.out.println("Exception " + exception.getExceptionRecordId() + " has been resolved!");
+            } catch (ExceptionRecordNotFoundException ex) {
+                System.out.println("Error: " + ex.getMessage());
+            } catch (InputDataValidationException ex) {
+                System.out.println("Error: " + ex.getMessage());
+            }
+        }
+    }
 
     public void doCheckOutGuest() {
-//room allocation change to false 
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("*** HoRS System :: Check-In Guest ***\n");
+            System.out.print("Guest Email > ");
+            String guestEmail = scanner.nextLine().trim();
+            GuestEntity guest = guestSessionBean.retreiveGuestReservations(guestEmail);
+            for(ReservationEntity reservation: guest.getReservations()) {
+                for(ReservationRoomEntity reservationRoom: reservation.getReservationRooms()) {
+                    RoomEntity room = reservationRoom.getRoom();
+                    room.setRoomAllocated(false);
+                    try {
+                        roomSessionBean.updateRoom(room);
+                    } catch (RoomNotFoundException | UpdateRoomException | InputDataValidationException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                }
+            }
+        } catch (GuestNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
     }
 
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {

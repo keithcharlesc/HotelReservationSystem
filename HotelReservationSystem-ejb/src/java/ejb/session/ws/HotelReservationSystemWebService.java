@@ -162,90 +162,90 @@ public class HotelReservationSystemWebService {
         }
     }
     
-    @WebMethod(operationName = "partnerReserveRoom")
-    public void partnerReserveRoom(@WebParam(name = "checkIn") String checkIn, @WebParam(name = "checkOut") String checkOut, @WebParam(name = "numberOfRooms") int numberOfRooms, @WebParam(name = "roomTypeOption") String roomTypeOption) throws RoomTypeNotFoundException {
-        LocalDate startDate = LocalDate.parse(checkIn);
-        LocalDateTime startDateTime = startDate.atStartOfDay();
-        Date checkInDate = reservationSessionBeanLocal.convertToDateViaSqlTimestamp(startDateTime.withHour(14)); //checkindate
-        LocalDate endDate = LocalDate.parse(checkOut);
-        LocalDateTime endDateTime = endDate.atStartOfDay();
-        Date checkOutDate = reservationSessionBeanLocal.convertToDateViaSqlTimestamp(endDateTime.withHour(12));
-        Long numberOfNights = (ChronoUnit.DAYS.between(checkInDate.toInstant(), checkOutDate.toInstant())) + 1;
-        RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
-        List<Date> dateRange = roomTypeSessionBean.getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
-        LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
-        for (Date date : dateRange) {
-            RoomRateEntity rate = null;
-
-            PeakRateEntity peakRate;
-            try {
-                peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
-                } catch (RoomRateNotFoundException ex) {
-                    peakRate = null;
-                }
-
-                PromotionRateEntity promotionRate;
-                try {
-                    promotionRate = roomRateSessionBean.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
-                } catch (RoomRateNotFoundException ex) {
-                    promotionRate = null;
-                }
-
-                if (peakRate == null & promotionRate == null) {
-                    try {
-                        rate = roomRateSessionBean.retrieveNormalRateByRoomType(roomTypeEntity.getRoomTypeId());
-                    } catch (RoomRateNotFoundException ex) {
-                        System.out.println("Error: " + ex.getMessage());
-                    }
-                } else if (peakRate == null && promotionRate != null) {
-                    rate = promotionRate;
-                } else if (peakRate != null && promotionRate == null) {
-                    rate = peakRate;
-                } else if (peakRate != null && promotionRate != null) {
-                    rate = promotionRate;
-                }
-
-                map.put(date, rate);
-            }
-            BigDecimal reservationAmount = new BigDecimal(0);
-
-            for (RoomRateEntity roomRate : map.values()) {
-                reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
-            }
-            reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
-
-            System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!" + "(" + roomTypeEntity.getRoomTypeName() + ")");
-            System.out.print("Would you like to make payment and confirm reservation? (Enter 'Y' to confirm) > ");
-            String input = scanner.nextLine().trim();
-
-            if (input.equals("Y")) {
-                ReservationEntity newReservation = new ReservationEntity(numberOfRooms, reservationAmount, checkInDate, checkOutDate, ReservationTypeEnum.ONLINE);
-                newReservation.setRoomType(roomTypeEntity);
-                for (int i = 0; i < numberOfRooms; i++) {
-                    ReservationRoomEntity reservationRoom = new ReservationRoomEntity();
-                    reservationRoom.setReservation(newReservation);
-                    newReservation.getReservationRooms().add(reservationRoom);
-                }
-
-                //add each night with their corresponding date and rate
-                for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
-                    Date key = entry.getKey();
-                    RoomRateEntity value = entry.getValue();
-//          System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
-                    NightEntity night = new NightEntity(value, key);
-                    try {
-                        NightEntity createdNight = nightSessionBean.createNewNight(night, night.getRoomRate().getName()); //might need to account if the creation of reservation feel then roll back if not got extra nights
-                        newReservation.getNights().add(createdNight);
-                    } catch (InputDataValidationException | RoomRateNotFoundException | UnknownPersistenceException ex) {
-                        System.out.println("Error: " + ex.getMessage());
-                    }
-                }
-                    ReservationEntity createdReservation = reservationSessionBean.createNewReservation(currentCustomerEntity.getGuestId(), newReservation);
-                    System.out.println("Reservation created successfully!  [Reservation ID: " + createdReservation.getReservationId() + "]\n");
-
-            } else {
-                System.out.println("No reservation made!\n");
-            }
-
-    }
+//    @WebMethod(operationName = "partnerReserveRoom")
+//    public void partnerReserveRoom(@WebParam(name = "checkIn") String checkIn, @WebParam(name = "checkOut") String checkOut, @WebParam(name = "numberOfRooms") int numberOfRooms, @WebParam(name = "roomTypeOption") String roomTypeOption) throws RoomTypeNotFoundException {
+//        LocalDate startDate = LocalDate.parse(checkIn);
+//        LocalDateTime startDateTime = startDate.atStartOfDay();
+//        Date checkInDate = reservationSessionBeanLocal.convertToDateViaSqlTimestamp(startDateTime.withHour(14)); //checkindate
+//        LocalDate endDate = LocalDate.parse(checkOut);
+//        LocalDateTime endDateTime = endDate.atStartOfDay();
+//        Date checkOutDate = reservationSessionBeanLocal.convertToDateViaSqlTimestamp(endDateTime.withHour(12));
+//        Long numberOfNights = (ChronoUnit.DAYS.between(checkInDate.toInstant(), checkOutDate.toInstant())) + 1;
+//        RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
+//        List<Date> dateRange = roomTypeSessionBean.getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
+//        LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
+//        for (Date date : dateRange) {
+//            RoomRateEntity rate = null;
+//
+//            PeakRateEntity peakRate;
+//            try {
+//                peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+//                } catch (RoomRateNotFoundException ex) {
+//                    peakRate = null;
+//                }
+//
+//                PromotionRateEntity promotionRate;
+//                try {
+//                    promotionRate = roomRateSessionBean.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+//                } catch (RoomRateNotFoundException ex) {
+//                    promotionRate = null;
+//                }
+//
+//                if (peakRate == null & promotionRate == null) {
+//                    try {
+//                        rate = roomRateSessionBean.retrieveNormalRateByRoomType(roomTypeEntity.getRoomTypeId());
+//                    } catch (RoomRateNotFoundException ex) {
+//                        System.out.println("Error: " + ex.getMessage());
+//                    }
+//                } else if (peakRate == null && promotionRate != null) {
+//                    rate = promotionRate;
+//                } else if (peakRate != null && promotionRate == null) {
+//                    rate = peakRate;
+//                } else if (peakRate != null && promotionRate != null) {
+//                    rate = promotionRate;
+//                }
+//
+//                map.put(date, rate);
+//            }
+//            BigDecimal reservationAmount = new BigDecimal(0);
+//
+//            for (RoomRateEntity roomRate : map.values()) {
+//                reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
+//            }
+//            reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
+//
+//            System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!" + "(" + roomTypeEntity.getRoomTypeName() + ")");
+//            System.out.print("Would you like to make payment and confirm reservation? (Enter 'Y' to confirm) > ");
+//            String input = scanner.nextLine().trim();
+//
+//            if (input.equals("Y")) {
+//                ReservationEntity newReservation = new ReservationEntity(numberOfRooms, reservationAmount, checkInDate, checkOutDate, ReservationTypeEnum.ONLINE);
+//                newReservation.setRoomType(roomTypeEntity);
+//                for (int i = 0; i < numberOfRooms; i++) {
+//                    ReservationRoomEntity reservationRoom = new ReservationRoomEntity();
+//                    reservationRoom.setReservation(newReservation);
+//                    newReservation.getReservationRooms().add(reservationRoom);
+//                }
+//
+//                //add each night with their corresponding date and rate
+//                for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
+//                    Date key = entry.getKey();
+//                    RoomRateEntity value = entry.getValue();
+////          System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
+//                    NightEntity night = new NightEntity(value, key);
+//                    try {
+//                        NightEntity createdNight = nightSessionBean.createNewNight(night, night.getRoomRate().getName()); //might need to account if the creation of reservation feel then roll back if not got extra nights
+//                        newReservation.getNights().add(createdNight);
+//                    } catch (InputDataValidationException | RoomRateNotFoundException | UnknownPersistenceException ex) {
+//                        System.out.println("Error: " + ex.getMessage());
+//                    }
+//                }
+//                    ReservationEntity createdReservation = reservationSessionBean.createNewReservation(currentCustomerEntity.getGuestId(), newReservation);
+//                    System.out.println("Reservation created successfully!  [Reservation ID: " + createdReservation.getReservationId() + "]\n");
+//
+//            } else {
+//                System.out.println("No reservation made!\n");
+//            }
+//
+//    }
 }

@@ -208,8 +208,8 @@ public class HotelOperationModule {
             System.out.print("Enter Name of Room Type> ");
             String roomTypeName = scanner.nextLine().trim();
             RoomTypeEntity roomType = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeName);
-            System.out.printf("%19s%30s%20s%30s\n", "Room Type ID", "Room Type Name", "Is Disabled", "Next Room Type");
-            System.out.printf("%19s%30s%20s%30s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled(), roomType.getNextRoomType());
+            System.out.printf("%19s%35s%20s%30s\n", "Room Type ID", "Room Type Name", "Is Disabled", "Next Room Type");
+            System.out.printf("%19s%35s%20s%30s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled(), roomType.getNextRoomType());
             System.out.println("1: Update Room Type");
             System.out.println("2: Delete Room Type");
             System.out.println("3: Back\n");
@@ -607,11 +607,11 @@ public class HotelOperationModule {
 
                     if (constraintViolations.isEmpty()) {
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
-                        System.out.println("Room Rate created successfully!\n");
-                        System.out.print("Press any key to continue...> ");
-                        scanner.nextLine();
                     }
                 }
+                System.out.println("Room Rate created successfully!\n");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
@@ -666,21 +666,24 @@ public class HotelOperationModule {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** HoRS System :: View All Room Rate Details ***\n");
         List<RoomRateEntity> roomRates = roomRateSessionBean.retrieveAllRoomRates();
-        System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
+        System.out.printf("%20s%35s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
         for (RoomRateEntity roomRate : roomRates) {
             if (roomRate instanceof PeakRateEntity) {
                 PeakRateEntity peakRate = (PeakRateEntity) roomRate;
                 //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%20s%30s%20s%30s%30s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), peakRate.getStartDate().toString(), peakRate.getEndDate().toString());
+                System.out.printf("%20s%35s%20s%30s%30s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), peakRate.getStartDate().toString(), peakRate.getEndDate().toString());
             } else if (roomRate instanceof PromotionRateEntity) {
                 PromotionRateEntity promotionRate = (PromotionRateEntity) roomRate;
                 //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%20s%30s%20s%30s%30s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), promotionRate.getStartDate().toString(), promotionRate.getEndDate().toString());
+                System.out.printf("%20s%35s%20s%30s%30s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), promotionRate.getStartDate().toString(), promotionRate.getEndDate().toString());
             } else {
                 //System.out.printf("%12s%30s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night");
-                System.out.printf("%20s%30s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
+                System.out.printf("%20s%35s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
             }
         }
+        System.out.println("Room Rate created successfully!\n");
+        System.out.print("Press any key to continue...> ");
+        sc.nextLine();
     }
 
     private void doUpdateRoomRate(RoomRateEntity roomRate) {
@@ -739,7 +742,9 @@ public class HotelOperationModule {
                 } else {
                     roomRateSessionBean.updateRoomRate(roomRate);
                 }
-                System.out.println("RoomRate updated successfully!\n");
+                System.out.println("Room Rate updated successfully!\n");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (RoomRateNotFoundException ex) {
                 System.out.println("Error when updating Room Rate: " + ex.getMessage());
             } catch (UpdateRoomRateException ex) {
@@ -771,6 +776,8 @@ public class HotelOperationModule {
                     roomRateSessionBean.updateRoomRate(roomRate);
                 }
                 System.out.println("Room rate deleted successfully!\n");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (UpdateRoomRateException | RoomRateNotFoundException | InputDataValidationException ex) {
                 System.out.println("An error has occurred while deleting product: " + ex.getMessage() + "\n");;
             }
@@ -807,6 +814,9 @@ public class HotelOperationModule {
             reservationRoomSessionBean.allocateRooms(allocationStartDate);
             reservationRoomSessionBean.allocateRoomExceptionType1(allocationStartDate);
             reservationRoomSessionBean.allocateRoomExceptionType2(allocationStartDate);
+            System.out.println("Room Allocation successfully!\n");
+            System.out.print("Press any key to continue...> ");
+            scanner.nextLine();
         } catch (ReservationRoomNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         } catch (RoomTypeNotFoundException ex) {

@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.CustomerEntity;
 import entity.GuestEntity;
+import entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.DeleteGuestException;
@@ -25,4 +26,6 @@ public interface GuestSessionBeanRemote {
     public CustomerEntity guestLogin(String email, String password) throws InvalidLoginCredentialException;
 
     public void deleteGuest(Long guestId) throws GuestNotFoundException, DeleteGuestException;
+    
+    public GuestEntity retreiveGuestReservations(String guestEmail) throws GuestNotFoundException;
 }
