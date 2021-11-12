@@ -139,8 +139,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         List<RoomEntity> rooms = query1.getResultList();
         for(RoomEntity room: rooms) {
             room.setRoomAllocated(false);
+            entityManager.persist(room);
         }
-        Query query2 = entityManager.createQuery("SELECT r FROM RoomEntity r WHERE r.roomAllocated = false AND r.isDisabled = false AND r.roomStatusEnum = :status");
+        Query query2 = entityManager.createQuery("SELECT r FROM RoomEntity r WHERE r.roomAllocated = false AND r.isDisabled = false AND r.roomStatusEnum = :status ORDER BY r.roomType");
         query2.setParameter("status", RoomStatusEnum.AVAILABLE);
         return query2.getResultList();
     }

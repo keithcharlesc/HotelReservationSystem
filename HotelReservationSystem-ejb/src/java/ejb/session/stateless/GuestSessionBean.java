@@ -92,6 +92,7 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
     @Override
     public GuestEntity retreiveGuestReservations(String guestEmail) throws GuestNotFoundException {
         GuestEntity guest = this.retrieveGuestByEmail(guestEmail);
+        guest.getReservations().size();
         for (ReservationEntity reservation : guest.getReservations()) {
             reservation.getReservationRooms().size();
             for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {

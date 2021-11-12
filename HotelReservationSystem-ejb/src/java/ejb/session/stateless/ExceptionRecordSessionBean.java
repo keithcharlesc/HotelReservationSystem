@@ -66,7 +66,12 @@ public class ExceptionRecordSessionBean implements ExceptionRecordSessionBeanRem
     public List<ExceptionRecordEntity> retrieveAllExceptionRecords() {
         Query query = entityManager.createQuery("SELECT e FROM ExceptionRecordEntity e");
 
-        return query.getResultList();
+        List<ExceptionRecordEntity> exceptions = query.getResultList();
+        for(ExceptionRecordEntity exception: exceptions) {
+            exception.getReservationRoom();
+            exception.getReservationRoom().getReservation();
+        }
+        return exceptions;
     }
     
     //check JPQL if falsed can be equate this way 

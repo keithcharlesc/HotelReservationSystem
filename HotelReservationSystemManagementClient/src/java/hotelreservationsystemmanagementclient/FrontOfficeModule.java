@@ -268,13 +268,13 @@ public class FrontOfficeModule {
             System.out.print("Guest Email > ");
             String guestEmail = scanner.nextLine().trim();
             GuestEntity guest = guestSessionBean.retreiveGuestReservations(guestEmail);
-            System.out.printf("%30s%30s%20s%20s%20s%20s\n", "Check In Date", "Check Out Date", "Room Type", "Room Number", "Exception Record ID", "Type of Exception Record");
+            System.out.printf("%30s%30s%30s%30s%30s%30s\n", "Check In Date", "Check Out Date", "Room Type", "Room Number", "Exception Record ID", "Type of Exception Record");
             for(ReservationEntity reservation: guest.getReservations()) {
                 for(ReservationRoomEntity reservationRoom: reservation.getReservationRooms()) {
                     if(reservationRoom.getExceptionRecord() != null) {
-                        System.out.printf("%30s%30s%20s%20s%20s%20s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getRoomType(), reservationRoom.getRoom().getNumber(), reservationRoom.getExceptionRecord().getExceptionRecordId(), reservationRoom.getExceptionRecord().getTypeOfException());
+                        System.out.printf("%30s%30s%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getRoomType(), reservationRoom.getRoom().getNumber(), reservationRoom.getExceptionRecord().getExceptionRecordId(), reservationRoom.getExceptionRecord().getTypeOfException());
                     } else {
-                        System.out.printf("%30s%30s%20s%20s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservation.getRoomType(), reservationRoom.getRoom().getNumber() );
+                        System.out.printf("%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservation.getRoomType(), reservationRoom.getRoom().getNumber() );
                     }
                 }
             }

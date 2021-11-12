@@ -382,7 +382,7 @@ public class HotelOperationModule {
             if (constraintViolations.isEmpty()) {
                 try {
                     RoomEntity roomUpdated = roomSessionBean.updateRoom(room);
-                    System.out.println("Room Successfully Updated! : Room No. " + roomUpdated.getNumber() + " , Room Type" + roomUpdated.getRoomType().getRoomTypeName() + " , ID : " + roomUpdated.getRoomId());
+                    System.out.println("Room Successfully Updated! : Room No.: " + roomUpdated.getNumber() + ", Room Type: " + roomUpdated.getRoomType().getRoomTypeName() + ", ID : " + roomUpdated.getRoomId());
                 } catch (InputDataValidationException | UpdateRoomException ex) {
                     System.out.println("Error: " + ex.getMessage());
                 }
@@ -456,14 +456,12 @@ public class HotelOperationModule {
         List<ExceptionRecordEntity> exceptionRecords = exceptionRecordSessionBean.retrieveAllExceptionRecords();
         System.out.println("Exception Type [1] => No available room for reserved room type, upgrade to next higher room type is available (Room is automatically allocated by system)");
         System.out.println("Exception Type [2] => No available room for reserved room type, no upgrade to next higher room type is available (No room automatically allocated by system)");
-        System.out.printf("%20s%19s%20s%20s\n", "Reservation ID", "Exception Record ID", "Exception Type", "Resolved Status");
-        for (ExceptionRecordEntity exceptionRecord : exceptionRecords) {
-            try {
-                ReservationRoomEntity reservationRoom = reservationRoomSessionBean.retrieveReservationRoomByReservationRoomId(exceptionRecord.getReservationRoom().getReservationRoomId());
+        System.out.printf("%30s%30s%30s%30s\n", "Reservation ID", "Exception Record ID", "Exception Type", "Resolved Status");
+        if (!exceptionRecords.isEmpty()) {
+            for (ExceptionRecordEntity exceptionRecord : exceptionRecords) {
+                ReservationRoomEntity reservationRoom = exceptionRecord.getReservationRoom();
                 Long reservationId = reservationRoom.getReservation().getReservationId();
-                System.out.printf("%20s%19s%20s%20s\n", reservationId, exceptionRecord.getExceptionRecordId(), exceptionRecord.getTypeOfException(), exceptionRecord.getResolved());
-            } catch (ReservationRoomNotFoundException ex) {
-                System.out.println("Error: " + ex.getMessage());
+                System.out.printf("%30s%30s%30s%30s\n", reservationId, exceptionRecord.getExceptionRecordId(), exceptionRecord.getTypeOfException(), exceptionRecord.getResolved());
             }
         }
         System.out.print("Press any key to continue...> ");
@@ -809,7 +807,6 @@ public class HotelOperationModule {
         LocalDate allocateDate = LocalDate.parse(allocation);
         LocalDateTime allocationDateTime = allocateDate.atStartOfDay();
         Date allocationStartDate = convertToDateViaSqlTimestamp(allocationDateTime);
-        System.out.println("allocationStartDate : " + allocationStartDate); //2021-12-04 00 : 00 :00
         try {
             reservationRoomSessionBean.allocateRooms(allocationStartDate);
             reservationRoomSessionBean.allocateRoomExceptionType1(allocationStartDate);
