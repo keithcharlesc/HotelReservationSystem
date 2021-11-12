@@ -16,6 +16,8 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PartnerNotFoundException;
 import util.exception.ReservationNotFoundException;
@@ -28,6 +30,9 @@ import util.exception.ReservationNotFoundException;
 @Stateless()
 public class HotelReservationSystemWebService {
 
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
+    private EntityManager em;
+    
     @EJB
     private ReservationSessionBeanLocal reservationSessionBeanLocal;
 
@@ -59,5 +64,9 @@ public class HotelReservationSystemWebService {
         ReservationEntity reservation = reservationSessionBeanLocal.retrieveReservationByReservationId(reservationId);
         System.out.printf("%30s%30s%30s%30s%30s%30s\n", "", "Guest Name", "Reservation Room Type", "Number of Rooms", "Start Date", "End Date", "Reservation Fee");
         System.out.printf("%30s%30s%30s%30s%30s%30s\n", reservation.getGuest().getName(), reservation.getRoomType().getRoomTypeName(), reservation.getNumberOfRooms(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()));
+    }
+
+    public void persist(Object object) {
+        em.persist(object);
     }
 }
