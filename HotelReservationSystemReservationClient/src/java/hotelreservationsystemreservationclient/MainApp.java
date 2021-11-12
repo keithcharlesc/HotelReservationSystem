@@ -347,14 +347,6 @@ public class MainApp {
                 }
                 reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
 
-//                List<RoomRateEntity> roomRates = roomTypeEntity.getRoomRates(); //jpql to get room rate = published rate
-//                RoomRateEntity publishedRate = new PublishedRateEntity();
-//                for (RoomRateEntity roomRate : roomRates) {
-//                    if (roomRate.getClass().getSimpleName().equals("PublishedRateEntity")) {
-//                        publishedRate = (PublishedRateEntity) roomRate;
-//                    }
-//                }
-//                BigDecimal reservationAmount = publishedRate.getRatePerNight().multiply(new BigDecimal(numberOfNights)).multiply(new BigDecimal(numberOfRooms)); //convert number of nights to make it big decimal
                 System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
                 System.out.print("Would you like to make a reservation? (Enter 'Y' to confirm) > ");
                 String input = scanner.nextLine().trim();
@@ -376,7 +368,6 @@ public class MainApp {
     }
 
     public void doGuestReserveHotelRoom(BigDecimal reservationAmount, Integer numberOfRooms, Date checkInDate, Date checkOutDate, RoomTypeEntity roomType, LinkedHashMap<Date, RoomRateEntity> map) {
-//        Scanner scanner = new Scanner(System.in);
 
         ReservationEntity newReservation = new ReservationEntity(numberOfRooms, reservationAmount, checkInDate, checkOutDate, ReservationTypeEnum.ONLINE);
         newReservation.setRoomType(roomType);
@@ -400,16 +391,6 @@ public class MainApp {
             }
         }
 
-//        List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
-//        for (Date date : dateRange) {
-//            NightEntity night = new NightEntity(publishedRate, date);
-//            try {
-//                NightEntity createdNight = nightSessionBean.createNewNight(night, night.getRoomRate().getName()); //might need to account if the creation of reservation feel then roll back if not got extra nights
-//                newReservation.getNights().add(createdNight);
-//            } catch (InputDataValidationException | RoomRateNotFoundException | UnknownPersistenceException ex) {
-//                System.out.println("Error: " + ex.getMessage());
-//            }
-//        }
         try {
             ReservationEntity createdReservation = reservationSessionBean.createNewReservation(currentCustomerEntity.getGuestId(), newReservation);
             System.out.println("Reservation created successfully!\n");
