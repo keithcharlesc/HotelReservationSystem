@@ -251,7 +251,8 @@ public class HotelOperationModule {
             roomType.setRoomBed(bed);
         }
         System.out.print("Enter Room Capacity of RoomType (-1 if no change)> ");
-        int capacity = scanner.nextInt();
+        int capacity = -1;
+        capacity = scanner.nextInt();
         scanner.nextLine();
         if (capacity>0) {
             roomType.setRoomCapacity(capacity);
@@ -259,7 +260,6 @@ public class HotelOperationModule {
         System.out.print("Enter Room Amenities of RoomType (blank if no change)> ");
         String amenities = "";
         amenities = scanner.nextLine().trim();
-        scanner.nextLine();
         if (amenities.length() > 0) {
             roomType.setRoomAmenities(amenities);
         }
