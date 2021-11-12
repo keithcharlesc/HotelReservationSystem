@@ -25,4 +25,5 @@ public interface PartnerEmployeeSessionBeanLocal {
     public PartnerEmployeeEntity retrievePartnerEmployeeByPartnerEmployeeId(Long partnerEmployeeId) throws PartnerNotFoundException;
     public PartnerEmployeeEntity retrievePartnerEmployeeByUsername(String username) throws PartnerNotFoundException;
     public PartnerEmployeeEntity partnerEmployeeLogin(String username, String password) throws InvalidLoginCredentialException;
+    public PartnerEmployeeEntity retrieveAllPartnerReservations(String username) throws PartnerNotFoundException;
 }

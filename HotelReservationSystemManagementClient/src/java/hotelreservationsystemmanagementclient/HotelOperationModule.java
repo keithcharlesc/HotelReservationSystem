@@ -11,6 +11,7 @@ import entity.NormalRateEntity;
 import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
 import entity.PublishedRateEntity;
+import entity.ReservationRoomEntity;
 import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
@@ -22,11 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.Schedule;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -158,6 +154,7 @@ public class HotelOperationModule {
                     doViewAllRooms();
                 } else if (response == 8) {
                     doViewRoomAllocationExceptionReport();
+//                   roomAllocation();
                 } else if (response == 9) {
                     break;
                 } else {
@@ -234,27 +231,27 @@ public class HotelOperationModule {
         }
         System.out.print("Enter Room Description of RoomType (blank if no change)> ");
         String description = "";
-        description= scanner.nextLine().trim();
+        description = scanner.nextLine().trim();
         if (description.length() > 0) {
             roomType.setRoomDescription(description);
         }
         System.out.print("Enter Room Size of RoomType (-1 if no change)> ");
         int size = -1;
         size = scanner.nextInt();
-        if (size>0) {
+        if (size > 0) {
             roomType.setRoomSize(size);
         }
         System.out.print("Enter No. of Room Bed of RoomType (-1 if no change)> ");
         int bed = -1;
         bed = scanner.nextInt();
-        if (bed>0) {
+        if (bed > 0) {
             roomType.setRoomBed(bed);
         }
         System.out.print("Enter Room Capacity of RoomType (-1 if no change)> ");
         int capacity = -1;
         capacity = scanner.nextInt();
         scanner.nextLine();
-        if (capacity>0) {
+        if (capacity > 0) {
             roomType.setRoomCapacity(capacity);
         }
         System.out.print("Enter Room Amenities of RoomType (blank if no change)> ");
@@ -271,9 +268,12 @@ public class HotelOperationModule {
         }
         try {
             roomTypeSessionBean.updateRoomType(roomType);
+            System.out.println("Room Type updated!");
+            System.out.print("Press any key to continue...> ");
+            scanner.nextLine();
         } catch (RoomTypeNotFoundException | UpdateRoomTypeException | InputDataValidationException ex) {
             System.out.println("Error: " + ex.getMessage());
-        } 
+        }
     }
 
     public void doDeleteRoomType(RoomTypeEntity roomType) {
@@ -284,6 +284,8 @@ public class HotelOperationModule {
             try {
                 roomTypeSessionBean.deleteRoomType(roomType.getRoomTypeId());
                 System.out.println("Room Type successfully deleted!");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (RoomTypeNotFoundException ex) {
                 System.out.println("Error: " + ex.getMessage());
             } catch (DeleteRoomTypeException ex) {
@@ -449,16 +451,22 @@ public class HotelOperationModule {
         List<ExceptionRecordEntity> exceptionRecords = exceptionRecordSessionBean.retrieveAllExceptionRecords();
         System.out.println("Exception Type [1] => No available room for reserved room type, upgrade to next higher room type is available (Room is automatically allocated by system)");
         System.out.println("Exception Type [2] => No available room for reserved room type, no upgrade to next higher room type is available (No room automatically allocated by system)");
-        System.out.printf("%19s%20s%20s\n", "Exception Record ID", "Exception Type", "Resolved Status");
+        System.out.printf("%20s%19s%20s%20s\n", "Reservation ID", "Exception Record ID", "Exception Type", "Resolved Status");
         for (ExceptionRecordEntity exceptionRecord : exceptionRecords) {
-            System.out.printf("%19s%20s%20s\n", exceptionRecord.getExceptionRecordId(), exceptionRecord.getTypeOfException(), exceptionRecord.getResolved());
+            try {
+                ReservationRoomEntity reservationRoom = reservationRoomSessionBean.retrieveReservationRoomByReservationRoomId(exceptionRecord.getReservationRoom().getReservationRoomId());
+                Long reservationId = reservationRoom.getReservation().getReservationId();
+                System.out.printf("%20s%19s%20s%20s\n", reservationId, exceptionRecord.getExceptionRecordId(), exceptionRecord.getTypeOfException(), exceptionRecord.getResolved());
+            } catch (ReservationRoomNotFoundException ex) {
+                System.out.println("Error: " + ex.getMessage());
+            }
         }
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
     }
-
     // OPERATION MANAGER OPERATIONS (END) <================================================ 
     //SALES MANAGER OPERATIONS (START) ===================================================>  
+
     public void salesManagerOperations() throws InvalidAccessRightException {
 
         if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SALES_MANAGER) {
@@ -595,6 +603,8 @@ public class HotelOperationModule {
                     if (constraintViolations.isEmpty()) {
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
                         System.out.println("RoomRate created successfully!\n");
+                        System.out.print("Press any key to continue...> ");
+                        scanner.nextLine();
                     }
                 }
             } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {
@@ -763,8 +773,8 @@ public class HotelOperationModule {
             System.out.println("No reservation made!\n");
         }
     }
-    
-     private void showInputDataValidationErrorsForRoomRateEntity(Set<ConstraintViolation<RoomRateEntity>> constraintViolations) {
+
+    private void showInputDataValidationErrorsForRoomRateEntity(Set<ConstraintViolation<RoomRateEntity>> constraintViolations) {
         System.out.println("\nInput data validation error!:");
 
         for (ConstraintViolation constraintViolation : constraintViolations) {
@@ -772,7 +782,6 @@ public class HotelOperationModule {
         }
 
     }
-
 
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
         return java.sql.Timestamp.valueOf(dateToConvert);

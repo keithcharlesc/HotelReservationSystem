@@ -263,19 +263,24 @@ public class MainApp {
 
                 Integer totalNoOfRoomsForRoomType = roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType(roomType.getRoomTypeName());
 //                System.out.println("*Total Number of Rooms For " + roomType.getRoomTypeName() + ", is " + totalNoOfRoomsForRoomType);
-                Integer reservedRoomsForRoomTypeForDateRange = roomTypeSessionBean.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, end);
+                Integer reservedRoomsForRoomTypeForDateRange = roomTypeSessionBean.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, roomType.getRoomTypeName());
 //                System.out.println("Reserved Rooms For " + roomType.getRoomTypeName() + ", is " + reservedRoomsForRoomTypeForDateRange);
                 Integer remainingAvailableRooms = totalNoOfRoomsForRoomType - reservedRoomsForRoomTypeForDateRange;
 //                System.out.println("Remaining Avail Rooms For " + roomType.getRoomTypeName() + ", is " + remainingAvailableRooms);
-                if (remainingAvailableRooms >= numberOfRooms) {
+//                if (remainingAvailableRooms >= numberOfRooms) {
                     //if there is sufficient rooms available
                     //display the room type
-                    System.out.println("- " + roomType.getRoomTypeName());
-                }
+                    System.out.println("- " + roomType.getRoomTypeName() + " , Number of rooms available : " + remainingAvailableRooms);
+//                }
             }
             System.out.println();
             System.out.print("Indicate Room Type Option> ");
             String roomTypeOption = scanner.nextLine().trim();
+            
+//            if (roomTypeOption.equals("None")) {
+//                break;
+//            }
+            
             try {
                 RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
 
@@ -405,9 +410,9 @@ public class MainApp {
         System.out.println("*** Hotel Reservation (HoR) System :: View All Reservations ***\n");
         try {
             List<ReservationEntity> reservations = guestSessionBean.retrieveGuestByGuestId(currentCustomerEntity.getGuestId()).getReservations();
-            System.out.printf("%20s%20s%20s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
+            System.out.printf("%20s%20s%35s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
             for (ReservationEntity reservation : reservations) {
-                System.out.printf("%20s%20s%20s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+                System.out.printf("%20s%20s%35s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
             }
         } catch (GuestNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
@@ -420,13 +425,13 @@ public class MainApp {
     public void viewReservationDetails() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Hotel Reservation (HoR) System :: View Reservation Details ***\n");
-        System.out.println("Enter Reservation ID >");
+        System.out.print("Enter Reservation ID > ");
         Long reservationId = sc.nextLong();
         sc.nextLine();
         try {
             ReservationEntity reservation = reservationSessionBean.retrieveReservationByReservationId(reservationId);
-            System.out.printf("%20s%20s%20s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
-            System.out.printf("%20s%20s%20s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+            System.out.printf("%20s%20s%35s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
+            System.out.printf("%20s%20s%35s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
         } catch (ReservationNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
