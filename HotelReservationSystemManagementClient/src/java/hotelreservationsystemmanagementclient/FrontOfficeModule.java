@@ -79,7 +79,7 @@ public class FrontOfficeModule {
             System.out.println("1: Walk-In Search Room"); //includes walk-in reserve room
             System.out.println("2: Check-in Guest");
             System.out.println("3: Check-out Guest");
-            System.out.println("4: Logout\n");
+            System.out.println("4: Back\n");
             response = 0;
 
             while (response < 1 || response > 3) {

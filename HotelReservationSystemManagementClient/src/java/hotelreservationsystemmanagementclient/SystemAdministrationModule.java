@@ -51,7 +51,7 @@ public class SystemAdministrationModule {
         while (true) {
             System.out.println("*** HoRS System :: System Administration ***\n");
             System.out.println("1: Create New Employee");
-            System.out.println("2: View All Employee");
+            System.out.println("2: View All Employees");
             System.out.println("3: Create New Partner");
             System.out.println("4: View All Partners");
             System.out.println("5: Back\n");

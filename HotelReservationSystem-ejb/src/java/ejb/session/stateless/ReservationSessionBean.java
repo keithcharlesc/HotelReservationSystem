@@ -3,6 +3,11 @@ package ejb.session.stateless;
 import entity.GuestEntity;
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +17,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -61,7 +65,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
 //                for (NightEntity nightEntity : newReservationEntity.getNights()) {
 //                    em.persist(nightEntity);
 //                }
-
                 for (ReservationRoomEntity reservationRoomEntity : newReservationEntity.getReservationRooms()) {
                     em.persist(reservationRoomEntity);
                 }
@@ -83,16 +86,27 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
 
         return query.getResultList();
     }
-    
+
     @Override
     public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {
-        long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
+//        long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
+//        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate > :currentDate AND r.startDate < :nextDay AND rr.isAllocated=false");
         Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate > :currentDate AND r.startDate < :nextDay AND rr.isAllocated=false");
-        //query.setParameter("currentDate", currentDate, TemporalType.DATE);
-        query.setParameter("currentDate", currentDate);
-        query.setParameter("nextDay", new Date(currentDate.getTime() + MILLIS_IN_A_DAY) );
+        
+        LocalDateTime beginning = convertToLocalDateTimeViaInstant(currentDate).truncatedTo(ChronoUnit.HOURS);
+        Date beginningOfCurrentDate = convertToDateViaSqlTimestamp(beginning);
+        
+        LocalDateTime end = convertToLocalDateTimeViaInstant(currentDate).truncatedTo(ChronoUnit.HOURS);
+        Date endOfCurrentDate = convertToDateViaSqlTimestamp(end.plusHours(23).plusMinutes(59));
+        
+//        Date beginning = getDateWithoutTimeUsingFormat(currentDate);
+//        currentDate 00>=   startDate <= currentDate 2359                
+                
+//query.setParameter("currentDate", currentDate, TemporalType.DATE);
+        query.setParameter("currentDate", beginningOfCurrentDate);
+        query.setParameter("nextDay", endOfCurrentDate);
         List<ReservationEntity> reservations = query.getResultList();
-        for(ReservationEntity reservation: reservations) {
+        for (ReservationEntity reservation : reservations) {
             reservation.getReservationRooms().size();
         }
 
@@ -146,4 +160,18 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
         return msg;
     }
 
+//    public static Date getDateWithoutTimeUsingFormat(Date date) throws ParseException {
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//        return formatter.parse(formatter.format(date));
+//    }
+
+    public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
+
+    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
+        return java.sql.Timestamp.valueOf(dateToConvert);
+    }
 }

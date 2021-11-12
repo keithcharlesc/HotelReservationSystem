@@ -29,7 +29,7 @@ public class GuestEntity implements Serializable {
     private Long guestId;
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(min = 4, max = 32)
+    @Size(min = 1, max = 32)
     private String name;
     @Column(nullable = false, unique = true, length = 64)
     @NotNull

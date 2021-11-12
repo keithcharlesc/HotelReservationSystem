@@ -113,10 +113,10 @@ public class MainApp {
                         }
                     } else if (response == 2) {
                         try {
-                            Long customerId = doRegister();
-                            currentCustomerEntity = (CustomerEntity) guestSessionBean.retrieveGuestByGuestId(customerId);
-                            registeredCustomerMenu();
-                        } catch (GuestEmailExistException | UnknownPersistenceException | GuestNotFoundException | InputDataValidationException ex) {
+                            doRegister();
+//                            currentCustomerEntity = (CustomerEntity) guestSessionBean.retrieveGuestByGuestId(customerId);
+//                            registeredCustomerMenu();
+                        } catch (GuestEmailExistException | UnknownPersistenceException | InputDataValidationException ex) {
                             System.out.println("Error: " + ex.getMessage());
                         }
                     } else if (response == 3) {
@@ -153,7 +153,7 @@ public class MainApp {
         }
     }
 
-    private Long doRegister() throws GuestEmailExistException, UnknownPersistenceException, InputDataValidationException {
+    private void doRegister() throws GuestEmailExistException, UnknownPersistenceException, InputDataValidationException {
         Scanner scanner = new Scanner(System.in);
         String name = "";
         String email = "";
@@ -169,7 +169,11 @@ public class MainApp {
         phoneNo = scanner.nextLine().trim();
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
-        return guestSessionBean.createNewGuest(new CustomerEntity(name, email, phoneNo, password));
+        guestSessionBean.createNewGuest(new CustomerEntity(name, email, phoneNo, password));
+        System.out.println("Account created successfully! Please go to login page to login.");
+        System.out.print("Press any key to continue...> ");
+        scanner.nextLine();
+
     }
 
     private void registeredCustomerMenu() {
@@ -236,7 +240,7 @@ public class MainApp {
         Scanner scanner = new Scanner(System.in);
         String start = "";
         String end = "";
-        System.out.println("*** HoRS System :: Front Office :: Walk-In Search Room ***\n");
+        System.out.println("*** HoRS System :: Reservation Client :: Hotel Search Room ***\n");
         System.out.print("Enter Check-In Date [yyyy-MM-dd] > ");
         start = scanner.nextLine().trim();
         LocalDate startDate = LocalDate.parse(start);
@@ -248,159 +252,197 @@ public class MainApp {
         LocalDateTime endDateTime = endDate.atStartOfDay();
         Date checkOutDate = convertToDateViaSqlTimestamp(endDateTime.withHour(12)); //checkoudate
         System.out.println();
-        try {
-            Long numberOfNights = (numberOfNights(checkInDate, checkOutDate)) + 1;
-            System.out.print("Number of rooms > ");
-            Integer numberOfRooms = scanner.nextInt();
-            scanner.nextLine();
-            System.out.println();
-            //call list of room types that have available rooms
-//            System.out.println(roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType("Deluxe Room")); //total quantity of rooms per room type
-            List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
-            System.out.println("Available Room Types: ");
-            for (RoomTypeEntity roomType : listOfRoomTypes) {
-                int i = 1;
 
+        System.out.print("Number of rooms > ");
+        Integer numberOfRooms = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println();
+        //call list of room types that have available rooms
+//            System.out.println(roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType("Deluxe Room")); //total quantity of rooms per room type
+        List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
+        System.out.println("Available Room Types: ");
+        System.out.println();
+        System.out.printf("%30s%20s%25s\n", "Room Type Name", "Rooms Available", "Reservation Amount");
+        for (RoomTypeEntity roomType : listOfRoomTypes) {
+            if (roomType.getIsDisabled() == false) {
                 Integer totalNoOfRoomsForRoomType = roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType(roomType.getRoomTypeName());
 //                System.out.println("*Total Number of Rooms For " + roomType.getRoomTypeName() + ", is " + totalNoOfRoomsForRoomType);
                 Integer reservedRoomsForRoomTypeForDateRange = roomTypeSessionBean.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, roomType.getRoomTypeName());
 //                System.out.println("Reserved Rooms For " + roomType.getRoomTypeName() + ", is " + reservedRoomsForRoomTypeForDateRange);
                 Integer remainingAvailableRooms = totalNoOfRoomsForRoomType - reservedRoomsForRoomTypeForDateRange;
 //                System.out.println("Remaining Avail Rooms For " + roomType.getRoomTypeName() + ", is " + remainingAvailableRooms);
-//                if (remainingAvailableRooms >= numberOfRooms) {
+                if (remainingAvailableRooms >= numberOfRooms) {
                     //if there is sufficient rooms available
                     //display the room type
-                    System.out.println("- " + roomType.getRoomTypeName() + " , Number of rooms available : " + remainingAvailableRooms);
-//                }
-            }
-            System.out.println();
-            System.out.print("Indicate Room Type Option> ");
-            String roomTypeOption = scanner.nextLine().trim();
-            
-//            if (roomTypeOption.equals("None")) {
-//                break;
-//            }
-            
-            try {
-                RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
 
-                List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
-                LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
-                for (Date date : dateRange) {
-                    RoomRateEntity rate = null;
-
-                    //for each date,
-                    //find the available rates (where the validity period contains the date) >= date<=
-                    //check for normal
-                    //check for peak
-                    //check for promotion
-                    //if promotion
-                    PeakRateEntity peakRate;
                     try {
-                        peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
-                    } catch (RoomRateNotFoundException ex) {
-                        peakRate = null;
-                    }
+                        RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomType.getRoomTypeName());
+                        List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
+                        LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
+                        for (Date date : dateRange) {
+                            RoomRateEntity rate = null;
+                            //for each date,
+                            //find the available rates (where the validity period contains the date) >= date<=
+                            //check for normal
+                            //check for peak
+                            //check for promotion
+                            //if promotion
+                            PeakRateEntity peakRate;
+                            try {
+                                peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+                            } catch (RoomRateNotFoundException ex) {
+                                peakRate = null;
+                            }
 
-                    PromotionRateEntity promotionRate;
-                    try {
-                        promotionRate = roomRateSessionBean.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
-                    } catch (RoomRateNotFoundException ex) {
-                        promotionRate = null;
-                    }
+                            PromotionRateEntity promotionRate;
+                            try {
+                                promotionRate = roomRateSessionBean.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+                            } catch (RoomRateNotFoundException ex) {
+                                promotionRate = null;
+                            }
 
-                    if (peakRate == null & promotionRate == null) {
-                        try {
-                            rate = roomRateSessionBean.retrieveNormalRateByRoomType(roomTypeEntity.getRoomTypeId());
-                        } catch (RoomRateNotFoundException ex) {
-                            System.out.println("Error: " + ex.getMessage());
+                            if (peakRate == null & promotionRate == null) {
+                                try {
+                                    rate = roomRateSessionBean.retrieveNormalRateByRoomType(roomTypeEntity.getRoomTypeId());
+                                } catch (RoomRateNotFoundException ex) {
+                                    System.out.println("Error: " + ex.getMessage());
+                                }
+                            } else if (peakRate == null && promotionRate != null) {
+                                rate = promotionRate;
+                            } else if (peakRate != null && promotionRate == null) {
+                                rate = peakRate;
+                            } else if (peakRate != null && promotionRate != null) {
+                                rate = promotionRate;
+                            }
+
+                            map.put(date, rate);
+                            //if peak or promotion exists (one only)
+                            //- takes precedence over normal rate
+                            // if both peak and promotion exists
+                            //-take the rate that is lower
                         }
-                    } else if (peakRate == null && promotionRate != null) {
-                        rate = promotionRate;
-                    } else if (peakRate != null && promotionRate == null) {
-                        rate = peakRate;
-                    } else if (peakRate != null && promotionRate != null) {
-                        rate = promotionRate;
+
+                        //PRINT RATE AMOUNTS for WHATS AVAIL
+                        BigDecimal reservationAmount = new BigDecimal(0);
+
+                        for (RoomRateEntity roomRate : map.values()) {
+                            reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
+                        }
+                        reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
+                        System.out.printf("%30s%20s%25s\n", roomType.getRoomTypeName(), remainingAvailableRooms, NumberFormat.getCurrencyInstance().format(reservationAmount));
+//                System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
+
+                    } catch (RoomTypeNotFoundException ex) {
+                        System.out.println("Error: " + ex.getMessage());
                     }
-
-                    map.put(date, rate);
-                    //if peak or promotion exists (one only)
-                    //- takes precedence over normal rate
-                    // if both peak and promotion exists
-                    //-take the rate that is lower
                 }
-
-                //PRINT RATE AMOUNTS for WHATS AVAIL
-                BigDecimal reservationAmount = new BigDecimal(0);
-
-                System.out.println();
-                System.out.println("Retrieving room rates for each night...");
-                System.out.println();
-                System.out.printf("%30s%30s%30s\n", "Date", "Room Rate", "Rate Per Night");
-                for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
-                    Date key = entry.getKey();
-                    RoomRateEntity value = entry.getValue();
-//                    System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
-                    String df = DateFormat.getDateInstance().format(key);
-                    System.out.printf("%30s%30s%30s\n", df, value.getName(), NumberFormat.getCurrencyInstance().format(value.getRatePerNight()));
-                }
-
-                System.out.println();
-
-                for (RoomRateEntity roomRate : map.values()) {
-                    reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
-                }
-                reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
-
-                System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
-                System.out.print("Would you like to make a reservation? (Enter 'Y' to confirm) > ");
-                String input = scanner.nextLine().trim();
-
-                if (input.equals("Y")) {
-                    doGuestReserveHotelRoom(reservationAmount, numberOfRooms, checkInDate, checkOutDate, roomTypeEntity, map);
-                } else {
-                    System.out.println("No reservation made!\n");
-                }
-//
-            } catch (RoomTypeNotFoundException ex) {
-                System.out.println("Error: " + ex.getMessage());
             }
-//
-        } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
+        }
+
+        System.out.println();
+        System.out.print("Would you like to make a reservation? (Enter 'Y' to confirm) > ");
+        String input = scanner.nextLine().trim();
+
+        if (input.equals("Y")) {
+//                                 doGuestReserveHotelRoom(reservationAmount, numberOfRooms, checkInDate, checkOutDate, roomTypeEntity, map);
+            doGuestReserveHotelRoom(numberOfRooms, checkInDate, checkOutDate);
+        } else {
+            System.out.println("No reservation made!\n");
         }
 
     }
 
-    public void doGuestReserveHotelRoom(BigDecimal reservationAmount, Integer numberOfRooms, Date checkInDate, Date checkOutDate, RoomTypeEntity roomType, LinkedHashMap<Date, RoomRateEntity> map) {
+    public void doGuestReserveHotelRoom(Integer numberOfRooms, Date checkInDate, Date checkOutDate) {
 
-        ReservationEntity newReservation = new ReservationEntity(numberOfRooms, reservationAmount, checkInDate, checkOutDate, ReservationTypeEnum.ONLINE);
-        newReservation.setRoomType(roomType);
-        for (int i = 0; i < numberOfRooms; i++) {
-            ReservationRoomEntity reservationRoom = new ReservationRoomEntity();
-            reservationRoom.setReservation(newReservation);
-            newReservation.getReservationRooms().add(reservationRoom);
-        }
-
-        //add each night with their corresponding date and rate
-        for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
-            Date key = entry.getKey();
-            RoomRateEntity value = entry.getValue();
-//          System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
-            NightEntity night = new NightEntity(value, key);
-            try {
-                NightEntity createdNight = nightSessionBean.createNewNight(night, night.getRoomRate().getName()); //might need to account if the creation of reservation feel then roll back if not got extra nights
-                newReservation.getNights().add(createdNight);
-            } catch (InputDataValidationException | RoomRateNotFoundException | UnknownPersistenceException ex) {
-                System.out.println("Error: " + ex.getMessage());
-            }
-        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Indicate Room Type Option> ");
+        String roomTypeOption = scanner.nextLine().trim();
 
         try {
-            ReservationEntity createdReservation = reservationSessionBean.createNewReservation(currentCustomerEntity.getGuestId(), newReservation);
-            System.out.println("Reservation created successfully!\n");
-        } catch (GuestNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
-            System.out.println("An error has occurred: " + ex.getMessage() + "\n");;
+            Long numberOfNights = (numberOfNights(checkInDate, checkOutDate)) + 1;
+            RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeOption);
+            List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
+            LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
+            for (Date date : dateRange) {
+                RoomRateEntity rate = null;
+
+                PeakRateEntity peakRate;
+                try {
+                    peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+                } catch (RoomRateNotFoundException ex) {
+                    peakRate = null;
+                }
+
+                PromotionRateEntity promotionRate;
+                try {
+                    promotionRate = roomRateSessionBean.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
+                } catch (RoomRateNotFoundException ex) {
+                    promotionRate = null;
+                }
+
+                if (peakRate == null & promotionRate == null) {
+                    try {
+                        rate = roomRateSessionBean.retrieveNormalRateByRoomType(roomTypeEntity.getRoomTypeId());
+                    } catch (RoomRateNotFoundException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                } else if (peakRate == null && promotionRate != null) {
+                    rate = promotionRate;
+                } else if (peakRate != null && promotionRate == null) {
+                    rate = peakRate;
+                } else if (peakRate != null && promotionRate != null) {
+                    rate = promotionRate;
+                }
+
+                map.put(date, rate);
+            }
+            BigDecimal reservationAmount = new BigDecimal(0);
+
+            for (RoomRateEntity roomRate : map.values()) {
+                reservationAmount = reservationAmount.add(roomRate.getRatePerNight());
+            }
+            reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
+
+            System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!" + "(" + roomTypeEntity.getRoomTypeName() + ")");
+            System.out.print("Would you like to make payment and confirm reservation? (Enter 'Y' to confirm) > ");
+            String input = scanner.nextLine().trim();
+
+            if (input.equals("Y")) {
+                ReservationEntity newReservation = new ReservationEntity(numberOfRooms, reservationAmount, checkInDate, checkOutDate, ReservationTypeEnum.ONLINE);
+                newReservation.setRoomType(roomTypeEntity);
+                for (int i = 0; i < numberOfRooms; i++) {
+                    ReservationRoomEntity reservationRoom = new ReservationRoomEntity();
+                    reservationRoom.setReservation(newReservation);
+                    newReservation.getReservationRooms().add(reservationRoom);
+                }
+
+                //add each night with their corresponding date and rate
+                for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
+                    Date key = entry.getKey();
+                    RoomRateEntity value = entry.getValue();
+//          System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
+                    NightEntity night = new NightEntity(value, key);
+                    try {
+                        NightEntity createdNight = nightSessionBean.createNewNight(night, night.getRoomRate().getName()); //might need to account if the creation of reservation feel then roll back if not got extra nights
+                        newReservation.getNights().add(createdNight);
+                    } catch (InputDataValidationException | RoomRateNotFoundException | UnknownPersistenceException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                }
+
+                try {
+                    ReservationEntity createdReservation = reservationSessionBean.createNewReservation(currentCustomerEntity.getGuestId(), newReservation);
+                    System.out.println("Reservation created successfully!  [Reservation ID: " + createdReservation.getReservationId() + "]\n");
+                } catch (GuestNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
+                    System.out.println("An error has occurred: " + ex.getMessage() + "\n");;
+                }
+
+            } else {
+                System.out.println("No reservation made!\n");
+            }
+
+        } catch (RoomTypeNotFoundException | IOException ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
 
     }
@@ -410,9 +452,9 @@ public class MainApp {
         System.out.println("*** Hotel Reservation (HoR) System :: View All Reservations ***\n");
         try {
             List<ReservationEntity> reservations = guestSessionBean.retrieveGuestByGuestId(currentCustomerEntity.getGuestId()).getReservations();
-            System.out.printf("%20s%20s%35s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
+            System.out.printf("%20s%20s%30s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
             for (ReservationEntity reservation : reservations) {
-                System.out.printf("%20s%20s%35s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+                System.out.printf("%20s%20s%30s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
             }
         } catch (GuestNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
@@ -430,8 +472,8 @@ public class MainApp {
         sc.nextLine();
         try {
             ReservationEntity reservation = reservationSessionBean.retrieveReservationByReservationId(reservationId);
-            System.out.printf("%20s%20s%35s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
-            System.out.printf("%20s%20s%35s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+            System.out.printf("%20s%20s%30s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
+            System.out.printf("%20s%20s%30s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
         } catch (ReservationNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         }

@@ -76,8 +76,8 @@ public class HotelOperationModule {
     public void menuHotelOperation() throws InvalidAccessRightException {
 
         if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.OPERATION_MANAGER
-                && currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SALES_MANAGER) {
-            throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER rights to access the HOTEL OPERATIONS module.");
+                && currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SALES_MANAGER && currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR) {
+            throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER or SYSTEM ADMINISTRATOR rights to access the HOTEL OPERATIONS module.");
         }
         //NEED TO CHECK IF TO PUT HERE BC MAYBE OTHER USERS CAN USE THE SYSTEM STUFF
 
@@ -116,7 +116,12 @@ public class HotelOperationModule {
     }
 
     //OPERATION MANAGER OPERATIONS (START) =========================================>
-    public void operationManagerOperations() {
+    public void operationManagerOperations() throws InvalidAccessRightException {
+        
+        if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.OPERATION_MANAGER) {
+            throw new InvalidAccessRightException("You don't have OPERATION MANAGER access rights.");
+        }
+        
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -203,8 +208,8 @@ public class HotelOperationModule {
             System.out.print("Enter Name of Room Type> ");
             String roomTypeName = scanner.nextLine().trim();
             RoomTypeEntity roomType = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeName);
-            System.out.printf("%19s%20s%20s\n", "Room Type ID", "Room Type Name", "Is Disabled");
-            System.out.printf("%19s%20s%20s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled());
+            System.out.printf("%19s%30s%20s%30s\n", "Room Type ID", "Room Type Name", "Is Disabled", "Next Room Type");
+            System.out.printf("%19s%30s%20s%30s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled(), roomType.getNextRoomType());
             System.out.println("1: Update Room Type");
             System.out.println("2: Delete Room Type");
             System.out.println("3: Back\n");
@@ -223,25 +228,25 @@ public class HotelOperationModule {
 
     public void doUpdateRoomType(RoomTypeEntity roomType) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter RoomType Name (blank if no change)> ");
+        System.out.print("Enter Room Type Name (blank if no change)> ");
         String name = "";
         name = scanner.nextLine().trim();
         if (name.length() > 0) {
             roomType.setRoomTypeName(name);
         }
-        System.out.print("Enter Room Description of RoomType (blank if no change)> ");
+        System.out.print("Enter Room Description of Room Type (blank if no change)> ");
         String description = "";
         description = scanner.nextLine().trim();
         if (description.length() > 0) {
             roomType.setRoomDescription(description);
         }
-        System.out.print("Enter Room Size of RoomType (-1 if no change)> ");
+        System.out.print("Enter Room Size of Room Type (-1 if no change)> ");
         int size = -1;
         size = scanner.nextInt();
         if (size > 0) {
             roomType.setRoomSize(size);
         }
-        System.out.print("Enter No. of Room Bed of RoomType (-1 if no change)> ");
+        System.out.print("Enter No. of Room Bed of Room Type (-1 if no change)> ");
         int bed = -1;
         bed = scanner.nextInt();
         if (bed > 0) {
@@ -302,9 +307,9 @@ public class HotelOperationModule {
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** HoRS System :: Hotel Operation :: Operation Manager :: View All Room Types ***\n");
         List<RoomTypeEntity> roomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
-        System.out.printf("%19s%20s%20s\n", "Room Type ID", "Room Type Name", "Is Disabled");
+        System.out.printf("%19s%30s%20s%30s\n", "Room Type ID", "Room Type Name", "Is Disabled", "Next Room Type");
         for (RoomTypeEntity roomType : roomTypes) {
-            System.out.printf("%19s%20s%20s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled());
+            System.out.printf("%19s%30s%20s%30s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled(), roomType.getNextRoomType());
         }
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
@@ -426,9 +431,9 @@ public class HotelOperationModule {
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** HoRS System :: Hotel Operation :: Operation Manager :: View All Rooms ***\n");
         List<RoomEntity> rooms = roomSessionBean.retrieveAllRooms();
-        System.out.printf("%19s%20s%20s\n", "Room ID", "Room Number", "Room Status");
+        System.out.printf("%20s%20s%30s\n", "Room Number", "Room Status", "Room Type");
         for (RoomEntity room : rooms) {
-            System.out.printf("%19s%20s%20s\n", room.getRoomId().toString(), room.getNumber(), room.getRoomStatusEnum().toString());
+            System.out.printf("%20s%20s%30s\n", room.getNumber(), room.getRoomStatusEnum().toString(), room.getRoomType().getRoomTypeName());
         }
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
@@ -470,7 +475,7 @@ public class HotelOperationModule {
     public void salesManagerOperations() throws InvalidAccessRightException {
 
         if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SALES_MANAGER) {
-            throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER rights to access the system administration module.");
+            throw new InvalidAccessRightException("You don't have SALES MANAGER access rights.");
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -602,7 +607,7 @@ public class HotelOperationModule {
 
                     if (constraintViolations.isEmpty()) {
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
-                        System.out.println("RoomRate created successfully!\n");
+                        System.out.println("Room Rate created successfully!\n");
                         System.out.print("Press any key to continue...> ");
                         scanner.nextLine();
                     }
@@ -808,7 +813,12 @@ public class HotelOperationModule {
         }
     }
     
-    public void system() {
+    public void system() throws InvalidAccessRightException {
+        
+        if (currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR) {
+            throw new InvalidAccessRightException("You don't have SYSTEM ADMINISTRATOR access rights.");
+        }
+        
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
