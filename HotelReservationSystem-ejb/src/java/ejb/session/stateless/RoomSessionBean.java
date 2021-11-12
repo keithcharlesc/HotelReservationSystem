@@ -95,8 +95,12 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @Override
     public List<RoomEntity> retrieveAllRooms() {
         Query query = entityManager.createQuery("SELECT r FROM RoomEntity r ORDER BY r.number");
+        List<RoomEntity> rooms = query.getResultList();
+        for (RoomEntity room : rooms) {
+            room.getRoomType();
+        }
 
-        return query.getResultList();
+        return rooms;
     }
 
     @Override
