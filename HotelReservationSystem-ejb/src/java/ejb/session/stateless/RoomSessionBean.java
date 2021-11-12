@@ -135,7 +135,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @Override 
     public List<RoomEntity> retreiveAvailableRooms(Date allocateDate, RoomTypeEntity roomType) {
         Query query1 = entityManager.createQuery("SELECT r FROM RoomEntity r, IN (r.reservationRooms) rr WHERE rr.reservation.endDate <= :allocateDate AND r.roomAllocated = true AND r.roomType = :roomType");
-        query1.setParameter("allocateDate", allocateDate, TemporalType.DATE);
+        query1.setParameter("allocateDate", allocateDate);
         query1.setParameter("roomType", roomType);
         List<RoomEntity> rooms = query1.getResultList();
         for(RoomEntity room: rooms) {

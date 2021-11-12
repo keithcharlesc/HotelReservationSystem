@@ -797,11 +797,12 @@ public class HotelOperationModule {
     public void roomAllocation() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** HoRS System :: Room Allocation ***\n");
-        System.out.print("Enter Date of Allocation [yyyy-MM-dd]> ");
+        System.out.print("Enter Date of Allocation [yyyy-MM-dd]> "); 
         String allocation = scanner.nextLine().trim();
         LocalDate allocateDate = LocalDate.parse(allocation);
         LocalDateTime allocationDateTime = allocateDate.atStartOfDay();
         Date allocationStartDate = convertToDateViaSqlTimestamp(allocationDateTime);
+        System.out.println("allocationStartDate : " + allocationStartDate); //2021-12-04 00 : 00 :00
         try {
             reservationRoomSessionBean.allocateRooms(allocationStartDate);
             reservationRoomSessionBean.allocateRoomExceptionType1(allocationStartDate);

@@ -95,7 +95,7 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
     }
     
     @Override
-    public void allocateRooms(Date allocateDate) {
+    public void allocateRooms(Date allocateDate) { //2021-12-04 00:00:00
         List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
         System.out.println(currentDayReservation.get(0));
         //List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);

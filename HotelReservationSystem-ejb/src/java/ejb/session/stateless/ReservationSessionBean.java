@@ -88,25 +88,29 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
     }
 
     @Override
-    public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {
+    public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {  //2021-12-04 00:00:00
 //        long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
 //        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate > :currentDate AND r.startDate < :nextDay AND rr.isAllocated=false");
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate > :currentDate AND r.startDate < :nextDay AND rr.isAllocated=false");
-        
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate >= :startOfDay AND r.startDate <= :endOfDay AND rr.isAllocated=false");
+//          Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.startDate >= :startOfDay AND r.startDate <=, IN (r.reservationRooms) rr WHERE rr.isAllocated=false");
+
         LocalDateTime beginning = convertToLocalDateTimeViaInstant(currentDate).truncatedTo(ChronoUnit.HOURS);
         Date beginningOfCurrentDate = convertToDateViaSqlTimestamp(beginning);
-        
+        System.out.println("beginningOfCurrentDate: " + beginningOfCurrentDate);
+
         LocalDateTime end = convertToLocalDateTimeViaInstant(currentDate).truncatedTo(ChronoUnit.HOURS);
-        Date endOfCurrentDate = convertToDateViaSqlTimestamp(end.plusHours(23).plusMinutes(59));
-        
+        Date endOfCurrentDate = convertToDateViaSqlTimestamp(end.plusHours(23).plusMinutes(59).plusSeconds(59));
+        System.out.println("endOfCurrentDate: " + endOfCurrentDate);
+
 //        Date beginning = getDateWithoutTimeUsingFormat(currentDate);
 //        currentDate 00>=   startDate <= currentDate 2359                
-                
 //query.setParameter("currentDate", currentDate, TemporalType.DATE);
-        query.setParameter("currentDate", beginningOfCurrentDate);
-        query.setParameter("nextDay", endOfCurrentDate);
+        query.setParameter("startOfDay", beginningOfCurrentDate);
+        query.setParameter("endOfDay", endOfCurrentDate);
         List<ReservationEntity> reservations = query.getResultList();
+        System.out.println("reservation.getReservationRooms().size(): " + reservations.size());
         for (ReservationEntity reservation : reservations) {
+            System.out.println("reservation: " + reservation.getReservationId());
             reservation.getReservationRooms().size();
         }
 
@@ -164,7 +168,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
 //        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 //        return formatter.parse(formatter.format(date));
 //    }
-
     public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
         return dateToConvert.toInstant()
                 .atZone(ZoneId.systemDefault())
