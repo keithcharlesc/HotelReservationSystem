@@ -274,7 +274,7 @@ public class FrontOfficeModule {
                     if(reservationRoom.getExceptionRecord() != null) {
                         System.out.printf("%30s%30s%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getRoomType(), reservationRoom.getRoom().getNumber(), reservationRoom.getExceptionRecord().getExceptionRecordId(), reservationRoom.getExceptionRecord().getTypeOfException());
                     } else {
-                        System.out.printf("%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservation.getRoomType(), reservationRoom.getRoom().getNumber() );
+                        System.out.printf("%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservation.getRoomType().getRoomTypeName(), reservationRoom.getRoom().getNumber() );
                     }
                 }
             }

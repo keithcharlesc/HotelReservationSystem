@@ -121,31 +121,24 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
         //System.out.println(currentDayReservation.get(0));
         List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);
         List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate);
+
         for (ReservationRoomEntity reservationRoom : unallocated) {
             int i = 0;
-            while(i<availableRooms.size()) {
+            while (i < availableRooms.size()) {
                 if (reservationRoom.getReservation().getRoomType().equals(availableRooms.get(i).getRoomType())) {
                     reservationRoom.setRoom(availableRooms.get(i));
                     availableRooms.get(i).getReservationRooms().add(reservationRoom);
                     reservationRoom.setIsAllocated(true);
                     availableRooms.get(i).setRoomAllocated(true);
+                    availableRooms.remove(i);
                     break;
                 }
                 i++;
             }
         }
     }
-        
-        //think of how to rollback 
-//        for (ReservationRoomEntity reservationRoom : unallocated) {
-//            if (reservationRoom.getReservation().getRoomType().equals(availableRooms.get(i).getRoomType())) {
-//                reservationRoom.setRoom(availableRooms.get(i));
-//                availableRooms.get(i).getReservationRooms().add(reservationRoom);
-//                reservationRoom.setIsAllocated(true);
-//                availableRooms.get(i).setRoomAllocated(true);
-//            }
-//            i++;
-//        }
+
+
     
     @Override
     public void allocateRoomExceptionType1(Date allocateDate) throws ReservationRoomNotFoundException, RoomTypeNotFoundException {
@@ -153,14 +146,18 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
         List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate);
         for (ReservationRoomEntity reservationRoom : unallocated) {
             String nextRoomType = reservationRoom.getReservation().getRoomType().getNextRoomType();
+            System.out.println("(******NEXTROOMTYPE**********" + nextRoomType);
             int i = 0;
             while (i < availableRooms.size()) {
-                if (availableRooms.get(i).getRoomType().equals(nextRoomType)) {
+                System.out.println("(******NEXTROOMTYPE**********" + availableRooms.get(i).getRoomType());
+                System.out.println("(******NEXTROOMTYPE**********" + availableRooms.get(i).getNumber());
+                if (availableRooms.get(i).getRoomType().getRoomTypeName().equals(nextRoomType)) {
                     reservationRoom.setRoom(availableRooms.get(i));
                     availableRooms.get(i).getReservationRooms().add(reservationRoom);
                     reservationRoom.setIsAllocated(true);
                     availableRooms.get(i).setRoomAllocated(true);
                     exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(1), reservationRoom.getReservationRoomId());
+                    availableRooms.remove(i);
                     break;
                 }
                 i++;

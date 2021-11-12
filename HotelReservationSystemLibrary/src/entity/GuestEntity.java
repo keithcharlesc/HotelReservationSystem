@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,6 +33,7 @@ public class GuestEntity implements Serializable {
     @Size(min = 1, max = 32)
     private String name;
     @Column(nullable = false, unique = true, length = 64)
+    @Email
     @NotNull
     @Size(min = 4, max = 64)
     private String email;

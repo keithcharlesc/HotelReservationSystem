@@ -25,6 +25,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.RoomStatusEnum;
 import util.exception.DeleteRoomTypeException;
 import util.exception.InputDataValidationException;
 import util.exception.RoomTypeNameExistException;
@@ -269,7 +270,8 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     
     @Override
     public Integer retrieveTotalQuantityOfRoomsBasedOnRoomType(String roomTypeInput) { //RETURNS TOTAL QUANTITY OF ROOMS - ROOM TYPE
-        Query query = entityManager.createQuery("SELECT r FROM RoomEntity r JOIN r.roomType rt WHERE rt.roomTypeName = :roomType");
+        Query query = entityManager.createQuery("SELECT r FROM RoomEntity r JOIN r.roomType rt WHERE rt.roomTypeName = :roomType AND r.roomStatusEnum = :roomStatus");
+        query.setParameter("roomStatus", RoomStatusEnum.AVAILABLE);
         query.setParameter("roomType", roomTypeInput);
         return query.getResultList().size();
     }
