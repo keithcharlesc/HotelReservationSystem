@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.NormalRateEntity;
 import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
+import entity.PublishedRateEntity;
 import entity.RoomRateEntity;
 import java.util.Date;
 import java.util.List;
@@ -44,5 +45,7 @@ public interface RoomRateSessionBeanLocal {
     public PeakRateEntity retrievePeakRateByRoomTypeAndValidityPeriod(Long roomTypeId, Date date) throws RoomRateNotFoundException;
 
     public NormalRateEntity retrieveNormalRateByRoomType(Long roomTypeId) throws RoomRateNotFoundException;
+    
+    public PublishedRateEntity retrievePublishedRateByRoomType(Long roomTypeId) throws RoomRateNotFoundException;
     
 }

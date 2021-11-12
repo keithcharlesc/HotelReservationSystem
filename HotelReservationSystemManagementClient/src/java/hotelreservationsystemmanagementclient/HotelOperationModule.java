@@ -16,7 +16,9 @@ import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -208,8 +210,8 @@ public class HotelOperationModule {
             System.out.print("Enter Name of Room Type> ");
             String roomTypeName = scanner.nextLine().trim();
             RoomTypeEntity roomType = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomTypeName);
-            System.out.printf("%19s%30s%20s%30s\n", "Room Type ID", "Room Type Name", "Is Disabled", "Next Room Type");
-            System.out.printf("%19s%30s%20s%30s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled(), roomType.getNextRoomType());
+            System.out.printf("%19s%35s%20s%30s\n", "Room Type ID", "Room Type Name", "Is Disabled", "Next Room Type");
+            System.out.printf("%19s%35s%20s%30s\n", roomType.getRoomTypeId().toString(), roomType.getRoomTypeName(), roomType.getIsDisabled(), roomType.getNextRoomType());
             System.out.println("1: Update Room Type");
             System.out.println("2: Delete Room Type");
             System.out.println("3: Back\n");
@@ -382,7 +384,7 @@ public class HotelOperationModule {
             if (constraintViolations.isEmpty()) {
                 try {
                     RoomEntity roomUpdated = roomSessionBean.updateRoom(room);
-                    System.out.println("Room Successfully Updated! : Room No. " + roomUpdated.getNumber() + " , Room Type" + roomUpdated.getRoomType().getRoomTypeName() + " , ID : " + roomUpdated.getRoomId());
+                    System.out.println("Room Successfully Updated! : Room No.: " + roomUpdated.getNumber() + ", Room Type: " + roomUpdated.getRoomType().getRoomTypeName() + ", ID : " + roomUpdated.getRoomId());
                 } catch (InputDataValidationException | UpdateRoomException ex) {
                     System.out.println("Error: " + ex.getMessage());
                 }
@@ -456,14 +458,12 @@ public class HotelOperationModule {
         List<ExceptionRecordEntity> exceptionRecords = exceptionRecordSessionBean.retrieveAllExceptionRecords();
         System.out.println("Exception Type [1] => No available room for reserved room type, upgrade to next higher room type is available (Room is automatically allocated by system)");
         System.out.println("Exception Type [2] => No available room for reserved room type, no upgrade to next higher room type is available (No room automatically allocated by system)");
-        System.out.printf("%20s%19s%20s%20s\n", "Reservation ID", "Exception Record ID", "Exception Type", "Resolved Status");
-        for (ExceptionRecordEntity exceptionRecord : exceptionRecords) {
-            try {
-                ReservationRoomEntity reservationRoom = reservationRoomSessionBean.retrieveReservationRoomByReservationRoomId(exceptionRecord.getReservationRoom().getReservationRoomId());
+        System.out.printf("%30s%30s%30s%30s\n", "Reservation ID", "Exception Record ID", "Exception Type", "Resolved Status");
+        if (!exceptionRecords.isEmpty()) {
+            for (ExceptionRecordEntity exceptionRecord : exceptionRecords) {
+                ReservationRoomEntity reservationRoom = exceptionRecord.getReservationRoom();
                 Long reservationId = reservationRoom.getReservation().getReservationId();
-                System.out.printf("%20s%19s%20s%20s\n", reservationId, exceptionRecord.getExceptionRecordId(), exceptionRecord.getTypeOfException(), exceptionRecord.getResolved());
-            } catch (ReservationRoomNotFoundException ex) {
-                System.out.println("Error: " + ex.getMessage());
+                System.out.printf("%30s%30s%30s%30s\n", reservationId, exceptionRecord.getExceptionRecordId(), exceptionRecord.getTypeOfException(), exceptionRecord.getResolved());
             }
         }
         System.out.print("Press any key to continue...> ");
@@ -536,6 +536,7 @@ public class HotelOperationModule {
         RoomRateEntity roomRate;
         String start;
         String end;
+        Boolean failedConstraint = true;
 
         if (roomRateType >= 1 && roomRateType <= 4) {
             try {
@@ -544,10 +545,13 @@ public class HotelOperationModule {
                     normalRate.setName(name);
                     normalRate.setRatePerNight(ratePerNight);
                     roomRate = normalRate;
+                    
                     Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
-
                     if (constraintViolations.isEmpty()) {
+                        failedConstraint=false;
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
+                    } else {
+                        showInputDataValidationErrorsForRoomRateEntity(constraintViolations);
                     }
                 } else if (roomRateType == 2) {
                     PublishedRateEntity publishedRate = new PublishedRateEntity();
@@ -555,9 +559,11 @@ public class HotelOperationModule {
                     publishedRate.setRatePerNight(ratePerNight);
                     roomRate = publishedRate;
                     Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
-
                     if (constraintViolations.isEmpty()) {
+                        failedConstraint = false;
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
+                    } else {
+                        showInputDataValidationErrorsForRoomRateEntity(constraintViolations);
                     }
                 } else if (roomRateType == 3) {
                     PromotionRateEntity promotionRate = new PromotionRateEntity();
@@ -581,10 +587,13 @@ public class HotelOperationModule {
                     promotionRate.setStartDate(validityStartDate);
                     promotionRate.setEndDate(validityEndDate);
                     roomRate = promotionRate;
+                    
                     Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
-
                     if (constraintViolations.isEmpty()) {
+                        failedConstraint=false;
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
+                    } else {
+                        showInputDataValidationErrorsForRoomRateEntity(constraintViolations);
                     }
                 } else if (roomRateType == 4) {
                     PeakRateEntity peakRate = new PeakRateEntity();
@@ -603,14 +612,19 @@ public class HotelOperationModule {
                     peakRate.setStartDate(validityStartDate);
                     peakRate.setEndDate(validityEndDate);
                     roomRate = peakRate;
+                    
                     Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRate);
-
                     if (constraintViolations.isEmpty()) {
+                        failedConstraint = false;
                         roomRateSessionBean.createNewRoomRate(roomRate, roomTypeName);
-                        System.out.println("Room Rate created successfully!\n");
-                        System.out.print("Press any key to continue...> ");
-                        scanner.nextLine();
+                    } else {
+                        showInputDataValidationErrorsForRoomRateEntity(constraintViolations);
                     }
+                }
+                if (!failedConstraint) {
+                    System.out.println("Room Rate created successfully!\n");
+                    System.out.print("Press any key to continue...> ");
+                    scanner.nextLine();
                 }
             } catch (RoomRateNameExistException | UnknownPersistenceException | InputDataValidationException | RoomTypeNotFoundException ex) {
                 System.out.println("Error: " + ex.getMessage());
@@ -666,21 +680,25 @@ public class HotelOperationModule {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** HoRS System :: View All Room Rate Details ***\n");
         List<RoomRateEntity> roomRates = roomRateSessionBean.retrieveAllRoomRates();
-        System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
+        System.out.printf("%20s%35s%20s%30s%30s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");  
         for (RoomRateEntity roomRate : roomRates) {
             if (roomRate instanceof PeakRateEntity) {
                 PeakRateEntity peakRate = (PeakRateEntity) roomRate;
                 //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%20s%30s%20s%30s%30s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), peakRate.getStartDate().toString(), peakRate.getEndDate().toString());
+                System.out.printf("%20s%35s%20s%30s%30s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), dateFormat.format(peakRate.getStartDate()), dateFormat.format(peakRate.getEndDate()));
             } else if (roomRate instanceof PromotionRateEntity) {
                 PromotionRateEntity promotionRate = (PromotionRateEntity) roomRate;
                 //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
-                System.out.printf("%20s%30s%20s%30s%30s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), promotionRate.getStartDate().toString(), promotionRate.getEndDate().toString());
+                System.out.printf("%20s%35s%20s%30s%30s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), dateFormat.format(promotionRate.getStartDate()), dateFormat.format(promotionRate.getEndDate()));
             } else {
                 //System.out.printf("%12s%30s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night");
-                System.out.printf("%20s%30s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
+                System.out.printf("%20s%35s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
             }
         }
+
+        System.out.print("Press any key to continue...> ");
+        sc.nextLine();
     }
 
     private void doUpdateRoomRate(RoomRateEntity roomRate) {
@@ -739,7 +757,9 @@ public class HotelOperationModule {
                 } else {
                     roomRateSessionBean.updateRoomRate(roomRate);
                 }
-                System.out.println("RoomRate updated successfully!\n");
+                System.out.println("Room Rate updated successfully!\n");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (RoomRateNotFoundException ex) {
                 System.out.println("Error when updating Room Rate: " + ex.getMessage());
             } catch (UpdateRoomRateException ex) {
@@ -771,6 +791,8 @@ public class HotelOperationModule {
                     roomRateSessionBean.updateRoomRate(roomRate);
                 }
                 System.out.println("Room rate deleted successfully!\n");
+                System.out.print("Press any key to continue...> ");
+                scanner.nextLine();
             } catch (UpdateRoomRateException | RoomRateNotFoundException | InputDataValidationException ex) {
                 System.out.println("An error has occurred while deleting product: " + ex.getMessage() + "\n");;
             }
@@ -802,11 +824,13 @@ public class HotelOperationModule {
         LocalDate allocateDate = LocalDate.parse(allocation);
         LocalDateTime allocationDateTime = allocateDate.atStartOfDay();
         Date allocationStartDate = convertToDateViaSqlTimestamp(allocationDateTime);
-        System.out.println("allocationStartDate : " + allocationStartDate); //2021-12-04 00 : 00 :00
         try {
             reservationRoomSessionBean.allocateRooms(allocationStartDate);
             reservationRoomSessionBean.allocateRoomExceptionType1(allocationStartDate);
             reservationRoomSessionBean.allocateRoomExceptionType2(allocationStartDate);
+            System.out.println("Room Allocation successfully!\n");
+            System.out.print("Press any key to continue...> ");
+            scanner.nextLine();
         } catch (ReservationRoomNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         } catch (RoomTypeNotFoundException ex) {

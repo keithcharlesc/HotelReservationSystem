@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.NormalRateEntity;
 import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
+import entity.PublishedRateEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
 import java.util.Date;
@@ -285,6 +286,19 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         } catch (NoResultException | NonUniqueResultException ex) {
 //            return null;
             throw new RoomRateNotFoundException("No normal rate found exist!");
+        }
+    }
+    
+    @Override
+    public PublishedRateEntity retrievePublishedRateByRoomType(Long roomTypeId) throws RoomRateNotFoundException {
+        Query query = em.createQuery("SELECT pr FROM PublishedRateEntity pr WHERE pr.isDisabled = FALSE AND pr.roomType.roomTypeId = :id");
+        query.setParameter("id", roomTypeId);
+
+        try {
+            return (PublishedRateEntity)query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+//            return null;
+            throw new RoomRateNotFoundException("No published rate found exist!");
         }
     }
 

@@ -165,7 +165,7 @@ public class MainApp {
         email = scanner.nextLine().trim();
         System.out.print("Enter name> ");
         name = scanner.nextLine().trim();
-        System.out.print("Enter phoneNo> ");
+        System.out.print("Enter phone number> ");
         phoneNo = scanner.nextLine().trim();
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();

@@ -120,7 +120,6 @@ public class PartnerEmployeeSessionBean implements PartnerEmployeeSessionBeanRem
         for(ReservationEntity reservation: partnerEmployee.getReservations()) {
             reservation.getGuest();
             reservation.getRoomType();
-            reservation.getReservationRooms().size();
         }
         return partnerEmployee;
     }

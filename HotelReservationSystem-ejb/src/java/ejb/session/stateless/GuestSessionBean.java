@@ -3,6 +3,7 @@ package ejb.session.stateless;
 import entity.CustomerEntity;
 import entity.GuestEntity;
 import entity.ReservationEntity;
+import entity.ReservationRoomEntity;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -21,7 +22,6 @@ import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.GuestNotFoundException;
 import util.exception.GuestEmailExistException;
-import util.exception.RetrieveGuestReservationsException;
 import util.exception.UnknownPersistenceException;
 
 @Stateless
@@ -89,11 +89,19 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
         }
     }
     
-//    @Override
-//    public List<ReservationEntity> retreiveGuestReservations(String guestEmail) throws GuestNotFoundException {
-//        GuestEntity guest = this.retrieveGuestByEmail(guestEmail);
-//        //lazy load the exception report 
-//    }
+    @Override
+    public GuestEntity retreiveGuestReservations(String guestEmail) throws GuestNotFoundException {
+        GuestEntity guest = this.retrieveGuestByEmail(guestEmail);
+        guest.getReservations().size();
+        for (ReservationEntity reservation : guest.getReservations()) {
+            reservation.getReservationRooms().size();
+            for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+                reservationRoom.getExceptionRecord();
+                reservationRoom.getRoom();
+            }
+        }
+        return guest;
+    }
 
     @Override
     public GuestEntity retrieveGuestByEmail(String email) throws GuestNotFoundException {
@@ -102,7 +110,6 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
 
         try {
             GuestEntity guest = (GuestEntity) query.getSingleResult();
-            guest.getReservations().size();
             return guest;
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new GuestNotFoundException("Guest Email " + email + " does not exist!");

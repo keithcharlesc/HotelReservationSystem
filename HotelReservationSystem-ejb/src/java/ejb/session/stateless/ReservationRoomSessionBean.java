@@ -5,6 +5,11 @@ import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
 import entity.RoomEntity;
 import entity.RoomTypeEntity;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -88,93 +93,105 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
     }
     
     @Override 
-    public List<ReservationRoomEntity> retrieveUnallocatedRooms(Date allocateDate) {
-        Query query = em.createQuery("SELECT rr FROM ReservationRoomEntity rr WHERE rr.isAllocated = false WHERE rr.startDate >= :allocateDate ORDER BY rr.reservation.roomType");
-        query.setParameter("allocateDate", allocateDate);
+    public List<ReservationRoomEntity> retrieveUnallocatedRooms(Date currentDate) {
+        Query query = em.createQuery("SELECT rr FROM ReservationRoomEntity rr WHERE rr.isAllocated = false AND rr.reservation.startDate >= :startOfDay AND rr.reservation.startDate <= :endOfDay ORDER BY rr.reservation.roomType");
+        LocalDateTime beginning = convertToLocalDateTimeViaInstant(currentDate).truncatedTo(ChronoUnit.HOURS);
+        Date beginningOfCurrentDate = convertToDateViaSqlTimestamp(beginning);
+
+        LocalDateTime end = convertToLocalDateTimeViaInstant(currentDate).truncatedTo(ChronoUnit.HOURS);
+        Date endOfCurrentDate = convertToDateViaSqlTimestamp(end.plusHours(23).plusMinutes(59).plusSeconds(59));
+        query.setParameter("startOfDay", beginningOfCurrentDate);
+        query.setParameter("endOfDay", endOfCurrentDate);
         return query.getResultList();
     }
     
+    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
+        return java.sql.Timestamp.valueOf(dateToConvert);
+    }
+    
+    public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
+ 
     @Override
     public void allocateRooms(Date allocateDate) { //2021-12-04 00:00:00
-        List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
-        System.out.println(currentDayReservation.get(0));
-        //List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);
-        //List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate);
-        for (ReservationEntity reservation : currentDayReservation) {
-            RoomTypeEntity roomType = reservation.getRoomType();
+        //List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
+        //System.out.println(currentDayReservation.get(0));
+        List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);
+        List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate);
+
+        for (ReservationRoomEntity reservationRoom : unallocated) {
             int i = 0;
-            List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate, roomType);
-            if(availableRooms.size() >= reservation.getNumberOfRooms()) {
-                System.out.println("YES");
-                for(ReservationRoomEntity reservationRoom: reservation.getReservationRooms()) {
-                    System.out.println(i);
+            while (i < availableRooms.size()) {
+                if (reservationRoom.getReservation().getRoomType().equals(availableRooms.get(i).getRoomType())) {
                     reservationRoom.setRoom(availableRooms.get(i));
                     availableRooms.get(i).getReservationRooms().add(reservationRoom);
                     reservationRoom.setIsAllocated(true);
                     availableRooms.get(i).setRoomAllocated(true);
-                    i++;
+                    availableRooms.remove(i);
+                    break;
                 }
+                i++;
+            }
+        }
+    }
+
+
+    
+    @Override
+    public void allocateRoomExceptionType1(Date allocateDate) throws ReservationRoomNotFoundException, RoomTypeNotFoundException {
+        List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);
+        List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate);
+        for (ReservationRoomEntity reservationRoom : unallocated) {
+            String nextRoomType = reservationRoom.getReservation().getRoomType().getNextRoomType();
+            System.out.println("(******NEXTROOMTYPE**********" + nextRoomType);
+            int i = 0;
+            while (i < availableRooms.size()) {
+                System.out.println("(******NEXTROOMTYPE**********" + availableRooms.get(i).getRoomType());
+                System.out.println("(******NEXTROOMTYPE**********" + availableRooms.get(i).getNumber());
+                if (availableRooms.get(i).getRoomType().getRoomTypeName().equals(nextRoomType)) {
+                    reservationRoom.setRoom(availableRooms.get(i));
+                    availableRooms.get(i).getReservationRooms().add(reservationRoom);
+                    reservationRoom.setIsAllocated(true);
+                    availableRooms.get(i).setRoomAllocated(true);
+                    exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(1), reservationRoom.getReservationRoomId());
+                    availableRooms.remove(i);
+                    break;
+                }
+                i++;
             }
         }
     }
         
-        //think of how to rollback 
-//        for (ReservationRoomEntity reservationRoom : unallocated) {
-//            if (reservationRoom.getReservation().getRoomType().equals(availableRooms.get(i).getRoomType())) {
-//                reservationRoom.setRoom(availableRooms.get(i));
-//                availableRooms.get(i).getReservationRooms().add(reservationRoom);
-//                reservationRoom.setIsAllocated(true);
-//                availableRooms.get(i).setRoomAllocated(true);
-//            }
-//            i++;
-//        }
     
-    @Override
-    public void allocateRoomExceptionType1(Date allocateDate) throws ReservationRoomNotFoundException, RoomTypeNotFoundException {
-        List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
-        for (ReservationEntity reservation : currentDayReservation) {
-            String next = reservation.getRoomType().getNextRoomType();
-            if (!next.equals("None")) {
-                RoomTypeEntity nextRoomType = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(next);
-                int i = 0;
-                List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate, nextRoomType);
-                if (availableRooms.size() >= reservation.getNumberOfRooms()) {
-                    for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
-                        reservationRoom.setRoom(availableRooms.get(i));
-                        availableRooms.get(i).getReservationRooms().add(reservationRoom);
-                        reservationRoom.setIsAllocated(true);
-                        availableRooms.get(i).setRoomAllocated(true);
-                        exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(1), reservationRoom.getReservationRoomId());
-                    }
-                }
-            }
-        }
-    }
-
-
-//        List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms();
-//        List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms();
-//        int i = 0;
-//        for (ReservationRoomEntity reservationRoom : unallocated) {
-//            String nextRoomType = reservationRoom.getReservation().getRoomType().getNextRoomType();
-//            if (availableRooms.get(i).getRoomType().equals(nextRoomType)) {
-//                reservationRoom.setRoom(availableRooms.get(i));
-//                availableRooms.get(i).getReservationRooms().add(reservationRoom);
-//                reservationRoom.setIsAllocated(true);
-//                availableRooms.get(i).setRoomAllocated(true);
-//                exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(1), reservationRoom.getReservationRoomId());
+    
+//    public void allocateRoomExceptionType1(Date allocateDate) throws ReservationRoomNotFoundException, RoomTypeNotFoundException {
+//        List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
+//        for (ReservationEntity reservation : currentDayReservation) {
+//            String next = reservation.getRoomType().getNextRoomType();
+//            if (!next.equals("None")) {
+//                RoomTypeEntity nextRoomType = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(next);
+//                int i = 0;
+//                List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate, nextRoomType);
+//                if (availableRooms.size() >= reservation.getNumberOfRooms()) {
+//                    for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+//                        reservationRoom.setRoom(availableRooms.get(i));
+//                        availableRooms.get(i).getReservationRooms().add(reservationRoom);
+//                        reservationRoom.setIsAllocated(true);
+//                        availableRooms.get(i).setRoomAllocated(true);
+//                        exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(1), reservationRoom.getReservationRoomId());
+//                    }
+//                }
 //            }
-//            i++;
 //        }
 //    }
-    
     @Override
     public void allocateRoomExceptionType2(Date allocateDate) throws ReservationRoomNotFoundException {
-        List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
-        for (ReservationEntity reservation : currentDayReservation) {
-            for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
-                exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(2), reservationRoom.getReservationRoomId());
-            }
+        List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);
+        for (ReservationRoomEntity reservationRoom : unallocated) {
+            exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(2), reservationRoom.getReservationRoomId());
         }
     }
 

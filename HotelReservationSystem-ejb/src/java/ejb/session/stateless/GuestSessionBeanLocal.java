@@ -31,6 +31,8 @@ public interface GuestSessionBeanLocal {
     public CustomerEntity guestLogin(String email, String password) throws InvalidLoginCredentialException;
 
     public void deleteGuest(Long guestId) throws GuestNotFoundException, DeleteGuestException;
+    
+    public GuestEntity retreiveGuestReservations(String guestEmail) throws GuestNotFoundException;
 
     
 }
