@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -90,9 +92,9 @@ public class FrontOfficeModule {
                 if (response == 1) {
                     doWalkInSearchRoom();
                 } else if (response == 2) {
-//                    doCheckInGuest();
+                    doCheckInGuest();
                 } else if (response == 3) {
-//                    doCheckOutGuest();
+                    doCheckOutGuest();
                 } else if (response == 4) {
                     break;
                 } else {
@@ -251,11 +253,20 @@ public class FrontOfficeModule {
     }
 
     public void doCheckInGuest() {
-
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Guest Email > ");
+            String guestEmail = scanner.nextLine().trim();
+            guestSessionBean.retreiveGuestReservations(guestEmail);
+            //display reservation but also need to resolve exception -> to change the set 
+            
+        } catch (GuestNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
     }
 
     public void doCheckOutGuest() {
-
+//room allocation change to false 
     }
 
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {

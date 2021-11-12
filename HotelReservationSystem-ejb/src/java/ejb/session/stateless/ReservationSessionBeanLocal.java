@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.ReservationEntity;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -28,4 +29,6 @@ public interface ReservationSessionBeanLocal {
     public ReservationEntity retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
     
     public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate);
+    
+    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert);
 }

@@ -88,6 +88,12 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
             throw new GuestNotFoundException("Guest ID " + guestId + " does not exist!");
         }
     }
+    
+    @Override
+    public List<ReservationEntity> retreiveGuestReservations(String guestEmail) throws GuestNotFoundException {
+        GuestEntity guest = this.retrieveGuestByEmail(guestEmail);
+        //lazy load the exception report 
+    }
 
     @Override
     public GuestEntity retrieveGuestByEmail(String email) throws GuestNotFoundException {

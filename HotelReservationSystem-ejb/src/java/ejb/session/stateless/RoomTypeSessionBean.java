@@ -8,6 +8,8 @@ package ejb.session.stateless;
 import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -291,6 +293,20 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         }
 
         return msg;
+    }
+    
+    public List<Date> getListOfDaysBetweenTwoDates(Date startDate, Date endDate) {
+        List<Date> result = new ArrayList<Date>();
+        Calendar start = Calendar.getInstance();
+        start.setTime(startDate);
+        Calendar end = Calendar.getInstance();
+        end.setTime(endDate);
+//        end.add(Calendar.DAY_OF_YEAR, 1); //Add 1 day to endDate to make sure endDate is included into the final list
+        while (start.before(end)) {
+            result.add(start.getTime());
+            start.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        return result;
     }
 
 }

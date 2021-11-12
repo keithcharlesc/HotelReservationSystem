@@ -40,5 +40,7 @@ public interface RoomTypeSessionBeanLocal {
     public Integer retrieveTotalQuantityOfRoomsBasedOnRoomType(String roomTypeInput);
 
     public Integer retrieveQuantityOfRoomsReserved(Date checkInDateInput, Date checkOutDateInput, String roomTypeInput);
+    
+    public List<Date> getListOfDaysBetweenTwoDates(Date startDate, Date endDate);
 
 }
