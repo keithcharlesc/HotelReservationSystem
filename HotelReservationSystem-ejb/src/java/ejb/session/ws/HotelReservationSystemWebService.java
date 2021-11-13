@@ -19,22 +19,15 @@ import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
+import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.time.LocalDate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -42,16 +35,11 @@ import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import util.enumeration.ReservationTypeEnum;
 import util.exception.GuestEmailExistException;
 import util.exception.GuestNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PartnerNotFoundException;
-import util.exception.ReservationNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -99,10 +87,6 @@ public class HotelReservationSystemWebService {
     @WebMethod(operationName = "viewPartnerEmployeeReservations")
     public List<ReservationEntity> viewAllPartnerEmployeeReservations(@WebParam(name = "username") String username) throws PartnerNotFoundException {
         PartnerEmployeeEntity partner = partnerEmployeeSessionBeanLocal.retrieveAllPartnerReservations(username);
-//        System.out.printf("%30s%30s%30s%30s%30s%30s%30s\n", "Reservation ID", "Guest Name", "Reservation Room Type", "Number of Rooms", "Start Date", "End Date", "Reservation Fee");
-//        for (ReservationEntity reservation : partner.getReservations()) {
-//            System.out.printf("%30s%30s%30s%30s%30s%30s%30s\n", reservation.getReservationId(), reservation.getGuest().getName(), reservation.getRoomType().getRoomTypeName(), reservation.getNumberOfRooms(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()));
-//        }
         List<ReservationEntity> reservations = partner.getReservations();
         for (ReservationEntity reservation : reservations) {
             em.detach(reservation);
@@ -117,16 +101,24 @@ public class HotelReservationSystemWebService {
     public List<RoomTypeEntity> retrieveAllRoomTypes() {
         List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBeanLocal.retrieveAllRoomTypes();
 //        
-//        for (RoomTypeEntity roomType : listOfRoomTypes) {
-//////            em.detach(roomType);
-//            em.detach(roomType.getRooms().size());
-//            roomType.getRooms().clear();
-//            em.detach(roomType.getRoomRates().size());
-//            roomType.getRoomRates().clear();
-//              
-//
-//        }
-        
+        for (RoomTypeEntity roomType : listOfRoomTypes) {
+////        
+            em.detach(roomType);
+
+            for (RoomEntity room : roomType.getRooms()) {
+                em.detach(room);
+//                    room.setRoomType(null);
+            }
+
+            for (RoomRateEntity rate : roomType.getRoomRates()) {
+                em.detach(rate);
+//                    rate.setRoomType(null);
+            }
+
+            roomType.getRooms().clear();
+            roomType.getRoomRates().clear();
+
+        }
         return listOfRoomTypes;
     }
 
@@ -136,70 +128,248 @@ public class HotelReservationSystemWebService {
     }
 
     @WebMethod(operationName = "retrieveQuantityOfRoomsReserved")
-    public Integer retrieveQuantityOfRoomsReserved(@WebParam(name = "checkInDate") XMLGregorianCalendar checkInDate, @WebParam(name = "checkOutDate") XMLGregorianCalendar checkOutDate, @WebParam(name = "roomTypeName") String roomTypeName) {
-        return roomTypeSessionBeanLocal.retrieveQuantityOfRoomsReserved(date(checkInDate), date(checkOutDate), roomTypeName);
+    public Integer retrieveQuantityOfRoomsReserved(@WebParam(name = "start") String start, @WebParam(name = "end") String end, @WebParam(name = "roomTypeName") String roomTypeName) {
+//        LocalDate startDate = LocalDate.parse(start);
+//        LocalDateTime startDateTime = startDate.atStartOfDay();
+//        Date checkInDate = convertToDateViaSqlTimestamp(startDateTime.withHour(14)); //checkindate
+//        LocalDate endDate = LocalDate.parse(end);
+//        LocalDateTime endDateTime = endDate.atStartOfDay();
+//        Date checkOutDate = convertToDateViaSqlTimestamp(endDateTime.withHour(12)); //checkoudate
+
+//        System.out.println("***********" + roomTypeName + "***********");
+//        System.out.println("***********test**************" + start + "**************************");
+//        System.out.println("***********123****************" + convertStringToDate(start) + "**************************");
+//        System.out.println("***********abc****************" + convertStringToDate(end) + "**************************");
+//        System.out.println("***********def*****************" + end + "**************************");
+//        return roomTypeSessionBeanLocal.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, roomTypeName);
+        return roomTypeSessionBeanLocal.retrieveQuantityOfRoomsReserved(convertStringToDate(start), convertStringToDate(end), roomTypeName);
     }
 
     @WebMethod(operationName = "retrieveRoomTypeByRoomTypeName")
     public RoomTypeEntity retrieveRoomTypeByRoomTypeName(@WebParam(name = "roomTypeName") String roomTypeName) throws RoomTypeNotFoundException {
-        return roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
+        RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
+
+        em.detach(roomType);
+
+        for (RoomEntity room : roomType.getRooms()) {
+            em.detach(room);
+//                    room.setRoomType(null);
+        }
+
+        for (RoomRateEntity rate : roomType.getRoomRates()) {
+            em.detach(rate);
+//                    rate.setRoomType(null);
+        }
+
+        roomType.getRooms().clear();
+        roomType.getRoomRates().clear();
+
+        return roomType;
+
     }
 
     @WebMethod(operationName = "retrievePeakRateByRoomTypeAndValidityPeriod")
-    public PeakRateEntity retrievePeakRateByRoomTypeAndValidityPeriod(@WebParam(name = "roomTypeId") Long roomTypeId, @WebParam(name = "dateOf") XMLGregorianCalendar dateOf) throws RoomRateNotFoundException {
-        return roomRateSessionBeanLocal.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeId, date(dateOf));
+    public PeakRateEntity retrievePeakRateByRoomTypeAndValidityPeriod(@WebParam(name = "roomTypeId") Long roomTypeId, @WebParam(name = "dateOf") String dateOf) throws RoomRateNotFoundException {
+//        LocalDate startDate = LocalDate.parse(dateOf);
+//        LocalDateTime startDateTime = startDate.atStartOfDay();
+//        Date date = convertToDateViaSqlTimestamp(startDateTime.withHour(14)); //checkindate
+
+        PeakRateEntity rate = roomRateSessionBeanLocal.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeId, convertStringToDate(dateOf));
+        em.detach(rate);
+        em.detach(rate.getRoomType());
+        rate.setRoomType((null));
+        for (NightEntity night : rate.getNights()) {
+            em.detach(night);
+        }
+
+        rate.getNights().clear();
+        return rate;
+
     }
 
     @WebMethod(operationName = "retrievePromotionRateByRoomTypeAndValidityPeriod")
-    public PromotionRateEntity retrievePromotionRateByRoomTypeAndValidityPeriod(@WebParam(name = "roomTypeId") Long roomTypeId, @WebParam(name = "dateOf") XMLGregorianCalendar dateOf) throws RoomRateNotFoundException {
-        return roomRateSessionBeanLocal.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeId, date(dateOf));
+    public PromotionRateEntity retrievePromotionRateByRoomTypeAndValidityPeriod(@WebParam(name = "roomTypeId") Long roomTypeId, @WebParam(name = "dateOf") String dateOf) throws RoomRateNotFoundException {
+//        LocalDate startDate = LocalDate.parse(dateOf);
+//        LocalDateTime startDateTime = startDate.atStartOfDay();
+//        Date date = convertToDateViaSqlTimestamp(startDateTime.withHour(14)); //checkindate
+        PromotionRateEntity rate = roomRateSessionBeanLocal.retrievePromotionRateByRoomTypeAndValidityPeriod(roomTypeId, convertStringToDate(dateOf));
+
+        em.detach(rate);
+        em.detach(rate.getRoomType());
+        rate.setRoomType((null));
+        for (NightEntity night : rate.getNights()) {
+            em.detach(night);
+        }
+
+        rate.getNights().clear();
+        return rate;
+
     }
 
     @WebMethod(operationName = "retrieveNormalRateByRoomType")
     public NormalRateEntity retrieveNormalRateByRoomType(@WebParam(name = "roomTypeId") Long roomTypeId) throws RoomRateNotFoundException {
-        return roomRateSessionBeanLocal.retrieveNormalRateByRoomType(roomTypeId);
-    }
+        NormalRateEntity rate = roomRateSessionBeanLocal.retrieveNormalRateByRoomType(roomTypeId);
 
-//    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
-//        return java.sql.Timestamp.valueOf(dateToConvert);
-//    }
-//
-//    public static long numberOfNights(Date firstDate, Date secondDate) throws IOException {
-//        return ChronoUnit.DAYS.between(firstDate.toInstant(), secondDate.toInstant());
-//    }
-//
-//    private List<Date> getListOfDaysBetweenTwoDates(Date startDate, Date endDate) {
-//        List<Date> result = new ArrayList<Date>();
-//        Calendar start = Calendar.getInstance();
-//        start.setTime(startDate);
-//        Calendar end = Calendar.getInstance();
-//        end.setTime(endDate);
-////        end.add(Calendar.DAY_OF_YEAR, 1); //Add 1 day to endDate to make sure endDate is included into the final list
-//        while (start.before(end)) {
-//            result.add(start.getTime());
-//            start.add(Calendar.DAY_OF_YEAR, 1);
-//        }
-//        return result;
-//    }
-
-    private String formatDate(XMLGregorianCalendar xmlGregorianCalendarInstance) {
-        return date(xmlGregorianCalendarInstance).toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString();
-    }
-
-    private static java.util.Date date(XMLGregorianCalendar xmlGregorianCalendarInstance) {
-        return xmlGregorianCalendarInstance.toGregorianCalendar().getTime();
-    }
-
-    private static XMLGregorianCalendar xml(java.util.Date date) {
-        try {
-            GregorianCalendar gcalendar = new GregorianCalendar();
-            gcalendar.setTime(date);
-            XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcalendar);
-            return xmlDate;
-        } catch (DatatypeConfigurationException ex) {
-            System.out.println(ex.getMessage());
-            return null;
+        em.detach(rate);
+        em.detach(rate.getRoomType());
+        rate.setRoomType((null));
+        for (NightEntity night : rate.getNights()) {
+            em.detach(night);
         }
+
+        rate.getNights().clear();
+        return rate;
+    }
+
+    @WebMethod(operationName = "retrieveGuestByEmail")
+    public GuestEntity retrieveGuestByEmail(@WebParam(name = "email") String email) throws GuestNotFoundException {
+
+        GuestEntity guest = guestSessionBeanLocal.retrieveGuestByEmail(email);
+
+        em.detach(guest);
+
+        for (ReservationEntity reservation : guest.getReservations()) {
+            em.detach(reservation);
+        }
+
+        guest.getReservations().clear();
+
+        return guest;
+
+    }
+
+    @WebMethod(operationName = "createNewGuest")
+    public Long createNewGuest(@WebParam(name = "createGuestRecord") GuestEntity createGuestRecord) throws GuestEmailExistException, UnknownPersistenceException, InputDataValidationException {
+
+        return guestSessionBeanLocal.createNewGuest(createGuestRecord);
+
+//        em.detach(guest);
+//
+//        for (ReservationEntity reservation : guest.getReservations()) {
+//            em.detach(reservation);
+//        }
+//
+//        guest.getReservations().clear();
+//
+//        return guest;
+    }
+
+    @WebMethod(operationName = "createNewNight")
+    public NightEntity createNewNight(@WebParam(name = "newNightEntity") NightEntity newNightEntity, @WebParam(name = "roomRateName") String roomRateName) throws UnknownPersistenceException, InputDataValidationException, RoomRateNotFoundException {
+
+        NightEntity night = nightSessionBeanLocal.createNewNight(newNightEntity, roomRateName);
+
+        em.detach(night);
+        em.detach(night.getRoomRate());
+        night.setRoomRate((null));
+
+        return night;
+    }
+
+    @WebMethod(operationName = "createNewReservation")
+    public ReservationEntity createNewReservation(@WebParam(name = "guestId") Long guestId, @WebParam(name = "newReservationEntity") ReservationEntity newReservationEntity) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException {
+
+        ReservationEntity reservation = reservationSessionBeanLocal.createNewReservation(guestId, newReservationEntity);
+
+//        em.detach(reservation);
+//        em.detach(reservation.getGuest());
+//        reservation.setGuest(null);
+//
+//        for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+//            em.detach(reservationRoom);
+//            reservationRoom.setReservation(null);
+//            em.detach(reservationRoom.getRoom());
+//            reservationRoom.setRoom(null);
+//            em.detach(reservationRoom.getExceptionRecord());
+//            reservationRoom.setExceptionRecord(null);
+//        }
+//
+//        reservation.getReservationRooms().clear();
+        
+
+        em.detach(reservation);
+        em.detach(reservation.getGuest());
+        reservation.setGuest(null);
+        
+        for (ReservationEntity reservationByGuest : reservation.getGuest().getReservations()) {
+            em.detach(reservationByGuest);
+        }
+        reservation.getGuest().getReservations().clear();
+        
+        em.detach(reservation);
+        em.detach(reservation.getRoomType());
+        reservation.setRoomType(null);
+        
+        for (NightEntity night : reservation.getNights()) {
+            em.detach(night);
+            em.detach(night.getRoomRate());
+            night.setRoomRate(null);
+        }
+        reservation.getNights().clear();
+
+        for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+            em.detach(reservationRoom);
+            em.detach(reservationRoom.getReservation());
+            reservationRoom.setReservation(null);
+            em.detach(reservationRoom.getRoom());
+            reservationRoom.setRoom(null);
+            em.detach(reservationRoom.getRoom().getRoomType());
+            reservationRoom.getRoom().setRoomType(null);
+            em.detach(reservationRoom.getExceptionRecord());
+            reservationRoom.setExceptionRecord(null);
+        }
+        reservation.getReservationRooms().clear();
+
+        return reservation;
+    }
+    
+    
+    //        for (NightEntity night : reservation.getNights()) {
+//            em.detach(night);
+//        }
+//        reservation.getNights().clear();
+//        em.detach(reservation);
+//        em.detach(reservation.getGuest());
+//        reservation.setGuest(null);
+//
+//        for (ReservationEntity reservationEntity : reservation.getGuest().getReservations()) {
+//            em.detach(reservationEntity);
+//            em.detach(reservationEntity.getGuest());
+//            reservationEntity.setGuest(null);
+//        }
+//        reservation.getGuest().getReservations().clear();
+//
+//        em.detach(reservation.getRoomType());
+//        reservation.setRoomType(null);
+//
+//        for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+//            em.detach(reservationRoom);
+//            reservationRoom.setReservation(null);
+//        }
+//
+//        reservation.getReservationRooms().clear();
+//
+//        for (NightEntity night : reservation.getNights()) {
+//            em.detach(night);
+//        }
+//
+//        reservation.getNights().clear();
+    
+    
+
+    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
+        return java.sql.Timestamp.valueOf(dateToConvert);
+    }
+
+    public Date convertStringToDate(String strDate) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+        try {
+            Date date = dateFormat.parse(strDate);
+            return date;
+        } catch (ParseException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+        return new Date();
     }
 
 }

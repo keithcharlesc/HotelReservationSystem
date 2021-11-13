@@ -13,8 +13,8 @@ public class HolidayReservationSystemJavaSeClient {
 
     public static void main(String[] args) {
         // TODO code application logic here
-//        MainApp mainApp = new MainApp();
-//        mainApp.runApp();
+        MainApp mainApp = new MainApp();
+        mainApp.runApp();
 
     }
 

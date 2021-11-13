@@ -280,6 +280,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     //For those reservations made previously, how many rooms have been reserved alr 
     @Override
     public Integer retrieveQuantityOfRoomsReserved(Date checkInDateInput, Date checkOutDateInput, String roomTypeInput) {
+        System.out.println("******BEAN : checkInDateInput " + checkInDateInput + "**********");
         Query query = entityManager.createQuery("SELECT rre FROM ReservationRoomEntity rre WHERE rre.reservation.roomType.roomTypeName = :roomType AND rre.reservation.startDate >= :checkInDate AND rre.reservation.startDate < :checkOutDate");
         query.setParameter("checkInDate", checkInDateInput);
         query.setParameter("checkOutDate", checkOutDateInput);
