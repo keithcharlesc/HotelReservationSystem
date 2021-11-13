@@ -77,7 +77,7 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
     @Override
     public GuestEntity retrieveGuestByGuestId(Long guestId) throws GuestNotFoundException {
         GuestEntity guestEntity = em.find(GuestEntity.class, guestId);
-
+        System.out.println("*********GUEST TEST");
         if (guestEntity != null) {
             guestEntity.getReservations().size();
             for(ReservationEntity reservation: guestEntity.getReservations()) {
