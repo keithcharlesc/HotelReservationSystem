@@ -18,6 +18,7 @@ import entity.PartnerEmployeeEntity;
 import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
 import entity.ReservationEntity;
+import entity.ReservationRoomEntity;
 import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
@@ -84,12 +85,26 @@ public class HotelReservationSystemWebService {
 
 //    //need detach ??? 
     @WebMethod(operationName = "viewPartnerEmployeeReservations")
-    public PartnerEmployeeEntity viewAllPartnerEmployeeReservations(@WebParam(name = "username") String username) throws PartnerNotFoundException {
+    public List<ReservationEntity> viewAllPartnerEmployeeReservations(@WebParam(name = "username") String username) throws PartnerNotFoundException {
         PartnerEmployeeEntity partner = partnerEmployeeSessionBeanLocal.retrieveAllPartnerReservations(username);
-        
-        partner.getReservations();
+//      
+       List<ReservationEntity> reservations = partner.getReservations();
+        for (ReservationEntity reservation : reservations) {
+           
+            for(ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+                em.detach(reservationRoom);
+                reservationRoom.setReservation(null);
+            }
+            reservation.getReservationRooms().clear();
+            em.detach(reservation);
+            em.detach(reservation.getGuest());
+            reservation.setGuest(null);
+            em.detach(reservation.getRoomType());
+            reservation.setRoomType(null);
+            reservation.getGuest().getReservations().clear();
+        }
 
-        return partner;
+        return reservations;
     }
 
     @WebMethod(operationName = "retrieveAllRoomTypes")
