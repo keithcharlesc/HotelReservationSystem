@@ -294,6 +294,7 @@ public class HotelReservationSystemWebService {
         for (ReservationEntity reservationByGuest : reservation.getGuest().getReservations()) {
             em.detach(reservationByGuest);
         }
+        reservation.getGuest().getReservations().remove(reservation);
         reservation.getGuest().getReservations().clear();
         
         em.detach(reservation);
@@ -303,6 +304,8 @@ public class HotelReservationSystemWebService {
         for (NightEntity night : reservation.getNights()) {
             em.detach(night);
             em.detach(night.getRoomRate());
+            em.detach(night.getRoomRate().getRoomType());
+            em.detach(night.getRoomRate().setRoomType(null));
             night.setRoomRate(null);
         }
         reservation.getNights().clear();
