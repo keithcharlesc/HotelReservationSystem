@@ -51,7 +51,6 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
 
     
 
-    // Added in v4.2 for bean validation
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
     
@@ -116,9 +115,7 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
     }
  
     @Override
-    public void allocateRooms(Date allocateDate) { //2021-12-04 00:00:00
-        //List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
-        //System.out.println(currentDayReservation.get(0));
+    public void allocateRooms(Date allocateDate) { 
         List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);
         List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate);
 
@@ -165,28 +162,6 @@ public class ReservationRoomSessionBean implements ReservationRoomSessionBeanLoc
         }
     }
         
-    
-    
-//    public void allocateRoomExceptionType1(Date allocateDate) throws ReservationRoomNotFoundException, RoomTypeNotFoundException {
-//        List<ReservationEntity> currentDayReservation = reservationSessionBeanLocal.retrieveCurrentDayReservations(allocateDate);
-//        for (ReservationEntity reservation : currentDayReservation) {
-//            String next = reservation.getRoomType().getNextRoomType();
-//            if (!next.equals("None")) {
-//                RoomTypeEntity nextRoomType = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(next);
-//                int i = 0;
-//                List<RoomEntity> availableRooms = roomSessionBeanLocal.retreiveAvailableRooms(allocateDate, nextRoomType);
-//                if (availableRooms.size() >= reservation.getNumberOfRooms()) {
-//                    for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
-//                        reservationRoom.setRoom(availableRooms.get(i));
-//                        availableRooms.get(i).getReservationRooms().add(reservationRoom);
-//                        reservationRoom.setIsAllocated(true);
-//                        availableRooms.get(i).setRoomAllocated(true);
-//                        exceptionRecordSessionBean.createNewExceptionRecord(new ExceptionRecordEntity(1), reservationRoom.getReservationRoomId());
-//                    }
-//                }
-//            }
-//        }
-//    }
     @Override
     public void allocateRoomExceptionType2(Date allocateDate) throws ReservationRoomNotFoundException {
         List<ReservationRoomEntity> unallocated = retrieveUnallocatedRooms(allocateDate);

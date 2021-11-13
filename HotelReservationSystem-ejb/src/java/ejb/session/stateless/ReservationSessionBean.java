@@ -39,7 +39,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
-    // Added in v4.2 for bean validation
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
@@ -48,8 +47,7 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
         validator = validatorFactory.getValidator();
     }
 
-    // Updated in v4.1
-    // Updated in v4.2 with bean validation
+
     @Override
     public ReservationEntity createNewReservation(Long guestId, ReservationEntity newReservationEntity) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException {
 
@@ -61,14 +59,9 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
                 guestEntity.getReservations().add(newReservationEntity);
 
                 em.persist(newReservationEntity);
-
-//                for (NightEntity nightEntity : newReservationEntity.getNights()) {
-//                    em.persist(nightEntity);
-//                }
                 for (ReservationRoomEntity reservationRoomEntity : newReservationEntity.getReservationRooms()) {
                     em.persist(reservationRoomEntity);
                 }
-//                em.persist(newReservationEntity.getRoomType());
                 em.flush();
 
                 return newReservationEntity;
@@ -88,11 +81,8 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
     }
 
     @Override
-    public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {  //2021-12-04 00:00:00
-//        long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
-//        Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate > :currentDate AND r.startDate < :nextDay AND rr.isAllocated=false");
+    public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate) {  
         Query query = em.createQuery("SELECT r FROM ReservationEntity r, IN (r.reservationRooms) rr WHERE r.startDate >= :startOfDay AND r.startDate <= :endOfDay AND rr.isAllocated=false");
-//          Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.startDate >= :startOfDay AND r.startDate <=, IN (r.reservationRooms) rr WHERE rr.isAllocated=false");
 
         LocalDateTime beginning = convertToLocalDateTimeViaInstant(currentDate).truncatedTo(ChronoUnit.HOURS);
         Date beginningOfCurrentDate = convertToDateViaSqlTimestamp(beginning);
@@ -102,9 +92,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
         Date endOfCurrentDate = convertToDateViaSqlTimestamp(end.plusHours(23).plusMinutes(59).plusSeconds(59));
         System.out.println("endOfCurrentDate: " + endOfCurrentDate);
 
-//        Date beginning = getDateWithoutTimeUsingFormat(currentDate);
-//        currentDate 00>=   startDate <= currentDate 2359                
-//query.setParameter("currentDate", currentDate, TemporalType.DATE);
         query.setParameter("startOfDay", beginningOfCurrentDate);
         query.setParameter("endOfDay", endOfCurrentDate);
         List<ReservationEntity> reservations = query.getResultList();
@@ -132,28 +119,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
         }
     }
 
-//    @Override
-//    public void updateReservation(ReservationEntity reservationEntity) throws ReservationNotFoundException, UpdateReservationException, InputDataValidationException {
-//        if (reservationEntity != null && reservationEntity.getReservationId() != null) {
-//            Set<ConstraintViolation<ReservationEntity>> constraintViolations = validator.validate(reservationEntity);
-//
-//            if (constraintViolations.isEmpty()) {
-//                ReservationEntity reservationEntityToUpdate = retrieveReservationByReservationId(reservationEntity.getReservationId());
-//
-//                if (reservationEntityToUpdate.getEmail().equals(reservationEntity.getEmail())) {
-//                    reservationEntityToUpdate.setName(reservationEntity.getName());
-//                    reservationEntityToUpdate.setPhoneNumber(reservationEntity.getLastName());
-//                    // Username and password are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
-//                } else {
-//                    throw new UpdateReservationException("Username of reservation record to be updated does not match the existing record");
-//                }
-//            } else {
-//                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-//            }
-//        } else {
-//            throw new ReservationNotFoundException("Reservation ID not provided for reservation to be updated");
-//        }
-//    }
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ReservationEntity>> constraintViolations) {
         String msg = "Input data validation error!:";
 
@@ -164,10 +129,6 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
         return msg;
     }
 
-//    public static Date getDateWithoutTimeUsingFormat(Date date) throws ParseException {
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-//        return formatter.parse(formatter.format(date));
-//    }
     public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
         return dateToConvert.toInstant()
                 .atZone(ZoneId.systemDefault())

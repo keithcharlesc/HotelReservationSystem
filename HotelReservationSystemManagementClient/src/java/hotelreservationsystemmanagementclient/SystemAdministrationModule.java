@@ -82,7 +82,8 @@ public class SystemAdministrationModule {
             }
         }
     }
-
+    
+    // EMPLOYEE <==============================================
     public void doCreateNewEmployee() {
         Scanner scanner = new Scanner(System.in);
         String username = "";
@@ -150,7 +151,8 @@ public class SystemAdministrationModule {
 
         System.out.println("\nPlease try again......\n");
     }
-
+    
+    // PARTNER <==============================================
     public void doCreateNewPartner() {
         Scanner scanner = new Scanner(System.in);
         String name = "";

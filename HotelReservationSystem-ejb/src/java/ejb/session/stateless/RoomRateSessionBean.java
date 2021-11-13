@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb.session.stateless;
 
 import entity.NormalRateEntity;
@@ -34,10 +29,7 @@ import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomRateException;
 
-/**
- *
- * @author xianhui
- */
+
 @Stateless
 public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateSessionBeanLocal {
 
@@ -70,7 +62,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
                 em.persist(newRoomRateEntity);
                 System.out.println("Successfully Created!");
                 em.flush();
-//                return newRoomRateEntity.getRoomRateId();
             } catch (PersistenceException ex) {
                 if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                     if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
@@ -123,41 +114,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         }
     }
 
-//    @Override
-//    public void updateRoomRate(RoomRateEntity roomRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException {
-//        if (roomRateEntity != null && roomRateEntity.getRoomRateId() != null) {
-//            Set<ConstraintViolation<RoomRateEntity>> constraintViolations = validator.validate(roomRateEntity);
-//
-//            if (constraintViolations.isEmpty()) {
-//                RoomRateEntity roomRateEntityToUpdate = retrieveRoomRateByRoomRateId(roomRateEntity.getRoomRateId());
-//                if (roomRateEntity instanceof PromotionRateEntity) {
-//                    PromotionRateEntity promoRateEntity = (PromotionRateEntity) roomRateEntity;
-//                    PromotionRateEntity promoRateEntityToUpdate = (PromotionRateEntity) roomRateEntityToUpdate;
-//                    promoRateEntityToUpdate.setName(promoRateEntity.getName());
-//                    promoRateEntityToUpdate.setRatePerNight(promoRateEntity.getRatePerNight());
-//                    promoRateEntityToUpdate.setStartDate(promoRateEntity.getStartDate());
-//                    promoRateEntityToUpdate.setEndDate(promoRateEntity.getEndDate());
-//                    promoRateEntityToUpdate.setIsDisabled(promoRateEntity.getIsDisabled());
-//                } else if (roomRateEntity instanceof PeakRateEntity) {
-//                    PeakRateEntity peakRateEntity = (PeakRateEntity) roomRateEntity;
-//                    PeakRateEntity peakRateEntityToUpdate = (PeakRateEntity) roomRateEntityToUpdate;
-//                    peakRateEntityToUpdate.setName(peakRateEntity.getName());
-//                    peakRateEntityToUpdate.setRatePerNight(peakRateEntity.getRatePerNight());
-//                    peakRateEntityToUpdate.setStartDate(peakRateEntity.getStartDate());
-//                    peakRateEntityToUpdate.setEndDate(peakRateEntity.getEndDate());
-//                    peakRateEntityToUpdate.setIsDisabled(peakRateEntity.getIsDisabled());
-//                } else {
-//                    roomRateEntityToUpdate.setName(roomRateEntity.getName());
-//                    roomRateEntityToUpdate.setRatePerNight(roomRateEntity.getRatePerNight());
-//                    roomRateEntityToUpdate.setIsDisabled(roomRateEntity.getIsDisabled());
-//                }
-//            } else {
-//                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-//            }
-//        } else {
-//            throw new RoomRateNotFoundException("RoomRate ID not provided for roomRate to be updated");
-//        }
-//    }
     
     @Override
     public void updatePromotionRate(PromotionRateEntity promoRateEntity) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException {
@@ -230,12 +186,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         } catch (RoomRateNotFoundException ex) {
             throw new RoomRateNotFoundException("RoomRate ID" + roomRateId + " is not found!");
         }
-
-//        if (roomRateEntity.getNights().isEmpty()) {
-//            em.remove(roomRateEntity);
-//        } else {
-//            throw new DeleteRoomRateException("RoomRate ID " + roomRateId + " is associated with night(s) and cannot be deleted!");
-//        }
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<RoomRateEntity>> constraintViolations) {
@@ -257,7 +207,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         try {
             return (PromotionRateEntity)query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-//            return null;
             throw new RoomRateNotFoundException("No promotion rate found!");
         }
     }
@@ -271,7 +220,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         try {
             return (PeakRateEntity)query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-//            return null;
             throw new RoomRateNotFoundException("No peak rate found exist!");
         }
     }
@@ -284,7 +232,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         try {
             return (NormalRateEntity)query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-//            return null;
             throw new RoomRateNotFoundException("No normal rate found exist!");
         }
     }
@@ -297,7 +244,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         try {
             return (PublishedRateEntity)query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-//            return null;
             throw new RoomRateNotFoundException("No published rate found exist!");
         }
     }

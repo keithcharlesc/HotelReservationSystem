@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb.session.singleton;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
@@ -69,7 +64,6 @@ public class DataInitializationSessionBean {
             employeeSessionBean.retrieveEmployeeByUsername("sysadmin");
             roomTypeSessionBean.retrieveRoomTypeByRoomTypeName("Deluxe Room");
             roomSessionBean.retrieveRoomByRoomNumber("0101");
-            //roomRateSessionBean.retrieveRoomRateByRoomRateName("Deluxe Room Published");
         } catch (RoomNotFoundException | EmployeeNotFoundException | RoomTypeNotFoundException ex) {
             initializeData();
         }
@@ -92,19 +86,20 @@ public class DataInitializationSessionBean {
 
     private void initializeData() {
         try {
+            // EMPLOYEE <==============================================
             employeeSessionBean.createNewEmployee(new EmployeeEntity("sysadmin", "password", EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR));
             employeeSessionBean.createNewEmployee(new EmployeeEntity("opmanager", "password", EmployeeAccessRightEnum.OPERATION_MANAGER));
             employeeSessionBean.createNewEmployee(new EmployeeEntity("salesmanager", "password", EmployeeAccessRightEnum.SALES_MANAGER));
             employeeSessionBean.createNewEmployee(new EmployeeEntity("guestrelo", "password", EmployeeAccessRightEnum.GUEST_RELATION_OFFICER));
 
-            //roomType
+            // ROOM TYPE <==============================================
             RoomTypeEntity deluxeRoomEntity = roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Deluxe Room", "Premier Room"));
             RoomTypeEntity premierRoomEntity = roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Premier Room", "Family Room"));
             RoomTypeEntity familyRoomEntity = roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Family Room", "Junior Suite"));
             RoomTypeEntity juniorSuiteEntity = roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Junior Suite", "Grand Suite"));
             RoomTypeEntity grandSuiteEntity = roomTypeSessionBean.createNewRoomType(new RoomTypeEntity("Grand Suite", "None"));
 
-            //roomRate
+            // ROOM RATE <==============================================
             roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Deluxe Room Published", new BigDecimal("100")), deluxeRoomEntity.getRoomTypeName());
             roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Deluxe Room Normal", new BigDecimal("50")), deluxeRoomEntity.getRoomTypeName());
             roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Premier Room Published", new BigDecimal("200")), premierRoomEntity.getRoomTypeName());
@@ -115,9 +110,8 @@ public class DataInitializationSessionBean {
             roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Junior Suite Normal", new BigDecimal("200")), juniorSuiteEntity.getRoomTypeName());
             roomRateSessionBean.createNewRoomRate(new PublishedRateEntity("Grand Suite Published", new BigDecimal("500")), grandSuiteEntity.getRoomTypeName());
             roomRateSessionBean.createNewRoomRate(new NormalRateEntity("Grand Suite Normal", new BigDecimal("250")), grandSuiteEntity.getRoomTypeName());
-//            roomRateSessionBean.createNewRoomRate(new RoomRateEntity("Test", new BigDecimal("1")), deluxeRoomEntity);
             
-            //room
+            // ROOM <==============================================
             roomSessionBean.createNewRoom(new RoomEntity("0101", RoomStatusEnum.AVAILABLE), "Deluxe Room");
             roomSessionBean.createNewRoom(new RoomEntity("0201", RoomStatusEnum.AVAILABLE), "Deluxe Room");
             roomSessionBean.createNewRoom(new RoomEntity("0301", RoomStatusEnum.AVAILABLE), "Deluxe Room");

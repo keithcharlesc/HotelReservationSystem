@@ -31,7 +31,6 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
-    // Added in v4.2 for bean validation
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
@@ -133,68 +132,12 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
         }
     }
     
-
-    // Updated in v4.1 to update selective attributes instead of merging the entire state passed in from the client
-    // Also check for existing guest before proceeding with the update
-    // Updated in v4.2 with bean validation
-//    @Override
-//    public void updateGuest(GuestEntity guestEntity) throws GuestNotFoundException, UpdateGuestException, InputDataValidationException {
-//        if (guestEntity != null && guestEntity.getGuestId() != null) {
-//            Set<ConstraintViolation<GuestEntity>> constraintViolations = validator.validate(guestEntity);
-//
-//            if (constraintViolations.isEmpty()) {
-//                GuestEntity guestEntityToUpdate = retrieveGuestByGuestId(guestEntity.getGuestId());
-//
-//                if (guestEntityToUpdate.getEmail().equals(guestEntity.getEmail())) {
-//                    guestEntityToUpdate.setName(guestEntity.getName());
-//                    guestEntityToUpdate.setPhoneNumber(guestEntity.getLastName());
-//                    // Username and password are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
-//                } else {
-//                    throw new UpdateGuestException("Username of guest record to be updated does not match the existing record");
-//                }
-//            } else {
-//                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-//            }
-//        } else {
-//            throw new GuestNotFoundException("Guest ID not provided for guest to be updated");
-//        }
-//    }
-    // Updated in v4.1
     @Override
     public void deleteGuest(Long guestId) throws GuestNotFoundException, DeleteGuestException {
         GuestEntity guestEntityToRemove = retrieveGuestByGuestId(guestId);
-
-//        if (guestEntityToRemove.getSaleTransactionEntities().isEmpty()) {
         em.remove(guestEntityToRemove);
-//        } else {
-        // New in v4.1 to prevent deleting guest with existing sale transaction(s)
-//            throw new DeleteGuestException("Guest ID " + guestId + " is associated with existing sale transaction(s) and cannot be deleted!");
-//        }
     }
 
-//    @Override
-//    public List<ReservationEntity> retrieveGuestReservations(Long guestId) throws RetrieveGuestReservationsException {
-//
-//        try {
-//            GuestEntity guestEntity = retrieveGuestByGuestId(guestId);
-//            guestEntity.getReservations().size();
-//            if (!guestEntity.getReservations().isEmpty()) {
-//                return guestEntity.getReservations();
-//            } else {
-//                throw new RetrieveGuestReservationsException("No reservations found!");
-//            }
-//
-//        } catch (GuestNotFoundException ex) {
-//            throw new RetrieveGuestReservationsException("Guest data not found!");
-//        }
-//    }
-
-//    @Override
-//    public ReservationEntity retrieveReservation(Long guestId, Long reservationId) {
-//        
-//    }
-
-    // Added in v4.2
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<GuestEntity>> constraintViolations) {
         String msg = "Input data validation error!:";
 

@@ -81,8 +81,7 @@ public class HotelOperationModule {
                 && currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SALES_MANAGER && currentEmployee.getEmployeeAccessRightEnum() != EmployeeAccessRightEnum.SYSTEM_ADMINISTRATOR) {
             throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER or SYSTEM ADMINISTRATOR rights to access the HOTEL OPERATIONS module.");
         }
-        //NEED TO CHECK IF TO PUT HERE BC MAYBE OTHER USERS CAN USE THE SYSTEM STUFF
-
+        
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -217,7 +216,6 @@ public class HotelOperationModule {
             System.out.println("3: Back\n");
             System.out.print("> ");
             response = scanner.nextInt();
-//            scanner.nextLine();
             if (response == 1) {
                 doUpdateRoomType(roomType);
             } else if (response == 2) {
@@ -342,7 +340,6 @@ public class HotelOperationModule {
         Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(room);
         if (constraintViolations.isEmpty()) {
             try {
-//                System.out.println("Reached");
                 RoomEntity roomCreated = roomSessionBean.createNewRoom(room, roomType);
                 System.out.println("Room Successfully Created : Room No. " + roomCreated.getNumber() + " , Room Type: " + roomType + " , ID : " + roomCreated.getRoomId());
             } catch (InputDataValidationException | RoomNumberExistException | UnknownPersistenceException | RoomTypeNotFoundException ex) {
@@ -379,7 +376,6 @@ public class HotelOperationModule {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
-            //Unsure if room status needs updated or just the extra info (bed size etc)
             Set<ConstraintViolation<RoomEntity>> constraintViolations = validator.validate(room);
             if (constraintViolations.isEmpty()) {
                 try {
@@ -572,16 +568,13 @@ public class HotelOperationModule {
                     LocalDate startDate = LocalDate.parse(start);
                     LocalDateTime startDateTime = startDate.atStartOfDay();
                     Date validityStartDate = convertToDateViaSqlTimestamp(startDateTime);
-//                        Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse(start);
-////                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-////                        LocalDateTime startDateTime = LocalDateTime.parse(startDate, formatter);
+
                     System.out.print("Enter End Date of Validitory Period [yyyy-MM-dd]> ");
                     end = scanner.nextLine();
                     LocalDate endDate = LocalDate.parse(end);
                     LocalDateTime endDateTime = endDate.atStartOfDay();
                     Date validityEndDate = convertToDateViaSqlTimestamp(endDateTime.plusHours(23).plusMinutes(59));
-//                        Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(end);
-//                        LocalDateTime endDateTime = LocalDateTime.parse(endDate, formatter); 
+
                     promotionRate.setName(name);
                     promotionRate.setRatePerNight(ratePerNight);
                     promotionRate.setStartDate(validityStartDate);
@@ -685,14 +678,11 @@ public class HotelOperationModule {
         for (RoomRateEntity roomRate : roomRates) {
             if (roomRate instanceof PeakRateEntity) {
                 PeakRateEntity peakRate = (PeakRateEntity) roomRate;
-                //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
                 System.out.printf("%20s%35s%20s%30s%30s\n", peakRate.getRoomRateId().toString(), peakRate.getName(), NumberFormat.getCurrencyInstance().format(peakRate.getRatePerNight()), dateFormat.format(peakRate.getStartDate()), dateFormat.format(peakRate.getEndDate()));
             } else if (roomRate instanceof PromotionRateEntity) {
                 PromotionRateEntity promotionRate = (PromotionRateEntity) roomRate;
-                //System.out.printf("%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night", "Start Date", "End Date");
                 System.out.printf("%20s%35s%20s%30s%30s\n", promotionRate.getRoomRateId().toString(), promotionRate.getName(), NumberFormat.getCurrencyInstance().format(promotionRate.getRatePerNight()), dateFormat.format(promotionRate.getStartDate()), dateFormat.format(promotionRate.getEndDate()));
             } else {
-                //System.out.printf("%12s%30s%20s\n", "Room Rate ID", "Room Rate Name", "Rate Per Night");
                 System.out.printf("%20s%35s%20s\n", roomRate.getRoomRateId().toString(), roomRate.getName(), NumberFormat.getCurrencyInstance().format(roomRate.getRatePerNight()));
             }
         }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb.session.stateless;
 
 import entity.ReservationRoomEntity;
@@ -33,10 +28,7 @@ import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
-/**
- *
- * @author xianhui
- */
+
 @Stateless
 public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLocal {
 
@@ -66,12 +58,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                 RoomTypeEntity roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
                 roomType.getRooms().add(newRoomEntity);
                 newRoomEntity.setRoomType(roomType);
-
-//                if (newRoomEntity.getReservationRooms().size() > 0) {
-//                    for (ReservationRoomEntity reservationRoom : newRoomEntity.getReservationRooms()) {
-//                        entityManager.persist(reservationRoom);
-//                    }
-//                }
                 entityManager.persist(newRoomEntity);
                 entityManager.flush();
                 return newRoomEntity;
@@ -172,7 +158,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
-    //check this 
+
     @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
         RoomEntity roomEntityToRemove = retrieveRoomByRoomId(roomId);
