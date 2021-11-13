@@ -1,10 +1,9 @@
 package ejb.session.stateless;
 
 import entity.GuestEntity;
+import entity.PartnerEmployeeEntity;
 import entity.ReservationEntity;
 import entity.ReservationRoomEntity;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -23,12 +22,16 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.GuestNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.PartnerNotFoundException;
 import util.exception.ReservationNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 @Stateless
 
 public class ReservationSessionBean implements ReservationSessionBeanLocal, ReservationSessionBeanRemote {
+
+    @EJB
+    private PartnerEmployeeSessionBeanLocal partnerEmployeeSessionBeanLocal;
 
     @EJB
     private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
@@ -131,7 +134,37 @@ public class ReservationSessionBean implements ReservationSessionBeanLocal, Rese
             throw new ReservationNotFoundException("Reservation ID " + reservationId + " does not exist!");
         }
     }
+    
+    @Override
+    public Long createNewReservationReturnId(Long guestId, ReservationEntity newReservationEntity, String username) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException {
+        Set<ConstraintViolation<ReservationEntity>> constraintViolations = validator.validate(newReservationEntity);
+        if (constraintViolations.isEmpty() & newReservationEntity != null) {
+            try {
+                PartnerEmployeeEntity partnerEntity = partnerEmployeeSessionBeanLocal.retrievePartnerEmployeeByUsername(username);
+                GuestEntity guestEntity = guestSessionBeanLocal.retrieveGuestByGuestId(guestId);
+                newReservationEntity.setGuest(guestEntity);
+                guestEntity.getReservations().add(newReservationEntity);
+                partnerEntity.getReservations().add(newReservationEntity);
 
+                em.persist(newReservationEntity);
+
+//                for (NightEntity nightEntity : newReservationEntity.getNights()) {
+//                    em.persist(nightEntity);
+//                }
+                for (ReservationRoomEntity reservationRoomEntity : newReservationEntity.getReservationRooms()) {
+                    em.persist(reservationRoomEntity);
+                }
+//                em.persist(newReservationEntity.getRoomType());
+                em.flush();
+                Long newId = newReservationEntity.getReservationId();
+                return newId;
+            } catch (PersistenceException | PartnerNotFoundException ex) {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+    }
 //    @Override
 //    public void updateReservation(ReservationEntity reservationEntity) throws ReservationNotFoundException, UpdateReservationException, InputDataValidationException {
 //        if (reservationEntity != null && reservationEntity.getReservationId() != null) {
