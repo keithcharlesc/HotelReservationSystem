@@ -73,7 +73,7 @@ public class MainApp {
                         System.out.println("Login successful!\n");
                         systemAdministrationModule = new SystemAdministrationModule(employeeSessionBean, partnerEmployeeSessionBean, currentEmployeeEntity);
                         hotelOperationModule = new HotelOperationModule(roomTypeSessionBean, roomSessionBean, roomRateSessionBean, exceptionRecordSessionBean, reservationRoomSessionBean, currentEmployeeEntity);
-                        frontOfficeModule = new FrontOfficeModule(roomSessionBean, roomTypeSessionBean, guestSessionBean, reservationSessionBean, nightSessionBean, roomRateSessionBean, exceptionRecordSessionBean, currentEmployeeEntity);
+                        frontOfficeModule = new FrontOfficeModule(roomSessionBean, roomTypeSessionBean, guestSessionBean, reservationSessionBean, nightSessionBean, roomRateSessionBean, exceptionRecordSessionBean, reservationRoomSessionBean, currentEmployeeEntity);
                         menuMain();
                     } catch (InvalidLoginCredentialException ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");

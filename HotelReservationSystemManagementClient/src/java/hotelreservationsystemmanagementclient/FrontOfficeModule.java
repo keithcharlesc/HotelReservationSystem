@@ -3,6 +3,7 @@ package hotelreservationsystemmanagementclient;
 import ejb.session.stateless.ExceptionRecordSessionBeanRemote;
 import ejb.session.stateless.GuestSessionBeanRemote;
 import ejb.session.stateless.NightSessionBeanRemote;
+import ejb.session.stateless.ReservationRoomSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
@@ -19,8 +20,11 @@ import entity.RoomTypeEntity;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -39,6 +45,7 @@ import util.exception.GuestEmailExistException;
 import util.exception.GuestNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidAccessRightException;
+import util.exception.ReservationRoomNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -53,6 +60,7 @@ public class FrontOfficeModule {
     private ReservationSessionBeanRemote reservationSessionBean;
     private NightSessionBeanRemote nightSessionBean;
     private RoomRateSessionBeanRemote roomRateSessionBean;
+    private ReservationRoomSessionBeanRemote reservationRoomSessionBean;
     private ExceptionRecordSessionBeanRemote exceptionRecordSessionBean;
     private EmployeeEntity currentEmployee;
     private final ValidatorFactory validatorFactory;
@@ -63,7 +71,7 @@ public class FrontOfficeModule {
         validator = validatorFactory.getValidator();
     }
 
-    public FrontOfficeModule(RoomSessionBeanRemote roomSessionBean, RoomTypeSessionBeanRemote roomTypeSessionBean, GuestSessionBeanRemote guestSessionBean, ReservationSessionBeanRemote reservationSessionBean, NightSessionBeanRemote nightSessionBean, RoomRateSessionBeanRemote roomRateSessionBean, ExceptionRecordSessionBeanRemote exceptionRecordSessionBean, EmployeeEntity currentEmployee) {
+    public FrontOfficeModule(RoomSessionBeanRemote roomSessionBean, RoomTypeSessionBeanRemote roomTypeSessionBean, GuestSessionBeanRemote guestSessionBean, ReservationSessionBeanRemote reservationSessionBean, NightSessionBeanRemote nightSessionBean, RoomRateSessionBeanRemote roomRateSessionBean, ExceptionRecordSessionBeanRemote exceptionRecordSessionBean, ReservationRoomSessionBeanRemote reservationRoomSessionBean, EmployeeEntity currentEmployee) {
         this();
         this.exceptionRecordSessionBean = exceptionRecordSessionBean;
         this.roomSessionBean = roomSessionBean;
@@ -72,6 +80,7 @@ public class FrontOfficeModule {
         this.reservationSessionBean = reservationSessionBean;
         this.nightSessionBean = nightSessionBean;
         this.roomRateSessionBean = roomRateSessionBean;
+        this.reservationRoomSessionBean = reservationRoomSessionBean;
         this.currentEmployee = currentEmployee;
     }
 
@@ -100,9 +109,9 @@ public class FrontOfficeModule {
                 if (response == 1) {
                     doWalkInSearchRoom();
                 } else if (response == 2) {
-//                    doCheckInGuest();
+                    doCheckInGuest();
                 } else if (response == 3) {
-//                    doCheckOutGuest();
+                    doCheckOutGuest();
                 } else if (response == 4) {
                     break;
                 } else {
@@ -362,8 +371,27 @@ public class FrontOfficeModule {
                     try {
                         ReservationEntity createdReservation = reservationSessionBean.createNewReservation(guest.getGuestId(), newReservation);
                         System.out.println("Reservation created successfully!  [Reservation ID: " + createdReservation.getReservationId() + "]\n");
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        Date current = sdf.parse(sdf.format(new Date()));
+                        LocalDateTime beginning = convertToLocalDateTimeViaInstant(current).truncatedTo(ChronoUnit.HOURS);
+                        Date beginningOfCurrentDate = convertToDateViaSqlTimestamp(beginning.plusHours(2));
+
+                        LocalDateTime end = convertToLocalDateTimeViaInstant(current).truncatedTo(ChronoUnit.HOURS);
+                        Date endOfCurrentDate = convertToDateViaSqlTimestamp(end.plusHours(23).plusMinutes(59).plusSeconds(59));
+                        System.out.println("BEGINNING OF CURRENT: " + beginningOfCurrentDate + " END OF CURRENT: " + endOfCurrentDate + " RESERVATION DATE: " + checkInDate);
+                        if (checkInDate.after(beginningOfCurrentDate) && checkInDate.before(endOfCurrentDate)) {
+                            reservationRoomSessionBean.allocateRooms(checkInDate);
+                            reservationRoomSessionBean.allocateRoomExceptionType1(checkInDate);
+                            reservationRoomSessionBean.allocateRoomExceptionType2(checkInDate);
+                        }
+                        System.out.print("Press any key to continue...> ");
+                        scanner.nextLine();
                     } catch (GuestNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
-                        System.out.println("An error has occurred: " + ex.getMessage() + "\n");;
+                        System.out.println("Error: " + ex.getMessage() + "\n");
+                    } catch (ReservationRoomNotFoundException ex) {
+                        System.out.println("Error: " + ex.getMessage() + "\n");
+                    } catch (ParseException ex) {
+                        System.out.println("Error: " + ex.getMessage() + "\n");
                     }
                 } catch (GuestNotFoundException ex) {
                     System.out.println("Error: " + ex.getMessage());
@@ -384,13 +412,18 @@ public class FrontOfficeModule {
             System.out.print("Guest Email > ");
             String guestEmail = scanner.nextLine().trim();
             GuestEntity guest = guestSessionBean.retreiveGuestReservations(guestEmail);
-            System.out.printf("%30s%30s%30s%30s%30s%30s\n", "Check In Date", "Check Out Date", "Room Type", "Room Number", "Exception Record ID", "Type of Exception Record");
+            System.out.printf("%30s%30s%30s%30s%30s%30s\n", "Reservation ID", "Check In Date", "Check Out Date", "Room Number", "Exception Record ID", "Type of Exception Record");
             for (ReservationEntity reservation : guest.getReservations()) {
                 for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
                     if (reservationRoom.getExceptionRecord() != null) {
-                        System.out.printf("%30s%30s%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getRoomType(), reservationRoom.getRoom().getNumber(), reservationRoom.getExceptionRecord().getExceptionRecordId(), reservationRoom.getExceptionRecord().getTypeOfException());
+                        if (reservationRoom.getExceptionRecord().getTypeOfException() == 1) {
+                            System.out.printf("%30s%30s%30s%30s%30s%30s\n", reservation.getReservationId(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getNumber().toString(), reservationRoom.getExceptionRecord().getExceptionRecordId(), reservationRoom.getExceptionRecord().getTypeOfException());
+                        } else {
+                            System.out.printf("%30s%30s%30s%30s%30s%30s\n", reservation.getReservationId(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), " ", reservationRoom.getExceptionRecord().getExceptionRecordId(), reservationRoom.getExceptionRecord().getTypeOfException());
+                        }
                     } else {
-                        System.out.printf("%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservation.getRoomType().getRoomTypeName(), reservationRoom.getRoom().getNumber());
+                        //System.out.printf("%30s%30s%30s%30s\n", reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getNumber());
+                        System.out.printf("%30s%30s%30s%30s\n", reservation.getReservationId(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getNumber().toString());
                     }
                 }
             }
@@ -427,7 +460,7 @@ public class FrontOfficeModule {
     public void doResolveExceptionRecord() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** HoRS System :: Resolve Exception ***\n");
-        System.out.print("Enter Exception ID>");
+        System.out.print("Enter Exception ID > ");
         Long id = sc.nextLong();
         System.out.print("Resolve Exception? (Enter 'Y' to confirm) > ");
         String input = sc.next().trim();
@@ -437,6 +470,8 @@ public class FrontOfficeModule {
                 exception.setResolved(true);
                 exceptionRecordSessionBean.updateExceptionRecord(exception);
                 System.out.println("Exception " + exception.getExceptionRecordId() + " has been resolved!");
+                System.out.print("Press any key to continue...> ");
+                sc.nextLine();
             } catch (ExceptionRecordNotFoundException ex) {
                 System.out.println("Error: " + ex.getMessage());
             } catch (InputDataValidationException ex) {
@@ -448,21 +483,27 @@ public class FrontOfficeModule {
     public void doCheckOutGuest() {
         try {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("*** HoRS System :: Check-In Guest ***\n");
+            System.out.println("*** HoRS System :: Check-Out Guest ***\n");
             System.out.print("Guest Email > ");
             String guestEmail = scanner.nextLine().trim();
             GuestEntity guest = guestSessionBean.retreiveGuestReservations(guestEmail);
             for (ReservationEntity reservation : guest.getReservations()) {
                 for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
                     RoomEntity room = reservationRoom.getRoom();
-                    room.setRoomAllocated(false);
-                    try {
-                        roomSessionBean.updateRoom(room);
-                    } catch (RoomNotFoundException | UpdateRoomException | InputDataValidationException ex) {
-                        System.out.println("Error: " + ex.getMessage());
+                    if (room != null) {
+                        room.setRoomAllocated(false);
+                        try {
+                            roomSessionBean.updateRoom(room);
+                        } catch (RoomNotFoundException | UpdateRoomException | InputDataValidationException ex) {
+                            System.out.println("Error: " + ex.getMessage());
+                        }
                     }
                 }
             }
+            System.out.println("");
+            System.out.println("Guest " + guest.getName() + " successfully checked out!");
+            System.out.print("Press any key to continue...> ");
+            scanner.nextLine();
         } catch (GuestNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
@@ -488,6 +529,12 @@ public class FrontOfficeModule {
             start.add(Calendar.DAY_OF_YEAR, 1);
         }
         return result;
+    }
+    
+    public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
     }
 
 }

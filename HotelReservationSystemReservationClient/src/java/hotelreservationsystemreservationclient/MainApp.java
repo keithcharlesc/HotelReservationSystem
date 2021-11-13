@@ -16,6 +16,7 @@ import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.CustomerEntity;
+import entity.GuestEntity;
 import entity.NightEntity;
 import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
@@ -27,8 +28,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,12 +41,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.ReservationTypeEnum;
 import util.exception.GuestEmailExistException;
 import util.exception.GuestNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.ReservationNotFoundException;
+import util.exception.ReservationRoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -433,8 +440,25 @@ public class MainApp {
                 try {
                     ReservationEntity createdReservation = reservationSessionBean.createNewReservation(currentCustomerEntity.getGuestId(), newReservation);
                     System.out.println("Reservation created successfully!  [Reservation ID: " + createdReservation.getReservationId() + "]\n");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Date current = sdf.parse(sdf.format(new Date()));
+                    LocalDateTime beginning = convertToLocalDateTimeViaInstant(current).truncatedTo(ChronoUnit.HOURS);
+                    Date beginningOfCurrentDate = convertToDateViaSqlTimestamp(beginning.plusHours(2));
+
+                    LocalDateTime end = convertToLocalDateTimeViaInstant(current).truncatedTo(ChronoUnit.HOURS);
+                    Date endOfCurrentDate = convertToDateViaSqlTimestamp(end.plusHours(23).plusMinutes(59).plusSeconds(59));
+                    System.out.println("BEGINNING OF CURRENT: " + beginningOfCurrentDate + " END OF CURRENT: " + endOfCurrentDate + " RESERVATION DATE: " + checkInDate);
+                    if (checkInDate.after(beginningOfCurrentDate) && checkInDate.before(endOfCurrentDate)) {
+                        reservationRoomSessionBean.allocateRooms(checkInDate);
+                        reservationRoomSessionBean.allocateRoomExceptionType1(checkInDate);
+                        reservationRoomSessionBean.allocateRoomExceptionType2(checkInDate);
+                    }
                 } catch (GuestNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
-                    System.out.println("An error has occurred: " + ex.getMessage() + "\n");;
+                    System.out.println("Error: " + ex.getMessage() + "\n");
+                } catch (ReservationRoomNotFoundException ex) {
+                    System.out.println("Error: " + ex.getMessage() + "\n");
+                } catch (ParseException ex) {
+                    System.out.println("Error: " + ex.getMessage() + "\n");
                 }
 
             } else {
@@ -451,10 +475,17 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Hotel Reservation (HoR) System :: View All Reservations ***\n");
         try {
-            List<ReservationEntity> reservations = guestSessionBean.retrieveGuestByGuestId(currentCustomerEntity.getGuestId()).getReservations();
-            System.out.printf("%20s%20s%30s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
-            for (ReservationEntity reservation : reservations) {
-                System.out.printf("%20s%20s%30s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+            GuestEntity guest = guestSessionBean.retreiveGuestReservations(currentCustomerEntity.getEmail());
+            System.out.printf("%20s%20s%30s%20s%30s%30s%20s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date", "Room Number");
+            for (ReservationEntity reservation : guest.getReservations()) {
+                for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+                    if (reservationRoom.getRoom() != null) {
+                        System.out.printf("%20s%20s%30s%20s%30s%30s%20s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), reservation.getReservationFee(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getNumber().toString());
+                    } else {
+                        System.out.printf("%20s%20s%30s%20s%30s%30s%20s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), reservation.getReservationFee(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), " ");
+                    }
+                    //System.out.printf("%20s%20s%30s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+                }
             }
         } catch (GuestNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
@@ -481,6 +512,7 @@ public class MainApp {
         System.out.print("Press any key to continue...> ");
         sc.nextLine();
     }
+    //need print room? 
 
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
         return java.sql.Timestamp.valueOf(dateToConvert);
@@ -612,5 +644,11 @@ public class MainApp {
         scanner.nextLine();
 
     }
-
+    
+    public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
+    
 }

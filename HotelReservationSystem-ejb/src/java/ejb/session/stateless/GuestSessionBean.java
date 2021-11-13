@@ -95,6 +95,7 @@ public class GuestSessionBean implements GuestSessionBeanLocal, GuestSessionBean
         guest.getReservations().size();
         for (ReservationEntity reservation : guest.getReservations()) {
             reservation.getReservationRooms().size();
+            reservation.getRoomType();
             for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
                 reservationRoom.getExceptionRecord();
                 reservationRoom.getRoom();
