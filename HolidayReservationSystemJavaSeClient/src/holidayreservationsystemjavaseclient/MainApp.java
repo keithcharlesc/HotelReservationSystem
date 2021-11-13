@@ -34,6 +34,7 @@ import ws.client.InputDataValidationException_Exception;
 import ws.client.InvalidLoginCredentialException_Exception;
 import ws.client.NightEntity;
 import ws.client.PartnerEmployeeEntity;
+import ws.client.PartnerNotFoundException_Exception;
 import ws.client.PeakRateEntity;
 import ws.client.PromotionRateEntity;
 import ws.client.ReservationEntity;
@@ -140,7 +141,7 @@ public class MainApp {
                 } else if (response == 2) {
 //                    viewReservationDetails();
                 } else if (response == 3) {
-//                    viewAllReservations();
+                    viewAllReservations();
                 } else if (response == 4) {
                     currentPartnerEmployeeEntity = null;
                     break;
@@ -185,13 +186,9 @@ public class MainApp {
         for (RoomTypeEntity roomType : listOfRoomTypes) {
 //            if (roomType.getIsDisabled() == false) {
             Integer totalNoOfRoomsForRoomType = service.getHotelReservationSystemWebServicePort().retrieveTotalQuantityOfRoomsBasedOnRoomType(roomType.getRoomTypeName());
-//            System.out.println(convertDateToString(checkInDate));
-//            System.out.println(convertDateToString(checkOutDate));
-//            
+
             String start = convertDateToString(checkInDate);
             String end = convertDateToString(checkOutDate);
-//            System.out.println(start);
-//            System.out.println(end);
 
             Integer reservedRoomsForRoomTypeForDateRange = service.getHotelReservationSystemWebServicePort().retrieveQuantityOfRoomsReserved(start, end, roomType.getRoomTypeName());
             Integer remainingAvailableRooms = totalNoOfRoomsForRoomType - reservedRoomsForRoomTypeForDateRange;
@@ -328,7 +325,6 @@ public class MainApp {
 
                 try {
                     GuestEntity hasGuestRecord = service.getHotelReservationSystemWebServicePort().retrieveGuestByEmail(guestEmail);
-                    System.out.println("123");
                 } catch (GuestNotFoundException_Exception ex) {
                     GuestEntity createGuestRecord = new GuestEntity();
                     createGuestRecord.setName(guestName);
@@ -336,7 +332,6 @@ public class MainApp {
                     createGuestRecord.setPhoneNumber(guestPhoneNumber);
                     try {
                         service.getHotelReservationSystemWebServicePort().createNewGuest(createGuestRecord);
-                        System.out.println("456");
                     } catch (GuestEmailExistException_Exception | InputDataValidationException_Exception | UnknownPersistenceException_Exception exception) {
                         System.out.println("Error: " + exception.getMessage());
                     }
@@ -344,20 +339,19 @@ public class MainApp {
 
                 try {
                     GuestEntity guest = service.getHotelReservationSystemWebServicePort().retrieveGuestByEmail(guestEmail);
-                    System.out.println("789");
                     ReservationEntity newReservation = new ReservationEntity();
                     newReservation.setNumberOfRooms(numberOfRooms);
                     newReservation.setReservationFee(reservationAmount);
                     newReservation.setStartDate(xml(checkInDate));
                     newReservation.setEndDate(xml(checkOutDate));
-                    newReservation.setReservationType(ReservationTypeEnum.WALK_IN);
+                    newReservation.setReservationType(ReservationTypeEnum.ONLINE);
 
 //                 ReservationEntity newReservation = new ReservationEntity(numberOfRooms, reservationAmount, checkInDate, checkOutDate, ReservationTypeEnum.WALK_IN);
                     newReservation.setRoomType(roomTypeEntity);
                     for (int i = 0; i < numberOfRooms; i++) {
                         ReservationRoomEntity reservationRoom = new ReservationRoomEntity();
                         reservationRoom.setReservation(newReservation);
-                        newReservation.getReservationRooms().add(reservationRoom);
+//                        newReservation.getReservationRooms().add(reservationRoom);
                     }
 
                     //add each night with their corresponding date and rate
@@ -370,7 +364,6 @@ public class MainApp {
                         night.setRoomRate(value);
                         try {
                             NightEntity createdNight = service.getHotelReservationSystemWebServicePort().createNewNight(night, night.getRoomRate().getName()); //might need to account if the creation of reservation feel then roll back if not got extra nights
-                            System.out.println("101112");
                             newReservation.getNights().add(createdNight);
                         } catch (InputDataValidationException_Exception | RoomRateNotFoundException_Exception | UnknownPersistenceException_Exception ex) {
                             System.out.println("Error: " + ex.getMessage());
@@ -378,10 +371,12 @@ public class MainApp {
                     }
 
                     try {
-                        System.out.println("Woah");
-                        ReservationEntity createdReservation = service.getHotelReservationSystemWebServicePort().createNewReservation(guest.getGuestId(), newReservation);
-                        System.out.println("131415");
-                        System.out.println("Reservation created successfully!  [Reservation ID: " + createdReservation.getReservationId() + "]\n");
+                        System.out.println("guest.getGuestId()" + guest.getGuestId());
+                        Long guestId = guest.getGuestId();
+                        Long reservationId = service.getHotelReservationSystemWebServicePort().createNewReservationReturnId(guestId, newReservation, currentPartnerEmployeeEntity.getUsername());
+//                        ReservationEntity createdReservation = service.getHotelReservationSystemWebServicePort().createNewReservation(guest.getGuestId(), newReservation);
+                        System.out.println("Reservation created successfully!  [Reservation ID: " + reservationId + "]\n");
+//                        System.out.println("Reservation created successfully!  [Reservation ID: " + createdReservation.getReservationId() + "]\n");
                     } catch (GuestNotFoundException_Exception | InputDataValidationException_Exception | UnknownPersistenceException_Exception ex) {
                         System.out.println("An error has occurred: " + ex.getMessage() + "\n");;
                     }
@@ -397,6 +392,48 @@ public class MainApp {
         }
     }
 
+    public void viewAllReservations() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Hotel Reservation (HoR) System :: View All Reservations ***\n");
+        try {
+            PartnerEmployeeEntity partner = service.getHotelReservationSystemWebServicePort().viewPartnerEmployeeReservations(currentPartnerEmployeeEntity.getUsername());
+            List<ReservationEntity> reservations = partner.getReservations();
+            System.out.printf("%20s%20s%30s%20s%30s%30s%20s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date", "Room Number");
+            for (ReservationEntity reservation : reservations) {
+                for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+                    if (reservationRoom.getRoom() != null) {
+                        System.out.printf("%20s%20s%30s%20s%30s%30s%20s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), reservation.getReservationFee(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), reservationRoom.getRoom().getNumber().toString());
+                    } else {
+                        System.out.printf("%20s%20s%30s%20s%30s%30s%20s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), reservation.getReservationFee(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), " ");
+                    }
+                    //System.out.printf("%20s%20s%30s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+                }
+            }
+        } catch (PartnerNotFoundException_Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+        System.out.println();
+        System.out.print("Press any key to continue...> ");
+        sc.nextLine();
+    }
+
+//    public void viewReservationDetails() {
+//        Scanner sc = new Scanner(System.in);
+//        System.out.println("*** Hotel Reservation (HoR) System :: View Reservation Details ***\n");
+//        System.out.print("Enter Reservation ID > ");
+//        Long reservationId = sc.nextLong();
+//        sc.nextLine();
+//        try {
+//            ReservationEntity reservation = reservationSessionBean.retrieveReservationByReservationId(reservationId);
+//            System.out.printf("%20s%20s%30s%20s%30s%30s\n", "Reservation ID", "Number of Rooms", "Room Type", "Reservation Fee", "Start Date", "End Date");
+//            System.out.printf("%20s%20s%30s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
+//        } catch (ReservationNotFoundException ex) {
+//            System.out.println("Error: " + ex.getMessage());
+//        }
+//        System.out.println();
+//        System.out.print("Press any key to continue...> ");
+//        sc.nextLine();
+//    }
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
         return java.sql.Timestamp.valueOf(dateToConvert);
     }
@@ -434,14 +471,6 @@ public class MainApp {
             System.out.println("Error: " + ex.getMessage());
         }
         return new Date();
-    }
-
-    private String formatDate(XMLGregorianCalendar xmlGregorianCalendarInstance) {
-        return date(xmlGregorianCalendarInstance).toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString();
-    }
-
-    private static java.util.Date date(XMLGregorianCalendar xmlGregorianCalendarInstance) {
-        return xmlGregorianCalendarInstance.toGregorianCalendar().getTime();
     }
 
     private static XMLGregorianCalendar xml(java.util.Date date) {

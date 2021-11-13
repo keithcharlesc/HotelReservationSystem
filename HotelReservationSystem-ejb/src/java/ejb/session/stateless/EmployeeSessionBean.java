@@ -29,7 +29,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
-    // Added in v4.2 for bean validation
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
@@ -38,8 +37,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
         validator = validatorFactory.getValidator();
     }
 
-    // Updated in v4.1
-    // Updated in v4.2 with bean validation
+
     @Override
     public Long createNewEmployee(EmployeeEntity newEmployeeEntity) throws EmployeeUsernameExistException, UnknownPersistenceException, InputDataValidationException {
         Set<ConstraintViolation<EmployeeEntity>> constraintViolations = validator.validate(newEmployeeEntity);
@@ -111,9 +109,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
         }
     }
 
-    // Updated in v4.1 to update selective attributes instead of merging the entire state passed in from the client
-    // Also check for existing employee before proceeding with the update
-    // Updated in v4.2 with bean validation
+
     @Override
     public void updateEmployee(EmployeeEntity employeeEntity) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException {
         if (employeeEntity != null && employeeEntity.getEmployeeId() != null) {
@@ -136,17 +132,11 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal, EmployeeSe
         }
     }
 
-    // Updated in v4.1
+
     @Override
     public void deleteEmployee(Long employeeId) throws EmployeeNotFoundException, DeleteEmployeeException {
         EmployeeEntity employeeEntityToRemove = retrieveEmployeeByEmployeeId(employeeId);
-
-//        if (employeeEntityToRemove.getSaleTransactionEntities().isEmpty()) {
             em.remove(employeeEntityToRemove);
-//        } else {
-            // New in v4.1 to prevent deleting employee with existing sale transaction(s)
-//            throw new DeleteEmployeeException("Employee ID " + employeeId + " is associated with existing sale transaction(s) and cannot be deleted!");
-//        }
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<EmployeeEntity>> constraintViolations) {

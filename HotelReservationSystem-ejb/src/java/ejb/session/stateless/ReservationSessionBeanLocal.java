@@ -31,4 +31,6 @@ public interface ReservationSessionBeanLocal {
     public List<ReservationEntity> retrieveCurrentDayReservations(Date currentDate);
     
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert);
+
+    public Long createNewReservationReturnId(Long guestId, ReservationEntity newReservationEntity, String username) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException;
 }

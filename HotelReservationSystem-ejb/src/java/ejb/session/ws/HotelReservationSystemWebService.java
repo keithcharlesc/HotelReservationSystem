@@ -18,7 +18,6 @@ import entity.PartnerEmployeeEntity;
 import entity.PeakRateEntity;
 import entity.PromotionRateEntity;
 import entity.ReservationEntity;
-import entity.ReservationRoomEntity;
 import entity.RoomEntity;
 import entity.RoomRateEntity;
 import entity.RoomTypeEntity;
@@ -85,16 +84,12 @@ public class HotelReservationSystemWebService {
 
 //    //need detach ??? 
     @WebMethod(operationName = "viewPartnerEmployeeReservations")
-    public List<ReservationEntity> viewAllPartnerEmployeeReservations(@WebParam(name = "username") String username) throws PartnerNotFoundException {
+    public PartnerEmployeeEntity viewAllPartnerEmployeeReservations(@WebParam(name = "username") String username) throws PartnerNotFoundException {
         PartnerEmployeeEntity partner = partnerEmployeeSessionBeanLocal.retrieveAllPartnerReservations(username);
-        List<ReservationEntity> reservations = partner.getReservations();
-        for (ReservationEntity reservation : reservations) {
-            em.detach(reservation);
-            em.detach(reservation.getGuest());
-            reservation.getGuest().getReservations().clear();
-        }
+        
+        partner.getReservations();
 
-        return reservations;
+        return partner;
     }
 
     @WebMethod(operationName = "retrieveAllRoomTypes")
@@ -243,15 +238,6 @@ public class HotelReservationSystemWebService {
 
         return guestSessionBeanLocal.createNewGuest(createGuestRecord);
 
-//        em.detach(guest);
-//
-//        for (ReservationEntity reservation : guest.getReservations()) {
-//            em.detach(reservation);
-//        }
-//
-//        guest.getReservations().clear();
-//
-//        return guest;
     }
 
     @WebMethod(operationName = "createNewNight")
@@ -266,10 +252,11 @@ public class HotelReservationSystemWebService {
         return night;
     }
 
-    @WebMethod(operationName = "createNewReservation")
-    public ReservationEntity createNewReservation(@WebParam(name = "guestId") Long guestId, @WebParam(name = "newReservationEntity") ReservationEntity newReservationEntity) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException {
+    @WebMethod(operationName = "createNewReservationReturnId")
+    public Long createNewReservationReturnId(@WebParam(name = "guestId") Long guestId, @WebParam(name = "newReservationEntity") ReservationEntity newReservationEntity,
+            @WebParam(name = "username") String username) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException {
 
-        ReservationEntity reservation = reservationSessionBeanLocal.createNewReservation(guestId, newReservationEntity);
+        Long reservationId = reservationSessionBeanLocal.createNewReservationReturnId(guestId, newReservationEntity, username);
 
 //        em.detach(reservation);
 //        em.detach(reservation.getGuest());
@@ -285,48 +272,46 @@ public class HotelReservationSystemWebService {
 //        }
 //
 //        reservation.getReservationRooms().clear();
-        
-
-        em.detach(reservation);
-        em.detach(reservation.getGuest());
-        reservation.setGuest(null);
-        
-        for (ReservationEntity reservationByGuest : reservation.getGuest().getReservations()) {
-            em.detach(reservationByGuest);
-        }
-        reservation.getGuest().getReservations().remove(reservation);
-        reservation.getGuest().getReservations().clear();
-        
-        em.detach(reservation);
-        em.detach(reservation.getRoomType());
-        reservation.setRoomType(null);
-        
-        for (NightEntity night : reservation.getNights()) {
-            em.detach(night);
-            em.detach(night.getRoomRate());
-            em.detach(night.getRoomRate().getRoomType());
-            em.detach(night.getRoomRate().setRoomType(null));
-            night.setRoomRate(null);
-        }
-        reservation.getNights().clear();
-
-        for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
-            em.detach(reservationRoom);
-            em.detach(reservationRoom.getReservation());
-            reservationRoom.setReservation(null);
-            em.detach(reservationRoom.getRoom());
-            reservationRoom.setRoom(null);
-            em.detach(reservationRoom.getRoom().getRoomType());
-            reservationRoom.getRoom().setRoomType(null);
-            em.detach(reservationRoom.getExceptionRecord());
-            reservationRoom.setExceptionRecord(null);
-        }
-        reservation.getReservationRooms().clear();
-
-        return reservation;
+//----------------------
+//        em.detach(reservation);
+//        em.detach(reservation.getGuest());
+//        reservation.setGuest(null);
+//
+//        for (ReservationEntity reservationByGuest : reservation.getGuest().getReservations()) {
+//            em.detach(reservationByGuest);
+//        }
+//        reservation.getGuest().getReservations().remove(reservation);
+//        reservation.getGuest().getReservations().clear();
+//
+//        em.detach(reservation);
+//        em.detach(reservation.getRoomType());
+//        reservation.setRoomType(null);
+//
+//        for (NightEntity night : reservation.getNights()) {
+//            em.detach(night);
+//            em.detach(night.getRoomRate());
+//            em.detach(night.getRoomRate().getRoomType());
+//            night.getRoomRate().setRoomType(null);
+//            night.setRoomRate(null);
+//        }
+//        reservation.getNights().clear();
+//
+//        for (ReservationRoomEntity reservationRoom : reservation.getReservationRooms()) {
+//            em.detach(reservationRoom);
+//            em.detach(reservationRoom.getReservation());
+//            reservationRoom.setReservation(null);
+//            em.detach(reservationRoom.getRoom());
+//            reservationRoom.setRoom(null);
+//            em.detach(reservationRoom.getRoom().getRoomType());
+//            reservationRoom.getRoom().setRoomType(null);
+//            em.detach(reservationRoom.getExceptionRecord());
+//            reservationRoom.setExceptionRecord(null);
+//        }
+//        reservation.getReservationRooms().clear();
+        //----------------------
+        return reservationId;
     }
-    
-    
+
     //        for (NightEntity night : reservation.getNights()) {
 //            em.detach(night);
 //        }
@@ -357,9 +342,6 @@ public class HotelReservationSystemWebService {
 //        }
 //
 //        reservation.getNights().clear();
-    
-    
-
     public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
         return java.sql.Timestamp.valueOf(dateToConvert);
     }

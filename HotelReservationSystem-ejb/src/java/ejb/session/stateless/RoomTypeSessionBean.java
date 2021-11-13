@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb.session.stateless;
 
 import entity.RoomEntity;
@@ -96,24 +91,17 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
         if (constraintViolations.isEmpty()) {
             try {
-                //checks whether a room type has next room type the same as that next room type
                 Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
                 query.setParameter("nextRoomType", newRoomTypeEntity.getNextRoomType());
 
-//                //checks whether the next room type exists as a Room Type itself
-//                Query queryTwo = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.roomTypeName = :roomType");
-//                queryTwo.setParameter("roomType", newRoomTypeEntity.getNextRoomType());
-//                RoomTypeEntity roomTypeExists = (RoomTypeEntity) queryTwo.getSingleResult();
                 if (!query.getResultList().isEmpty()) {
                     RoomTypeEntity roomType = (RoomTypeEntity) query.getSingleResult();
-//                    System.out.println("Executed One");
                     roomType.setNextRoomType(newRoomTypeEntity.getRoomTypeName());
                     createNewRoomType(newRoomTypeEntity);
                     entityManager.persist(newRoomTypeEntity);
                     entityManager.flush();
                     return newRoomTypeEntity;
                 } else {
-//                    System.out.println("Executed Two");
                     createNewRoomType(newRoomTypeEntity);
                     entityManager.persist(newRoomTypeEntity);
                     entityManager.flush();
@@ -209,9 +197,6 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                 }
                 
                 roomTypeEntityToUpdate.setRoomTypeName(roomTypeEntity.getRoomTypeName());
-
-                //if (roomTypeEntityToUpdate.getRoomTypeName().equals(roomTypeEntity.getRoomTypeName())) {
-                //roomTypeEntityToUpdate.setIsDisabled(roomTypeEntity.getIsDisabled());
                 roomTypeEntityToUpdate.setRoomDescription(roomTypeEntity.getRoomDescription());
                 roomTypeEntityToUpdate.setRoomSize(roomTypeEntity.getRoomSize());
                 roomTypeEntityToUpdate.setRoomBed(roomTypeEntity.getRoomBed());
@@ -255,18 +240,6 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         }
     }
 
-//    @Override
-//    public List<RoomTypeEntity> retrieveAllRoomTypesThatHasAvailableRooms() {
-////        Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r ORDER BY r.roomTypeId");
-//        Query query = entityManager.createQuery("SELECT COUNT(r) FROM Room r, IN (r.roomType) rt");
-//        return query.getResultList();
-//        
-//        RoomTypeEntity newRoomTypeEntity
-//        
-//         Query query = entityManager.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.nextRoomType = :nextRoomType");
-//                query.setParameter("nextRoomType", newRoomTypeEntity.getNextRoomType());
-//        
-//    }
     
     @Override
     public Integer retrieveTotalQuantityOfRoomsBasedOnRoomType(String roomTypeInput) { //RETURNS TOTAL QUANTITY OF ROOMS - ROOM TYPE
@@ -304,7 +277,6 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         start.setTime(startDate);
         Calendar end = Calendar.getInstance();
         end.setTime(endDate);
-//        end.add(Calendar.DAY_OF_YEAR, 1); //Add 1 day to endDate to make sure endDate is included into the final list
         while (start.before(end)) {
             result.add(start.getTime());
             start.add(Calendar.DAY_OF_YEAR, 1);

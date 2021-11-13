@@ -21,10 +21,7 @@ import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
 
-/**
- *
- * @author xianhui
- */
+
 @Stateless
 public class PartnerEmployeeSessionBean implements PartnerEmployeeSessionBeanRemote, PartnerEmployeeSessionBeanLocal {
 

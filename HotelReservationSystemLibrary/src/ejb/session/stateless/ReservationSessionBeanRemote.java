@@ -21,5 +21,7 @@ public interface ReservationSessionBeanRemote {
     public List<ReservationEntity> retrieveAllReservations();
 
     public ReservationEntity retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
+    
+    public Long createNewReservationReturnId(Long guestId, ReservationEntity newReservationEntity, String username) throws GuestNotFoundException, InputDataValidationException, UnknownPersistenceException;
 
 }

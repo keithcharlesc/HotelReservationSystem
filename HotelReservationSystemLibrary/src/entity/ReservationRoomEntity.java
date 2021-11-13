@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 //WEAK ENTITY 
 @Entity

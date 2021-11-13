@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package hotelreservationsystemreservationclient;
 
 import ejb.session.stateless.EmployeeSessionBeanRemote;
@@ -54,10 +49,7 @@ import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 
-/**
- *
- * @author keithcharleschan
- */
+
 public class MainApp {
 
     private ReservationSessionBeanRemote reservationSessionBean;
@@ -203,28 +195,6 @@ public class MainApp {
 
                 if (response == 1) {
                     doGuestSearchHotelRoom();
-//                    int nextResponse = 0;
-//                    while (true) {
-//                        System.out.println("*** Hotel Reservation (HoR) System ***\n");
-//                        System.out.println("1: Reserve Hotel Room");
-//                        System.out.println("2: Back");
-//                        while (nextResponse < 1 || nextResponse > 2) {
-//                            System.out.print("> ");
-//
-//                            response = scanner.nextInt();
-//
-//                            if (nextResponse == 1) {
-//                                //reserveHotelRoom();
-//                            } else if (nextResponse == 2) {
-//                                break;
-//                            } else {
-//                                System.out.println("Invalid option, please try again!\n");
-//                            }
-//                        }
-//                        if (nextResponse == 2) {
-//                            break;
-//                        }
-//                    }
                 } else if (response == 2) {
                     viewReservationDetails();
                 } else if (response == 3) {
@@ -265,7 +235,6 @@ public class MainApp {
         scanner.nextLine();
         System.out.println();
         //call list of room types that have available rooms
-//            System.out.println(roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType("Deluxe Room")); //total quantity of rooms per room type
         List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
         System.out.println("Available Room Types: ");
         System.out.println();
@@ -273,27 +242,18 @@ public class MainApp {
         for (RoomTypeEntity roomType : listOfRoomTypes) {
             if (roomType.getIsDisabled() == false) {
                 Integer totalNoOfRoomsForRoomType = roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType(roomType.getRoomTypeName());
-//                System.out.println("*Total Number of Rooms For " + roomType.getRoomTypeName() + ", is " + totalNoOfRoomsForRoomType);
                 Integer reservedRoomsForRoomTypeForDateRange = roomTypeSessionBean.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, roomType.getRoomTypeName());
-//                System.out.println("Reserved Rooms For " + roomType.getRoomTypeName() + ", is " + reservedRoomsForRoomTypeForDateRange);
                 Integer remainingAvailableRooms = totalNoOfRoomsForRoomType - reservedRoomsForRoomTypeForDateRange;
-//                System.out.println("Remaining Avail Rooms For " + roomType.getRoomTypeName() + ", is " + remainingAvailableRooms);
                 if (remainingAvailableRooms >= numberOfRooms) {
+                    
                     //if there is sufficient rooms available
                     //display the room type
-
                     try {
                         RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomType.getRoomTypeName());
                         List<Date> dateRange = getListOfDaysBetweenTwoDates(checkInDate, checkOutDate);
                         LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
                         for (Date date : dateRange) {
                             RoomRateEntity rate = null;
-                            //for each date,
-                            //find the available rates (where the validity period contains the date) >= date<=
-                            //check for normal
-                            //check for peak
-                            //check for promotion
-                            //if promotion
                             PeakRateEntity peakRate;
                             try {
                                 peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
@@ -323,10 +283,6 @@ public class MainApp {
                             }
 
                             map.put(date, rate);
-                            //if peak or promotion exists (one only)
-                            //- takes precedence over normal rate
-                            // if both peak and promotion exists
-                            //-take the rate that is lower
                         }
 
                         //PRINT RATE AMOUNTS for WHATS AVAIL
@@ -337,7 +293,6 @@ public class MainApp {
                         }
                         reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
                         System.out.printf("%30s%20s%25s\n", roomType.getRoomTypeName(), remainingAvailableRooms, NumberFormat.getCurrencyInstance().format(reservationAmount));
-//                System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
 
                     } catch (RoomTypeNotFoundException ex) {
                         System.out.println("Error: " + ex.getMessage());
@@ -351,7 +306,6 @@ public class MainApp {
         String input = scanner.nextLine().trim();
 
         if (input.equals("Y")) {
-//                                 doGuestReserveHotelRoom(reservationAmount, numberOfRooms, checkInDate, checkOutDate, roomTypeEntity, map);
             doGuestReserveHotelRoom(numberOfRooms, checkInDate, checkOutDate);
         } else {
             System.out.println("No reservation made!\n");
@@ -427,7 +381,6 @@ public class MainApp {
                 for (Map.Entry<Date, RoomRateEntity> entry : map.entrySet()) {
                     Date key = entry.getKey();
                     RoomRateEntity value = entry.getValue();
-//          System.out.println("<KEY-VALUE> : " + key + " - " + value.getRatePerNight());
                     NightEntity night = new NightEntity(value, key);
                     try {
                         NightEntity createdNight = nightSessionBean.createNewNight(night, night.getRoomRate().getName()); //might need to account if the creation of reservation feel then roll back if not got extra nights
@@ -484,7 +437,6 @@ public class MainApp {
                     } else {
                         System.out.printf("%20s%20s%30s%20s%30s%30s%20s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), reservation.getReservationFee(), reservation.getStartDate().toString(), reservation.getEndDate().toString(), " ");
                     }
-                    //System.out.printf("%20s%20s%30s%20s%30s%30s\n", reservation.getReservationId(), reservation.getNumberOfRooms(), reservation.getRoomType().getRoomTypeName(), NumberFormat.getCurrencyInstance().format(reservation.getReservationFee()), reservation.getStartDate(), reservation.getEndDate());
                 }
             }
         } catch (GuestNotFoundException ex) {
@@ -528,7 +480,6 @@ public class MainApp {
         start.setTime(startDate);
         Calendar end = Calendar.getInstance();
         end.setTime(endDate);
-//        end.add(Calendar.DAY_OF_YEAR, 1); //Add 1 day to endDate to make sure endDate is included into the final list
         while (start.before(end)) {
             result.add(start.getTime());
             start.add(Calendar.DAY_OF_YEAR, 1);
@@ -557,8 +508,6 @@ public class MainApp {
         Integer numberOfRooms = scanner.nextInt();
         scanner.nextLine();
         System.out.println();
-        //call list of room types that have available rooms
-//            System.out.println(roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType("Deluxe Room")); //total quantity of rooms per room type
         List<RoomTypeEntity> listOfRoomTypes = roomTypeSessionBean.retrieveAllRoomTypes();
         System.out.println("Available Room Types: ");
         System.out.println();
@@ -566,14 +515,9 @@ public class MainApp {
         for (RoomTypeEntity roomType : listOfRoomTypes) {
             if (roomType.getIsDisabled() == false) {
                 Integer totalNoOfRoomsForRoomType = roomTypeSessionBean.retrieveTotalQuantityOfRoomsBasedOnRoomType(roomType.getRoomTypeName());
-//                System.out.println("*Total Number of Rooms For " + roomType.getRoomTypeName() + ", is " + totalNoOfRoomsForRoomType);
                 Integer reservedRoomsForRoomTypeForDateRange = roomTypeSessionBean.retrieveQuantityOfRoomsReserved(checkInDate, checkOutDate, roomType.getRoomTypeName());
-//                System.out.println("Reserved Rooms For " + roomType.getRoomTypeName() + ", is " + reservedRoomsForRoomTypeForDateRange);
                 Integer remainingAvailableRooms = totalNoOfRoomsForRoomType - reservedRoomsForRoomTypeForDateRange;
-//                System.out.println("Remaining Avail Rooms For " + roomType.getRoomTypeName() + ", is " + remainingAvailableRooms);
                 if (remainingAvailableRooms >= numberOfRooms) {
-                    //if there is sufficient rooms available
-                    //display the room type
 
                     try {
                         RoomTypeEntity roomTypeEntity = roomTypeSessionBean.retrieveRoomTypeByRoomTypeName(roomType.getRoomTypeName());
@@ -581,12 +525,6 @@ public class MainApp {
                         LinkedHashMap<Date, RoomRateEntity> map = new LinkedHashMap<Date, RoomRateEntity>();
                         for (Date date : dateRange) {
                             RoomRateEntity rate = null;
-                            //for each date,
-                            //find the available rates (where the validity period contains the date) >= date<=
-                            //check for normal
-                            //check for peak
-                            //check for promotion
-                            //if promotion
                             PeakRateEntity peakRate;
                             try {
                                 peakRate = roomRateSessionBean.retrievePeakRateByRoomTypeAndValidityPeriod(roomTypeEntity.getRoomTypeId(), date);
@@ -616,10 +554,6 @@ public class MainApp {
                             }
 
                             map.put(date, rate);
-                            //if peak or promotion exists (one only)
-                            //- takes precedence over normal rate
-                            // if both peak and promotion exists
-                            //-take the rate that is lower
                         }
 
                         //PRINT RATE AMOUNTS for WHATS AVAIL
@@ -630,7 +564,6 @@ public class MainApp {
                         }
                         reservationAmount = reservationAmount.multiply(new BigDecimal(numberOfRooms));
                         System.out.printf("%30s%20s%25s\n", roomType.getRoomTypeName(), remainingAvailableRooms, NumberFormat.getCurrencyInstance().format(reservationAmount));
-//                System.out.println("Reservation amount: $" + reservationAmount + " for " + numberOfRooms + " rooms" + " for " + numberOfNights + " nights!");
 
                     } catch (RoomTypeNotFoundException ex) {
                         System.out.println("Error: " + ex.getMessage());

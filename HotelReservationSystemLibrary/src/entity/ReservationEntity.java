@@ -27,6 +27,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.ReservationTypeEnum;
 
 @Entity
@@ -73,6 +74,7 @@ public class ReservationEntity implements Serializable {
 //    @JoinColumn(nullable = false) 
     private List<NightEntity> nights;
 
+    @XmlTransient
     @OneToMany(mappedBy = "reservation")
     private List<ReservationRoomEntity> reservationRooms;
 
